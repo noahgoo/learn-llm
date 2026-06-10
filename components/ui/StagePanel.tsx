@@ -17,7 +17,7 @@ export function StagePanel() {
       aria-live="polite"
       className="pointer-events-none fixed left-16 top-1/2 z-10 w-[26rem] max-w-[38vw] -translate-y-1/2"
     >
-      <p className="font-mono text-[11px] uppercase tracking-wide3 text-ion">
+      <p className="font-mono text-[11px] uppercase tracking-wide3 text-accent">
         {stage.phase}
       </p>
       <h1 className="mt-3 font-display text-6xl leading-[1.04] text-ink">
@@ -32,7 +32,18 @@ export function StagePanel() {
           Station under construction
         </p>
       )}
-      <p className="mt-8 font-mono text-[10px] uppercase tracking-wide2 text-faint">
+      {/* the connective tissue: what flows in, what flows out */}
+      <dl className="mt-7 space-y-1.5 font-mono text-[10px] uppercase tracking-wide2">
+        <div className="flex gap-3">
+          <dt className="w-8 text-faint">In</dt>
+          <dd className="text-peri">▸ {stage.input}</dd>
+        </div>
+        <div className="flex gap-3">
+          <dt className="w-8 text-faint">Out</dt>
+          <dd className="text-lavender">▸ {stage.output}</dd>
+        </div>
+      </dl>
+      <p className="mt-6 font-mono text-[10px] uppercase tracking-wide2 text-faint">
         Lens · <span className="text-dim">{lens}</span>
       </p>
     </section>

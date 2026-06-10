@@ -2,15 +2,17 @@
 
 @theme {
   /* ── Inside the Model · design tokens ─────────────────────────── */
-  --color-void: #04060a; /* page background, deep space */
-  --color-abyss: #090d14; /* panel fills */
-  --color-ink: #e9eef4; /* primary text */
-  --color-dim: #8d97a7; /* secondary text */
-  --color-faint: #4c5666; /* tertiary / disabled */
-  --color-line: rgb(233 238 244 / 0.14); /* hairline rules */
-  --color-line-strong: rgb(233 238 244 / 0.32);
-  --color-ion: #6ee7ff; /* the accent: live data, active state */
-  --color-ion-dim: rgb(110 231 255 / 0.35);
+  --color-void: #06040c; /* page background, deep plum-black space */
+  --color-abyss: #0c0916; /* panel fills */
+  --color-ink: #ede9f7; /* primary text */
+  --color-dim: #948da8; /* secondary text */
+  --color-faint: #4f4a63; /* tertiary / disabled */
+  --color-line: rgb(237 233 247 / 0.14); /* hairline rules */
+  --color-line-strong: rgb(237 233 247 / 0.32);
+  --color-accent: #9d7bff; /* violet — live data, active state */
+  --color-accent-dim: rgb(157 123 255 / 0.35);
+  --color-lavender: #c9b4ff; /* soft support accent */
+  --color-peri: #a5b8ff; /* periwinkle — the token stream */
   --color-signal: #ffb454; /* probabilities, warnings, heat */
 
   --font-display: var(--font-instrument-serif), Georgia, serif;
@@ -31,7 +33,7 @@ body {
 }
 
 ::selection {
-  background: var(--color-ion-dim);
+  background: var(--color-accent-dim);
   color: var(--color-ink);
 }
 
@@ -40,12 +42,12 @@ body {
   background:
     radial-gradient(
       120% 90% at 70% 10%,
-      rgb(38 64 96 / 0.22) 0%,
+      rgb(88 58 160 / 0.2) 0%,
       transparent 55%
     ),
     radial-gradient(
       90% 80% at 15% 85%,
-      rgb(64 38 96 / 0.14) 0%,
+      rgb(120 70 180 / 0.12) 0%,
       transparent 50%
     ),
     var(--color-void);
@@ -71,11 +73,11 @@ body {
   background: var(--color-line);
 }
 
-/* Ion glow for active markers */
-.glow-ion {
+/* Violet glow for active markers */
+.glow-accent {
   box-shadow:
-    0 0 6px var(--color-ion),
-    0 0 18px var(--color-ion-dim);
+    0 0 6px var(--color-accent),
+    0 0 18px var(--color-accent-dim);
 }
 
 @media (prefers-reduced-motion: reduce) {

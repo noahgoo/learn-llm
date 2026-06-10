@@ -4,8 +4,8 @@ import { Canvas } from "@react-three/fiber";
 import { Stars } from "@react-three/drei";
 import { useSyncExternalStore } from "react";
 import { CameraRig } from "./CameraRig";
-import { PathLine } from "./PathLine";
 import { Stations } from "./Stations";
+import { TokenStream } from "./TokenStream";
 
 let webglSupport: boolean | undefined;
 function supportsWebGL(): boolean {
@@ -28,7 +28,7 @@ function WebGLFallback() {
   return (
     <div className="flex h-full items-center justify-center">
       <div className="max-w-md border border-line bg-abyss/70 p-8 text-center">
-        <p className="font-mono text-[11px] uppercase tracking-wide3 text-ion">
+        <p className="font-mono text-[11px] uppercase tracking-wide3 text-accent">
           Signal lost
         </p>
         <p className="mt-4 text-sm leading-relaxed text-dim">
@@ -62,12 +62,12 @@ export function Experience() {
       dpr={[1, 2]}
       gl={{ antialias: true, powerPreference: "high-performance" }}
     >
-      <color attach="background" args={["#04060a"]} />
-      <fog attach="fog" args={["#04060a", 60, 220]} />
-      <Stars radius={180} depth={120} count={3200} factor={3} saturation={0} fade speed={0.4} />
+      <color attach="background" args={["#06040c"]} />
+      <fog attach="fog" args={["#06040c", 60, 220]} />
+      <Stars radius={180} depth={120} count={3200} factor={3} saturation={0.6} fade speed={0.4} />
       <ambientLight intensity={0.15} />
       <CameraRig />
-      <PathLine />
+      <TokenStream />
       <Stations />
     </Canvas>
   );

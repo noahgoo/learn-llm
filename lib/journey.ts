@@ -21,6 +21,10 @@ export interface Stage {
   short: string;
   /** One-line teaser shown in the HUD before content lands (M2) */
   teaser: string;
+  /** What this stage receives — matches the previous stage's `output` */
+  input: string;
+  /** What this stage hands to the next */
+  output: string;
   /** Stages 5–10 are stations only until M3 */
   built: boolean;
 }
@@ -32,6 +36,8 @@ export const STAGES: Stage[] = [
     title: "Tokenization",
     short: "Tokens",
     teaser: "Your text shatters into the pieces the model can read.",
+    input: "raw text",
+    output: "token ids",
     built: true,
   },
   {
@@ -40,6 +46,8 @@ export const STAGES: Stage[] = [
     title: "Embeddings",
     short: "Vectors",
     teaser: "Each token becomes a point in a 768-dimensional space.",
+    input: "token ids",
+    output: "768-d vectors",
     built: true,
   },
   {
@@ -48,6 +56,8 @@ export const STAGES: Stage[] = [
     title: "Positional Encoding",
     short: "Position",
     teaser: "Order is information — the model learns where each token sits.",
+    input: "768-d vectors",
+    output: "vectors + position",
     built: true,
   },
   {
@@ -56,6 +66,8 @@ export const STAGES: Stage[] = [
     title: "Attention",
     short: "Attention",
     teaser: "Queries meet keys; every token looks back at the ones before it.",
+    input: "vectors + position",
+    output: "context-mixed vectors",
     built: true,
   },
   {
@@ -64,6 +76,8 @@ export const STAGES: Stage[] = [
     title: "Multi-Head Attention",
     short: "Heads",
     teaser: "Twelve heads attend in parallel, each watching for something different.",
+    input: "vectors + position",
+    output: "12 heads, recombined",
     built: false,
   },
   {
@@ -72,6 +86,8 @@ export const STAGES: Stage[] = [
     title: "Feed-Forward Network",
     short: "MLP",
     teaser: "Each token, alone, passes through the layer's thinking machinery.",
+    input: "context-mixed vectors",
+    output: "transformed vectors",
     built: false,
   },
   {
@@ -80,6 +96,8 @@ export const STAGES: Stage[] = [
     title: "Residual Stream",
     short: "Stream",
     teaser: "A highway of information that every layer reads from and writes to.",
+    input: "every layer's output",
+    output: "the accumulated stream",
     built: false,
   },
   {
@@ -88,6 +106,8 @@ export const STAGES: Stage[] = [
     title: "Layer Normalization",
     short: "LayerNorm",
     teaser: "Keeping the signal steady as it travels through 12 layers.",
+    input: "raw activations",
+    output: "normalized activations",
     built: false,
   },
   {
@@ -96,6 +116,8 @@ export const STAGES: Stage[] = [
     title: "Next-Token Prediction",
     short: "Prediction",
     teaser: "Logits, softmax, a roll of the dice — the next word appears.",
+    input: "final position's vector",
+    output: "probabilities over 50,257 tokens",
     built: false,
   },
   {
@@ -104,6 +126,8 @@ export const STAGES: Stage[] = [
     title: "Architecture vs. Weights",
     short: "Weights",
     teaser: "The same machine, before and after it learned everything.",
+    input: "the architecture (code)",
+    output: "the learned model (parameters)",
     built: false,
   },
 ];

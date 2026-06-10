@@ -5,8 +5,8 @@ import { useRef } from "react";
 import * as THREE from "three";
 import { STAGES, stationPosition } from "@/lib/journey";
 
-const ION = new THREE.Color("#6ee7ff");
-const FAINT = new THREE.Color("#4c5666");
+const VIOLET = new THREE.Color("#9d7bff");
+const FAINT = new THREE.Color("#4f4a63");
 
 function Station({ index, built }: { index: number; built: boolean }) {
   const core = useRef<THREE.Mesh>(null);
@@ -20,7 +20,7 @@ function Station({ index, built }: { index: number; built: boolean }) {
     if (ring.current) ring.current.rotation.z += delta * 0.05;
   });
 
-  const color = built ? ION : FAINT;
+  const color = built ? VIOLET : FAINT;
   return (
     <group position={stationPosition(index)}>
       {/* portal ring */}

@@ -35,17 +35,18 @@ export function ProgressRail() {
                 <span
                   className={`relative block h-2 w-2 rounded-full transition-colors duration-300 ${
                     active
-                      ? "bg-ion glow-ion"
+                      ? "bg-accent glow-accent"
                       : stage.built
                         ? "bg-dim group-hover:bg-ink group-focus-visible:bg-ink"
                         : "bg-faint group-hover:bg-dim group-focus-visible:bg-dim"
                   }`}
                 />
+                {/* label revealed on hover/focus only — the stage panel
+                    names the active stage, and a persistent label collides
+                    with it at panel height */}
                 <span
-                  className={`font-mono text-[10px] uppercase tracking-wide2 transition-all duration-300 ${
-                    active
-                      ? "translate-x-0 text-ion opacity-100"
-                      : "-translate-x-1 text-dim opacity-0 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100"
+                  className={`-translate-x-1 font-mono text-[10px] uppercase tracking-wide2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100 ${
+                    active ? "text-accent" : "text-dim"
                   }`}
                 >
                   {stage.short}

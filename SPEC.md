@@ -30,6 +30,11 @@ A NASA-Eyes-style cinematic experience (see Mars 2020 EDL reference) where the u
 9. Stacked layers → **Next-token prediction** (logits, softmax, temperature, sampling)
 10. **Architecture vs. trained weights** (the program vs. what training learned)
 
+### Visual direction (locked at Checkpoint A, revised per user feedback)
+- Void-dark base with **neon-purple palette** (user-supplied reference): violet primary accent, lavender/periwinkle support, purple-tinted nebula atmosphere. Simple, high-contrast, no rainbow soup.
+- **Continuity principle**: the user's tokens visibly *travel* — a particle stream flows along the journey path through every station, so each stage is seen receiving the previous stage's output. Every stage's HUD states IN ▸ / OUT ▸ explicitly. Stage visuals (M2/M3) must show the stream being transformed, never an isolated diorama.
+- Typography: Instrument Serif display, Archivo UI, IBM Plex Mono data.
+
 ### Acceptance criteria (MVP — vertical slice)
 - [ ] Landing → 3D scene loads ≥ 50 fps on a 2021 MacBook; graceful fallback message for WebGL-less browsers.
 - [ ] Scroll drives camera through stages 1–4 (tokenization, embeddings, positional encoding, attention) at full polish; stages 5–10 present as labeled stations with "coming soon" depth.
