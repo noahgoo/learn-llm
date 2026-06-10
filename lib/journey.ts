@@ -10,6 +10,8 @@ export type StageId =
   | "prediction"
   | "weights";
 
+export type Vec3 = [number, number, number];
+
 export interface Stage {
   id: StageId;
   /** Mission-style phase label, e.g. "PHASE 01" */
@@ -107,3 +109,30 @@ export const STAGES: Stage[] = [
 ];
 
 export const STAGE_COUNT = STAGES.length;
+
+/**
+ * Station positions: a gentle serpentine descent through the void.
+ * Camera keyframes sit behind/above each station, looking down-path.
+ */
+export function stationPosition(index: number): Vec3 {
+  return [
+    Math.sin(index * 0.85) * 16,
+    Math.cos(index * 0.6) * 5,
+    -index * 42,
+  ];
+}
+
+export function cameraKeyframe(index: number): Vec3 {
+  const [x, y, z] = stationPosition(index);
+  // offset left + above so the station frames right-of-center,
+  // clear of the HUD's left-side stage panel
+  return [x - 7.5, y + 4.5, z + 17];
+}
+
+/** Map scroll progress (0..1) to the nearest stage index. */
+export function stageIndexForProgress(progress: number): number {
+  return Math.min(
+    STAGE_COUNT - 1,
+    Math.max(0, Math.round(progress * (STAGE_COUNT - 1))),
+  );
+}

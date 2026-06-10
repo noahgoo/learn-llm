@@ -2,14 +2,14 @@
 
 import { STAGES } from "@/lib/journey";
 import { useJourneyStore } from "@/lib/store";
+import { scrollToStage } from "./ScrollTrack";
 
 /**
  * Vertical mission rail on the left edge: one node per journey stage.
- * Clicking a node is wired to camera flight in M0.4; for now it sets state.
+ * Clicking a node flies the camera there (via scroll position).
  */
 export function ProgressRail() {
   const activeStage = useJourneyStore((s) => s.activeStage);
-  const setActiveStage = useJourneyStore((s) => s.setActiveStage);
 
   return (
     <nav
@@ -28,7 +28,7 @@ export function ProgressRail() {
             <li key={stage.id} className="relative">
               <button
                 type="button"
-                onClick={() => setActiveStage(i)}
+                onClick={() => scrollToStage(i)}
                 aria-current={active ? "step" : undefined}
                 className="group flex items-center gap-3 outline-none"
               >

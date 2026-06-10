@@ -1,13 +1,19 @@
+import { Experience } from "@/components/canvas/Experience";
 import { Hud } from "@/components/ui/Hud";
+import { ScrollTrack } from "@/components/ui/ScrollTrack";
 
 export default function Home() {
   return (
-    <main className="relative h-dvh w-full overflow-hidden">
-      {/* Scene layer — R3F canvas mounts here in M0.4 */}
-      <div className="atmosphere absolute inset-0" />
-      <div className="vignette pointer-events-none absolute inset-0" />
-      <div className="grain pointer-events-none absolute inset-0" />
+    <main className="relative">
+      {/* Scene layer — fixed behind the HUD */}
+      <div className="atmosphere fixed inset-0">
+        <Experience />
+      </div>
+      <div className="vignette pointer-events-none fixed inset-0" />
+      <div className="grain pointer-events-none fixed inset-0" />
       <Hud />
+      {/* Scroll runway driving journey progress */}
+      <ScrollTrack />
     </main>
   );
 }
