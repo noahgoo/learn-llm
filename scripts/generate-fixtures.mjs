@@ -14,6 +14,8 @@ const SENTENCES = [
   "The capital of France is",
   "She opened the door and saw",
   "To be or not to be, that is the",
+  "The quick brown fox jumps over the",
+  "It was a dark and stormy",
 ];
 
 // keep in sync with lib/model/math.ts (tested there)

@@ -1,10 +1,16 @@
 import { describe, expect, it } from "vitest";
 import fixtures from "@/fixtures/sentences.json";
 import { N_HEAD, N_LAYER } from "@/lib/model/protocol";
+import { SUGGESTIONS } from "@/lib/suggestions";
 
 describe("model fixtures (real GPT-2 outputs)", () => {
   it("contains the example sentences", () => {
     expect(fixtures.length).toBeGreaterThanOrEqual(5);
+  });
+
+  it("every suggested payload has fixture data", () => {
+    const texts = fixtures.map((f) => f.text);
+    for (const s of SUGGESTIONS) expect(texts).toContain(s);
   });
 
   it.each(fixtures.map((f) => [f.text, f] as const))(
