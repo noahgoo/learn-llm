@@ -1,0 +1,109 @@
+export type StageId =
+  | "tokenization"
+  | "embeddings"
+  | "positional"
+  | "attention"
+  | "multi-head"
+  | "ffn"
+  | "residual"
+  | "layernorm"
+  | "prediction"
+  | "weights";
+
+export interface Stage {
+  id: StageId;
+  /** Mission-style phase label, e.g. "PHASE 01" */
+  phase: string;
+  title: string;
+  /** Short label for the progress rail */
+  short: string;
+  /** One-line teaser shown in the HUD before content lands (M2) */
+  teaser: string;
+  /** Stages 5–10 are stations only until M3 */
+  built: boolean;
+}
+
+export const STAGES: Stage[] = [
+  {
+    id: "tokenization",
+    phase: "PHASE 01",
+    title: "Tokenization",
+    short: "Tokens",
+    teaser: "Your text shatters into the pieces the model can read.",
+    built: true,
+  },
+  {
+    id: "embeddings",
+    phase: "PHASE 02",
+    title: "Embeddings",
+    short: "Vectors",
+    teaser: "Each token becomes a point in a 768-dimensional space.",
+    built: true,
+  },
+  {
+    id: "positional",
+    phase: "PHASE 03",
+    title: "Positional Encoding",
+    short: "Position",
+    teaser: "Order is information — the model learns where each token sits.",
+    built: true,
+  },
+  {
+    id: "attention",
+    phase: "PHASE 04",
+    title: "Attention",
+    short: "Attention",
+    teaser: "Queries meet keys; every token looks back at the ones before it.",
+    built: true,
+  },
+  {
+    id: "multi-head",
+    phase: "PHASE 05",
+    title: "Multi-Head Attention",
+    short: "Heads",
+    teaser: "Twelve heads attend in parallel, each watching for something different.",
+    built: false,
+  },
+  {
+    id: "ffn",
+    phase: "PHASE 06",
+    title: "Feed-Forward Network",
+    short: "MLP",
+    teaser: "Each token, alone, passes through the layer's thinking machinery.",
+    built: false,
+  },
+  {
+    id: "residual",
+    phase: "PHASE 07",
+    title: "Residual Stream",
+    short: "Stream",
+    teaser: "A highway of information that every layer reads from and writes to.",
+    built: false,
+  },
+  {
+    id: "layernorm",
+    phase: "PHASE 08",
+    title: "Layer Normalization",
+    short: "LayerNorm",
+    teaser: "Keeping the signal steady as it travels through 12 layers.",
+    built: false,
+  },
+  {
+    id: "prediction",
+    phase: "PHASE 09",
+    title: "Next-Token Prediction",
+    short: "Prediction",
+    teaser: "Logits, softmax, a roll of the dice — the next word appears.",
+    built: false,
+  },
+  {
+    id: "weights",
+    phase: "PHASE 10",
+    title: "Architecture vs. Weights",
+    short: "Weights",
+    teaser: "The same machine, before and after it learned everything.",
+    built: false,
+  },
+];
+
+export const STAGE_COUNT = STAGES.length;

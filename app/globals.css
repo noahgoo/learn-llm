@@ -1,26 +1,89 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* ── Inside the Model · design tokens ─────────────────────────── */
+  --color-void: #04060a; /* page background, deep space */
+  --color-abyss: #090d14; /* panel fills */
+  --color-ink: #e9eef4; /* primary text */
+  --color-dim: #8d97a7; /* secondary text */
+  --color-faint: #4c5666; /* tertiary / disabled */
+  --color-line: rgb(233 238 244 / 0.14); /* hairline rules */
+  --color-line-strong: rgb(233 238 244 / 0.32);
+  --color-ion: #6ee7ff; /* the accent: live data, active state */
+  --color-ion-dim: rgb(110 231 255 / 0.35);
+  --color-signal: #ffb454; /* probabilities, warnings, heat */
+
+  --font-display: var(--font-instrument-serif), Georgia, serif;
+  --font-sans: var(--font-archivo), system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  --tracking-wide2: 0.18em;
+  --tracking-wide3: 0.3em;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  height: 100%;
+  background: var(--color-void);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  overscroll-behavior: none;
+}
+
+::selection {
+  background: var(--color-ion-dim);
+  color: var(--color-ink);
+}
+
+/* Atmosphere: faint nebula depth + vignette behind everything */
+.atmosphere {
+  background:
+    radial-gradient(
+      120% 90% at 70% 10%,
+      rgb(38 64 96 / 0.22) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      90% 80% at 15% 85%,
+      rgb(64 38 96 / 0.14) 0%,
+      transparent 50%
+    ),
+    var(--color-void);
+}
+
+.vignette {
+  background: radial-gradient(
+    ellipse at center,
+    transparent 55%,
+    rgb(0 0 0 / 0.55) 100%
+  );
+}
+
+/* Film grain — tiny tiled SVG noise, keeps the void from feeling flat */
+.grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  opacity: 0.035;
+}
+
+/* Hairline rule utility (1 physical px) */
+.rule-x {
+  height: 1px;
+  background: var(--color-line);
+}
+
+/* Ion glow for active markers */
+.glow-ion {
+  box-shadow:
+    0 0 6px var(--color-ion),
+    0 0 18px var(--color-ion-dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

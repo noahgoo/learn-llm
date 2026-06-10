@@ -3,8 +3,8 @@
 Details + acceptance criteria: `tasks/plan.md`. Check off only after task's verify step passes.
 
 ## M0 Foundation
-- [ ] T0.1 Project scaffold (Next.js 15 + TS strict + Tailwind v4 + Vitest + ESLint/Prettier, static export)
-- [ ] T0.2 Repo hygiene (git init, MIT LICENSE, .gitignore, README stub, first commit)
+- [x] T0.1 Project scaffold (Next.js 16 + TS strict + Tailwind v4 + Vitest + ESLint/Prettier, static export)
+- [x] T0.2 Repo hygiene (git init, MIT LICENSE, .gitignore, README stub, first commit)
 - [ ] T0.3 Design system + HUD shell (tokens, progress rail, stage panel, lens toggle)
 - [ ] T0.4 R3F canvas + camera rig + scroll journey skeleton (10 stations, reduced-motion, WebGL fallback, keyboard nav)
 - [ ] ✅ CHECKPOINT A — user validates visual direction (locks after approval)
