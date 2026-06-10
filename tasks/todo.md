@@ -10,12 +10,14 @@ Details + acceptance criteria: `tasks/plan.md`. Check off only after task's veri
 - [ ] ✅ CHECKPOINT A — user validates visual direction (locks after approval)
 
 ## M1 Model plumbing
-- [ ] T1.1 Inference worker + lazy GPT-2 loader (WebGPU/WASM, typed protocol)
-- [ ] T1.2 Tokenizer API (+ fixture tests)
-- [ ] T1.3 Attention/logits extraction (+ shape & softmax tests) — spike attention-output feasibility FIRST
-- [ ] T1.4 Fixtures + illustrative mode (generate script, offline browsable)
-- [ ] T1.5 Input box wired (≤100 ms tokenize post-warm-up, progress UX)
+- [x] T1.1 Inference worker + lazy GPT-2 loader (typed protocol; WASM only — int8 numerically wrong on WebGPU EP, revisit with fp16 export)
+- [x] T1.2 Tokenizer API (vendored locally in public/tokenizer, fixture tests)
+- [x] T1.3 Attention/logits extraction — spike passed via custom instrumented ONNX export (attn/scores/QKV/hidden per layer, bit-exact vs HF)
+- [x] T1.4 Fixtures (5 sentences, committed; stage visuals consume them in M2 for illustrative mode)
+- [x] T1.5 Input box wired (debounced live inference, load CTA + progress, telemetry panel)
 - [ ] ✅ CHECKPOINT B — user validates real-model plumbing demo
+- [ ] (deferred) precise ≤100ms tokenize-latency measurement + perf marks
+- [ ] (deferred) int8 WASM vs node kernel drift — consider fp16 model option
 
 ## M2 Vertical slice
 - [ ] T2.0 Content + citation infra (MDX dual-lens, Cite popover, citations.json + integrity tests, References page, verified seed citations)
