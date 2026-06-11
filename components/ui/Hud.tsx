@@ -1,6 +1,8 @@
 "use client";
 
 import { useJourneyStore } from "@/lib/store";
+import { AttentionControls } from "./AttentionControls";
+import { ExploreToggle } from "./ExploreToggle";
 import { ProgressRail } from "./ProgressRail";
 import { PromptInput } from "./PromptInput";
 import { StagePanel } from "./StagePanel";
@@ -19,7 +21,9 @@ export function Hud() {
       <ProgressRail />
       <StagePanel />
       <PromptInput />
+      <AttentionControls />
       <Telemetry />
+      <ExploreToggle />
       <p
         className={`pointer-events-none fixed bottom-9 left-6 z-20 font-mono text-[10px] uppercase tracking-wide2 text-faint transition-opacity duration-500 ${
           started ? "opacity-0" : "opacity-100"

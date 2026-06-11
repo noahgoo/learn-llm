@@ -41,7 +41,9 @@ export function CameraRig() {
   const look = new THREE.Vector3();
 
   useFrame((_, rawDelta) => {
-    const progress = useJourneyStore.getState().progress;
+    const { progress, exploring } = useJourneyStore.getState();
+    if (exploring) return; // OrbitControls owns the camera
+
     if (reducedMotion) {
       smoothed.current = progress;
     } else {

@@ -29,6 +29,10 @@ export interface ModelOutput {
   attention: Float32Array[];
   /** Masked pre-softmax scores (Q·K/√d), same layout as `attention`. */
   scores: Float32Array[];
+  /** Token embeddings before position is added: [seq * 768] row-major. */
+  tokEmb: Float32Array;
+  /** Position embeddings for this sequence length: [seq * 768] row-major. */
+  posEmb: Float32Array;
   /** Top-k next-token candidates (softmax at final position, T=1). */
   topk: TopToken[];
   /** Final-position logits for the full vocab (for temperature/sampling UI). */

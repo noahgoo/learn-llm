@@ -60,6 +60,10 @@ for (const text of SENTENCES) {
       ),
     );
   }
+  const round3 = (v) => Math.round(v * 1e3) / 1e3;
+  const tokEmb = Array.from(out.tok_emb.data, round3);
+  const posEmb = Array.from(out.pos_emb.data, round3);
+
   const logits = out.logits.data;
   const final = logits.subarray((seq - 1) * VOCAB, seq * VOCAB);
   const probs = softmax(final);
@@ -75,6 +79,8 @@ for (const text of SENTENCES) {
     seq,
     attention,
     scores,
+    tokEmb,
+    posEmb,
     topk,
   });
   console.log(`${JSON.stringify(text)} -> ${seq} tokens, top: ${topk[0].token}`);

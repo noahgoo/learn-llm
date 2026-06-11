@@ -14,7 +14,7 @@ export function Telemetry() {
   if (!output && !error) return null;
 
   return (
-    <aside className="pointer-events-auto fixed right-6 bottom-8 z-20 w-72 border border-line bg-abyss/70 p-4 backdrop-blur-sm">
+    <aside className="pointer-events-auto fixed right-6 bottom-20 z-20 w-72 border border-line bg-abyss/70 p-4 backdrop-blur-sm">
       <p className="font-mono text-[10px] uppercase tracking-wide3 text-accent">
         Telemetry
       </p>

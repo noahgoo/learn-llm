@@ -109,6 +109,9 @@ async function run(id: number, text: string): Promise<void> {
     scores.push(new Float32Array(out[`scores_${l}`].data as Float32Array));
   }
 
+  const tokEmb = new Float32Array(out.tok_emb.data as Float32Array);
+  const posEmb = new Float32Array(out.pos_emb.data as Float32Array);
+
   const logits = out.logits.data as Float32Array;
   const finalLogits = new Float32Array(
     logits.subarray((seq - 1) * VOCAB, seq * VOCAB),
@@ -128,12 +131,16 @@ async function run(id: number, text: string): Promise<void> {
     seq,
     attention,
     scores,
+    tokEmb,
+    posEmb,
     topk,
     finalLogits,
   };
   post({ type: "result", id, output }, [
     ...attention.map((a) => a.buffer),
     ...scores.map((s) => s.buffer),
+    tokEmb.buffer,
+    posEmb.buffer,
     finalLogits.buffer,
   ]);
 }

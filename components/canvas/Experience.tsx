@@ -1,8 +1,11 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { Stars } from "@react-three/drei";
-import { useSyncExternalStore } from "react";
+import { OrbitControls, Stars } from "@react-three/drei";
+import { useEffect, useSyncExternalStore } from "react";
+import { useFixtureStore } from "@/lib/model/data";
+import { stationPosition } from "@/lib/journey";
+import { useJourneyStore } from "@/lib/store";
 import { CameraRig } from "./CameraRig";
 import { Stations } from "./Stations";
 import { TokenStream } from "./TokenStream";
@@ -41,6 +44,22 @@ function WebGLFallback() {
   );
 }
 
+/** Orbit controls around the current station while free-exploring. */
+function ExploreControls() {
+  const exploring = useJourneyStore((s) => s.exploring);
+  const activeStage = useJourneyStore((s) => s.activeStage);
+  if (!exploring) return null;
+  return (
+    <OrbitControls
+      target={stationPosition(activeStage)}
+      enablePan={false}
+      minDistance={4}
+      maxDistance={60}
+      makeDefault
+    />
+  );
+}
+
 /**
  * Scene root. Mounts the R3F canvas (fixed, behind the HUD) once WebGL
  * support is confirmed client-side.
@@ -52,6 +71,9 @@ export function Experience() {
     supportsWebGL,
     () => null,
   );
+  // illustrative-mode data for stage visuals before the model downloads
+  const loadFixtures = useFixtureStore((s) => s.loadFixtures);
+  useEffect(() => loadFixtures(), [loadFixtures]);
 
   if (webgl === null) return null;
   if (!webgl) return <WebGLFallback />;
@@ -67,6 +89,7 @@ export function Experience() {
       <Stars radius={180} depth={120} count={3200} factor={3} saturation={0.6} fade speed={0.4} />
       <ambientLight intensity={0.15} />
       <CameraRig />
+      <ExploreControls />
       <TokenStream />
       <Stations />
     </Canvas>
