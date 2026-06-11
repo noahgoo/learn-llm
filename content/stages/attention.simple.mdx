@@ -1,0 +1,19 @@
+So far every token traveled alone. Attention is where they finally *talk*
+— where "it" can figure out what it refers to, where " the" can sense a
+noun coming.<Cite id="vaswani2017" />
+
+Think of it as a matchmaking system. Every token broadcasts three things:
+
+- a **Query** — *"here's what I'm looking for"*
+- a **Key** — *"here's what I advertise"*
+- a **Value** — *"here's what I'll hand over if you pick me"*
+
+Each token compares its query against every earlier token's key. Strong
+match → big share of that token's value gets mixed in. The grid below is
+those match strengths for *your* sentence — each row shows where one token
+is looking. (Tokens can only look backward: the model must predict the
+future, so peeking ahead is forbidden.)
+
+After this stage, each token's vector is no longer just itself — it's
+itself *plus context*, a weighted blend of everything relevant that came
+before.

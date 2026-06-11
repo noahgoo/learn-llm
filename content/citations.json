@@ -1,0 +1,51 @@
+{
+  "vaswani2017": {
+    "title": "Attention Is All You Need",
+    "authors": "Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez, Kaiser & Polosukhin",
+    "year": 2017,
+    "venue": "NeurIPS 2017",
+    "url": "https://arxiv.org/abs/1706.03762"
+  },
+  "radford2019": {
+    "title": "Language Models are Unsupervised Multitask Learners",
+    "authors": "Radford, Wu, Child, Luan, Amodei & Sutskever",
+    "year": 2019,
+    "venue": "OpenAI Technical Report",
+    "url": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf"
+  },
+  "sennrich2016": {
+    "title": "Neural Machine Translation of Rare Words with Subword Units",
+    "authors": "Sennrich, Haddow & Birch",
+    "year": 2016,
+    "venue": "ACL 2016",
+    "url": "https://arxiv.org/abs/1508.07909"
+  },
+  "ba2016": {
+    "title": "Layer Normalization",
+    "authors": "Ba, Kiros & Hinton",
+    "year": 2016,
+    "venue": "arXiv preprint",
+    "url": "https://arxiv.org/abs/1607.06450"
+  },
+  "hendrycks2016": {
+    "title": "Gaussian Error Linear Units (GELUs)",
+    "authors": "Hendrycks & Gimpel",
+    "year": 2016,
+    "venue": "arXiv preprint",
+    "url": "https://arxiv.org/abs/1606.08415"
+  },
+  "elhage2021": {
+    "title": "A Mathematical Framework for Transformer Circuits",
+    "authors": "Elhage, Nanda, Olsson, Henighan, Joseph, Mann, Askell et al.",
+    "year": 2021,
+    "venue": "Transformer Circuits Thread (Anthropic)",
+    "url": "https://transformer-circuits.pub/2021/framework/index.html"
+  },
+  "holtzman2020": {
+    "title": "The Curious Case of Neural Text Degeneration",
+    "authors": "Holtzman, Buys, Du, Forbes & Choi",
+    "year": 2020,
+    "venue": "ICLR 2020",
+    "url": "https://arxiv.org/abs/1904.09751"
+  }
+}

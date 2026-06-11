@@ -1,5 +1,6 @@
 "use client";
 
+import { STAGE_CONTENT } from "@/content/stages";
 import { STAGES } from "@/lib/journey";
 import { useJourneyStore, useLensStore } from "@/lib/store";
 
@@ -11,6 +12,7 @@ export function StagePanel() {
   const activeStage = useJourneyStore((s) => s.activeStage);
   const lens = useLensStore((s) => s.lens);
   const stage = STAGES[activeStage];
+  const Content = STAGE_CONTENT[stage.id]?.[lens];
 
   return (
     <section
@@ -24,9 +26,15 @@ export function StagePanel() {
         {stage.title}
       </h1>
       <div className="rule-x mt-6 w-24" />
-      <p className="mt-6 max-w-[24rem] text-[15px] leading-relaxed text-dim">
-        {stage.teaser}
-      </p>
+      {Content ? (
+        <div className="prose-stage pointer-events-auto mt-6 max-h-[38vh] max-w-[24rem] overflow-y-auto pr-3 text-[14px] leading-relaxed text-dim">
+          <Content />
+        </div>
+      ) : (
+        <p className="mt-6 max-w-[24rem] text-[15px] leading-relaxed text-dim">
+          {stage.teaser}
+        </p>
+      )}
       {!stage.built && (
         <p className="mt-4 font-mono text-[10px] uppercase tracking-wide2 text-faint">
           Station under construction

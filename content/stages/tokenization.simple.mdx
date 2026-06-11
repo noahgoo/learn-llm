@@ -1,0 +1,12 @@
+Computers don't read words — they read numbers. Before your text can enter
+the model, it gets broken into **tokens**: common chunks of text that each
+have an ID number in a fixed dictionary of 50,257 entries.<Cite id="radford2019" />
+
+Common words like " the" are a single token. Rarer words get split into
+pieces — "transformer" might become "transform" + "er". The pieces were
+chosen by scanning a huge amount of text and repeatedly merging whichever
+pair of characters appeared together most often.<Cite id="sennrich2016" />
+
+Watch your own sentence shatter: each chip below the text is one token, and
+the number is its position in the dictionary. From here on, the model never
+sees letters again — only these IDs.

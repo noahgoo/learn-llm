@@ -80,6 +80,37 @@ body {
     0 0 18px var(--color-accent-dim);
 }
 
+/* Stage copy (MDX) typography */
+.prose-stage p {
+  margin-block: 0.75rem;
+}
+.prose-stage strong {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+.prose-stage ul {
+  margin-block: 0.75rem;
+  padding-left: 1.1rem;
+  list-style: square;
+}
+.prose-stage li {
+  margin-block: 0.3rem;
+}
+.prose-stage li::marker {
+  color: var(--color-accent);
+}
+.prose-stage code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  color: var(--color-peri);
+}
+.prose-stage::-webkit-scrollbar {
+  width: 3px;
+}
+.prose-stage::-webkit-scrollbar-thumb {
+  background: var(--color-line-strong);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
