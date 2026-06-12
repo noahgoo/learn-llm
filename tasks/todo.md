@@ -20,13 +20,14 @@ Details + acceptance criteria: `tasks/plan.md`. Check off only after task's veri
 - [ ] (deferred) int8 WASM vs node kernel drift — consider fp16 model option
 
 ## M2 Vertical slice
-- [ ] T2.0 Content + citation infra (MDX dual-lens, Cite popover, citations.json + integrity tests, References page, verified seed citations)
-- [ ] T2.1 Stage: Tokenization
-- [ ] T2.2 Stage: Embeddings
-- [ ] T2.3 Stage: Positional encoding
-- [ ] T2.4 Stage: Attention + Q/K/V sub-stage (flagship)
-- [ ] T2.5 Free-explore breakout mode
+- [x] T2.0 Content + citation infra (MDX dual-lens, Cite popover, citations.json + integrity tests, References page, 7 verified citations)
+- [x] T2.1 Stage: Tokenization (live BPE chips + ids)
+- [x] T2.2 Stage: Embeddings (PCA cloud + live projection + neighbors)
+- [x] T2.3 Stage: Positional (spiral, pos-vector similarity links)
+- [x] T2.4 Stage: Attention (per-head matrix, layer/head/softmax-scores controls; Q/K/V copy in technical lens)
+- [x] T2.5 Free-explore breakout (orbit + Esc resume)
 - [ ] ✅ CHECKPOINT C — user validates vertical slice
+- [ ] (polish backlog) token stream slab overlaps attention matrix; attention 3D lines between token chips; matrix slightly right-cropped on small windows
 
 ## M3 Remaining stages
 - [ ] T3.1 Multi-head attention

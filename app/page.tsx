@@ -10,6 +10,7 @@ export default function Home() {
         <Experience />
       </div>
       <div className="vignette pointer-events-none fixed inset-0" />
+      <div className="scrim-left pointer-events-none fixed inset-0" />
       <div className="grain pointer-events-none fixed inset-0" />
       <Hud />
       {/* Scroll runway driving journey progress */}

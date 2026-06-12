@@ -30,6 +30,13 @@ body {
   color: var(--color-ink);
   font-family: var(--font-sans);
   overscroll-behavior: none;
+  /* journey position lives in the progress rail, not a scrollbar */
+  scrollbar-width: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
 }
 
 ::selection {
@@ -58,6 +65,18 @@ body {
     ellipse at center,
     transparent 55%,
     rgb(0 0 0 / 0.55) 100%
+  );
+}
+
+/* Readability scrim: darkens the left third where stage copy sits,
+   so 3D scene content never fights the text */
+.scrim-left {
+  background: linear-gradient(
+    90deg,
+    rgb(6 4 12 / 0.96) 0%,
+    rgb(6 4 12 / 0.85) 30%,
+    rgb(6 4 12 / 0.35) 48%,
+    transparent 62%
   );
 }
 
@@ -104,11 +123,14 @@ body {
   font-size: 0.85em;
   color: var(--color-peri);
 }
-.prose-stage::-webkit-scrollbar {
-  width: 3px;
+.prose-stage {
+  overflow-x: hidden;
+  scrollbar-width: none;
+  /* fade the cut-off line into a hint that more copy scrolls below */
+  mask-image: linear-gradient(180deg, black 82%, transparent 100%);
 }
-.prose-stage::-webkit-scrollbar-thumb {
-  background: var(--color-line-strong);
+.prose-stage::-webkit-scrollbar {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
