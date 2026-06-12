@@ -30,7 +30,7 @@ export function ProgressRail() {
                 type="button"
                 onClick={() => scrollToStage(i)}
                 aria-current={active ? "step" : undefined}
-                className="group flex items-center gap-3 outline-none"
+                className="group relative flex items-center outline-none"
               >
                 <span
                   className={`relative block h-2 w-2 rounded-full transition-colors duration-300 ${
@@ -41,11 +41,10 @@ export function ProgressRail() {
                         : "bg-faint group-hover:bg-dim group-focus-visible:bg-dim"
                   }`}
                 />
-                {/* label revealed on hover/focus only — the stage panel
-                    names the active stage, and a persistent label collides
-                    with it at panel height */}
+                {/* label: hover/focus-revealed chip, absolutely positioned so
+                    it neither blocks the stage copy nor drowns in it */}
                 <span
-                  className={`-translate-x-1 font-mono text-[10px] uppercase tracking-wide2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100 ${
+                  className={`pointer-events-none absolute left-full z-30 ml-3 -translate-x-1 border border-line bg-abyss/95 px-2 py-1 font-mono text-[10px] whitespace-nowrap uppercase tracking-wide2 opacity-0 backdrop-blur-sm transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100 ${
                     active ? "text-accent" : "text-dim"
                   }`}
                 >
