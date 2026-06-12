@@ -1,13 +1,15 @@
 A token ID is just a dictionary position — the number 3797 says nothing
-about what " cat" *means*. The embedding step gives each token meaning: the
-model looks up row 3797 in a giant learned table and gets back a list of
-768 numbers — a point in a 768-dimensional space.<Cite id="radford2019" />
+about what " cat" *means*. The embedding step gives each token meaning:
+the model looks up its row in a giant learned table and gets back a long
+list of numbers — a point in a high-dimensional space.
 
-During training, tokens used in similar ways drifted close together in
-that space. " cat" sits near " dog" and " kitten"; " Paris" sits near
-" London". Meaning becomes geometry: directions and distances you can
-measure.
+Every LLM does this. During training, tokens used in similar ways drift
+close together in that space: " cat" ends up near " dog" and " kitten",
+" Paris" near " London". Meaning becomes geometry — directions and
+distances you can measure.
 
-The cloud around you is that space (flattened to 3-D so we can fly through
-it). Your tokens light up at their positions — see what the model considers
-their neighbors.
+The cloud around you is the live model's actual embedding space (768
+dimensions for GPT-2 small,<Cite id="radford2019" /> several thousand for
+frontier models), flattened to 3-D so we can fly through it. Your tokens
+light up at their real positions — see what the model considers their
+neighbors.

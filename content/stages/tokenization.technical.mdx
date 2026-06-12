@@ -1,16 +1,18 @@
-GPT-2 uses **byte-level Byte Pair Encoding (BPE)**: the base alphabet is
-the 256 byte values, so any string is representable with zero
-out-of-vocabulary tokens.<Cite id="radford2019" />
+Most LLM tokenizers descend from **Byte Pair Encoding (BPE)**: start from
+an alphabet of single symbols, count all adjacent pairs in the training
+corpus, merge the most frequent pair into a new vocabulary entry,
+repeat to a target vocabulary size.<Cite id="sennrich2016" /> At
+inference, text is segmented greedily by those same merge rules —
+deterministic and reversible. That's why a leading space matters:
+" the" and "the" are different vocabulary entries.
 
-BPE builds its vocabulary greedily: start from single symbols, count all
-adjacent pairs in the training corpus, merge the most frequent pair into a
-new symbol, repeat.<Cite id="sennrich2016" /> GPT-2 ran this to a
-vocabulary of **50,257** = 256 bytes + 50,000 learned merges + 1
-end-of-text token, with the constraint that merges never cross character
-categories (letters never merge with punctuation).<Cite id="radford2019" />
+**Byte-level** BPE, introduced with GPT-2 and still standard, uses the
+256 byte values as the base alphabet — any string in any language is
+representable with zero out-of-vocabulary tokens.<Cite id="radford2019" />
 
-At inference your text is greedily segmented by those same merge rules —
-deterministic, reversible, and the reason a leading space changes the
-token: " the" (id 262) and "the" (id 1169) are different dictionary
-entries. The result is a sequence of integer IDs in `[0, 50257)` — shape
-`[seq]` — and nothing else flows downstream.
+The live model here is GPT-2 small: vocabulary **50,257** = 256 bytes
++ 50,000 learned merges + 1 end-of-text token, with merges forbidden
+from crossing character categories.<Cite id="radford2019" /> Modern
+frontier models keep the same algorithm with larger vocabularies
+(~100k–250k entries) traded against sequence length. The output of this
+stage — for any LLM — is just a sequence of integer IDs, shape `[seq]`.

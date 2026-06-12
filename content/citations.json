@@ -41,6 +41,13 @@
     "venue": "Transformer Circuits Thread (Anthropic)",
     "url": "https://transformer-circuits.pub/2021/framework/index.html"
   },
+  "su2021": {
+    "title": "RoFormer: Enhanced Transformer with Rotary Position Embedding",
+    "authors": "Su, Lu, Pan, Murtadha, Wen & Liu",
+    "year": 2021,
+    "venue": "arXiv preprint (RoPE)",
+    "url": "https://arxiv.org/abs/2104.09864"
+  },
   "holtzman2020": {
     "title": "The Curious Case of Neural Text Degeneration",
     "authors": "Holtzman, Buys, Du, Forbes & Choi",

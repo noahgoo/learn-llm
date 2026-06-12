@@ -1,6 +1,7 @@
 So far every token traveled alone. Attention is where they finally *talk*
 — where "it" can figure out what it refers to, where " the" can sense a
-noun coming.<Cite id="vaswani2017" />
+noun coming. This mechanism is the heart of every modern language
+model.<Cite id="vaswani2017" />
 
 Think of it as a matchmaking system. Every token broadcasts three things:
 
@@ -9,10 +10,10 @@ Think of it as a matchmaking system. Every token broadcasts three things:
 - a **Value** — *"here's what I'll hand over if you pick me"*
 
 Each token compares its query against every earlier token's key. Strong
-match → big share of that token's value gets mixed in. The grid below is
-those match strengths for *your* sentence — each row shows where one token
-is looking. (Tokens can only look backward: the model must predict the
-future, so peeking ahead is forbidden.)
+match → big share of that token's value gets mixed in. The grid here
+shows those match strengths for *your* sentence, computed live — each row
+is one token deciding where to look. (Chat-style LLMs only look backward:
+they must predict the future, so peeking ahead is forbidden.)
 
 After this stage, each token's vector is no longer just itself — it's
 itself *plus context*, a weighted blend of everything relevant that came

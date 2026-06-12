@@ -1,13 +1,15 @@
 "Dog bites man" and "man bites dog" contain the same tokens — only the
 order differs. But the attention machinery ahead looks at all tokens *at
-once*, with no built-in sense of sequence. Order has to be added as
+once*, with no built-in sense of sequence. Every LLM has to add order as
 information.<Cite id="vaswani2017" />
 
-GPT-2's fix: alongside the meaning-table, it learned a second table — one
-vector for "position 1", one for "position 2", and so on. Each token's
-position vector is **added** onto its meaning vector before the journey
-continues.<Cite id="radford2019" />
+There are a few ways to do it. The model running here learned a second
+table alongside the meaning-table: one vector for "position 1", one for
+"position 2", and so on, **added** onto each token's meaning vector
+before the journey continues.<Cite id="radford2019" /> Most recent
+models instead *rotate* vectors by an angle that depends on position —
+different mechanics, same job.<Cite id="su2021" />
 
-So what flows forward is a blend: *what* the token means plus *where* it
-sits. The same word in a different position enters the model as a slightly
-different point in space — which is exactly the point.
+Either way, what flows forward is a blend: *what* the token means plus
+*where* it sits. The same word in a different position enters the model
+as a slightly different point in space — which is exactly the point.

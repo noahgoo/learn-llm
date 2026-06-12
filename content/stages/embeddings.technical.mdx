@@ -1,16 +1,17 @@
-The embedding matrix **W<sub>E</sub> ∈ ℝ<sup>50257×768</sup>** is a
-plain lookup table: token id *i* selects row *i*, giving the model
-dimension d<sub>model</sub> = 768 for GPT-2 small.<Cite id="radford2019" />
-No computation happens here — just indexing. The rows are parameters,
-learned end-to-end by gradient descent like every other weight.
+The embedding matrix **W<sub>E</sub> ∈ ℝ<sup>|V|×d<sub>model</sub></sup>**
+is a plain lookup table: token id *i* selects row *i*. No computation —
+just indexing. The rows are ordinary parameters, learned end-to-end by
+gradient descent. Model "width" largely *is* d<sub>model</sub>: 768 for
+the GPT-2 small running here,<Cite id="radford2019" /> tens of thousands
+in the largest published models.
 
-GPT-2 **ties** this matrix with the output head: the same W<sub>E</sub>
-that embeds inputs is transposed to project the final hidden state back
-onto vocabulary logits. Embedding and unembedding share weights, so the
-space is consistent end to end.<Cite id="radford2019" />
+Many GPT-family models (including this one) **tie** W<sub>E</sub> with
+the output head: the same matrix that embeds inputs is transposed to
+project the final hidden state back onto vocabulary logits, keeping one
+consistent token space end to end.<Cite id="radford2019" />
 
-The 3-D cloud here is a PCA projection of W<sub>E</sub> rows — three
-principal components of 768 — so distances are heavily compressed but
-neighborhood structure survives. Your tokens' actual 768-d embedding
-vectors (the `tok_emb` output of the live model) are projected with the
-same components.
+The 3-D cloud is a PCA projection of the live model's W<sub>E</sub> rows
+— three principal components out of 768 — so distances are heavily
+compressed, but neighborhood structure survives. Your tokens' actual
+768-d embedding vectors (the `tok_emb` output of the model in your
+browser) are projected with the same components.

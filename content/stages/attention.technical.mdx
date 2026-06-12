@@ -1,20 +1,21 @@
-Each head projects the (LayerNormed) residual stream with learned matrices:
-**Q = XW<sub>Q</sub>**, **K = XW<sub>K</sub>**, **V = XW<sub>V</sub>**,
-with head dimension d<sub>k</sub> = 768/12 = 64. The output is
+Each head projects the (normalized) residual stream with learned
+matrices: **Q = XW<sub>Q</sub>**, **K = XW<sub>K</sub>**,
+**V = XW<sub>V</sub>**. The output is
 
 **Attention(Q, K, V) = softmax(QKᵀ / √d<sub>k</sub> + M) V**
 
 — raw affinities QKᵀ are scaled by √d<sub>k</sub> (without it, dot
-products grow with dimension and push softmax into vanishing-gradient
-saturation<Cite id="vaswani2017" />), then the causal mask **M** sets
-every position j &gt; i to −∞ so softmax assigns it exactly zero: GPT-2
-is a decoder-only model and may not condition on the future.<Cite id="radford2019" />
+products grow with head dimension and push softmax into
+vanishing-gradient saturation<Cite id="vaswani2017" />). In decoder-only
+LLMs — GPT, Claude, Llama alike — the causal mask **M** sets every
+position j &gt; i to −∞, so softmax assigns the future exactly zero
+weight.<Cite id="radford2019" />
 
 Each softmax row is a probability distribution — the live matrix you're
-viewing; rows sum to 1. It multiplies V to give each position a convex
-combination of value vectors, which is then projected back and **added**
-to the residual stream — attention *writes* its findings rather than
-replacing anything.<Cite id="elhage2021" />
+viewing, from the model in your browser (d<sub>k</sub> = 64 here); rows
+sum to 1. It multiplies V to give each position a convex combination of
+value vectors, projected back and **added** to the residual stream —
+attention *writes* its findings rather than replacing anything.<Cite id="elhage2021" />
 
-Switch heads in the selector: the same Q/K/V mechanism, twelve different
-learned projections — the subject of the next stage.
+Switch heads in the selector: identical mechanism, different learned
+projections — the subject of the next stage.

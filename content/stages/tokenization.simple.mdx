@@ -1,12 +1,15 @@
-Computers don't read words — they read numbers. Before your text can enter
-the model, it gets broken into **tokens**: common chunks of text that each
-have an ID number in a fixed dictionary of 50,257 entries.<Cite id="radford2019" />
+Computers don't read words — they read numbers. Before any text can enter
+a language model, it gets broken into **tokens**: common chunks of text
+that each have an ID number in a fixed dictionary.
 
-Common words like " the" are a single token. Rarer words get split into
-pieces — "transformer" might become "transform" + "er". The pieces were
-chosen by scanning a huge amount of text and repeatedly merging whichever
-pair of characters appeared together most often.<Cite id="sennrich2016" />
+Common words like " the" are usually a single token. Rarer words get
+split into pieces — "transformer" might become "transform" + "er". The
+pieces aren't chosen by hand: the dictionary is built by scanning a huge
+amount of text and repeatedly merging whichever pair of symbols appears
+together most often.<Cite id="sennrich2016" /> Every major LLM — ChatGPT,
+Claude, Llama — starts exactly this way, just with its own dictionary.
 
-Watch your own sentence shatter: each chip below the text is one token, and
-the number is its position in the dictionary. From here on, the model never
-sees letters again — only these IDs.
+The live model on this site, GPT-2, uses a dictionary of 50,257
+entries.<Cite id="radford2019" /> Watch your own sentence shatter: each
+chip is one token, the number is its dictionary position. From here on,
+the model never sees letters again — only these IDs.

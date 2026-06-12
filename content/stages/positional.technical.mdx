@@ -1,16 +1,19 @@
 Self-attention is permutation-equivariant: shuffle the inputs and the
-outputs shuffle identically. Position must therefore be injected
-explicitly. The input to block 0 is **x<sub>i</sub> = W<sub>E</sub>[t<sub>i</sub>] +
-W<sub>P</sub>[i]** — token embedding plus position embedding, elementwise
-sum in ℝ<sup>768</sup>.
+outputs shuffle identically. Position must be injected explicitly.
+Three generations of solutions:
 
-The original Transformer used fixed **sinusoidal** encodings —
-sin/cos at geometrically spaced frequencies, chosen so any offset is a
-linear function of the encoding, with no learned parameters.<Cite id="vaswani2017" />
-GPT-2 instead **learns** W<sub>P</sub> ∈ ℝ<sup>1024×768</sup> as ordinary
-parameters — simpler, works as well, but caps context at 1024 positions:
-there is no row to look up for position 1025.<Cite id="radford2019" />
+- **Sinusoidal** (original Transformer): fixed sin/cos at geometrically
+  spaced frequencies; no parameters; any offset is a linear function of
+  the encoding.<Cite id="vaswani2017" />
+- **Learned absolute** (GPT-2, the model here): W<sub>P</sub> ∈
+  ℝ<sup>1024×768</sup> trained like any weight; block 0's input is
+  x<sub>i</sub> = W<sub>E</sub>[t<sub>i</sub>] + W<sub>P</sub>[i]. Simple,
+  but context is capped — there is no row for position 1025.<Cite id="radford2019" />
+- **Rotary (RoPE)** (most modern LLMs): rotate each Q/K pair by a
+  position-dependent angle inside attention itself, so dot products
+  depend on *relative* offsets — no addition into the stream, better
+  length behavior.<Cite id="su2021" />
 
-The live view shows your sequence's `pos_emb` rows. Note they're not
-random: training organized neighboring positions into smooth
-trajectories.
+The live view shows your sequence's actual `pos_emb` rows from the model
+in your browser. Note they're not noise: training organized neighboring
+positions into smooth trajectories.
