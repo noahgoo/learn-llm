@@ -1,10 +1,13 @@
 "use client";
 
-import { Billboard, Text } from "@react-three/drei";
+import { Text } from "@react-three/drei";
 import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
+import { cameraKeyframe, STAGES, stationPosition } from "@/lib/journey";
 import { useActiveOutput } from "@/lib/model/data";
 import { useAttentionStore, useJourneyStore } from "@/lib/store";
+
+const STAGE_INDEX = STAGES.findIndex((s) => s.id === "attention");
 
 const FONT = "/fonts/IBMPlexMono-Regular.ttf";
 const CELL = 0.5;
@@ -25,6 +28,16 @@ export function AttentionStage() {
   const head = useAttentionStore((s) => s.head);
   const view = useAttentionStore((s) => s.view);
   const mesh = useRef<THREE.InstancedMesh>(null);
+  const panel = useRef<THREE.Group>(null);
+
+  // world-fixed panel facing the journey's arrival camera: head-on when you
+  // fly in, genuinely 3-D when you drag/orbit around it
+  useEffect(() => {
+    if (!panel.current) return;
+    const [sx, sy, sz] = stationPosition(STAGE_INDEX);
+    const [cx, cy, cz] = cameraKeyframe(STAGE_INDEX);
+    panel.current.lookAt(cx - sx + panel.current.position.x, cy - sy, cz - sz);
+  }, []);
 
   const n = output?.seq ?? 0;
   const half = ((n - 1) * CELL) / 2;
@@ -69,9 +82,12 @@ export function AttentionStage() {
       for (let j = 0; j < n; j++) {
         const idx = i * n + j;
         const w = weights[idx];
-        dummy.position.set(j * CELL - half, half - i * CELL, 0);
+        // cells extrude toward the viewer by weight — a relief map you can
+        // read from any angle
+        const depth = w < 0 ? 0.02 : 0.08 + 1.6 * Math.min(1, w);
+        dummy.position.set(j * CELL - half, half - i * CELL, depth / 2);
         const s = w < 0 ? 0.12 : 0.3 + 0.68 * Math.min(1, w);
-        dummy.scale.set(s, s, 1);
+        dummy.scale.set(s, s, depth);
         dummy.updateMatrix();
         m.setMatrixAt(idx, dummy.matrix);
         if (w < 0) color.copy(VOID);
@@ -88,14 +104,14 @@ export function AttentionStage() {
   if (!output || !weights) return null;
 
   return (
-    <Billboard>
-      <group position={[1.2, 0, 0]}>
+    <group ref={panel} position={[1.2, 0, 0]}>
+      <group>
         <instancedMesh
           ref={mesh}
           key={n}
           args={[undefined, undefined, Math.max(1, n * n)]}
         >
-          <planeGeometry args={[CELL * 0.86, CELL * 0.86]} />
+          <boxGeometry args={[CELL * 0.86, CELL * 0.86, 1]} />
           {/* per-instance colors come from setColorAt; vertexColors would
               read a missing geometry attribute and render black */}
           <meshBasicMaterial />
@@ -137,6 +153,6 @@ export function AttentionStage() {
           }`}
         </Text>
       </group>
-    </Billboard>
+    </group>
   );
 }
