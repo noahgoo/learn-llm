@@ -48,6 +48,7 @@ export function CameraRig() {
   const drag = useRef({ active: false, yaw: 0, pitch: 0 });
   const target = useMemo(() => new THREE.Vector3(), []);
   const look = useMemo(() => new THREE.Vector3(), []);
+  const pivot = useMemo(() => new THREE.Vector3(), []);
   const offset = useMemo(() => new THREE.Vector3(), []);
   const right = useMemo(() => new THREE.Vector3(), []);
   const qYaw = useMemo(() => new THREE.Quaternion(), []);
@@ -113,13 +114,25 @@ export function CameraRig() {
       d.pitch += (0 - d.pitch) * decay;
     }
     if (Math.abs(d.yaw) > 1e-4 || Math.abs(d.pitch) > 1e-4) {
-      offset.copy(target).sub(look);
+      // pivot on the station actually in view, not the look-ahead point —
+      // otherwise the orbit center sits visibly off the ring
+      const stageT =
+        Math.round(t * (STAGE_COUNT - 1)) / (STAGE_COUNT - 1);
+      stationPath.getPoint(stageT, pivot);
+      offset.copy(target).sub(pivot);
       qYaw.setFromAxisAngle(UP, d.yaw);
       offset.applyQuaternion(qYaw);
       right.crossVectors(offset, UP).normalize();
       qPitch.setFromAxisAngle(right, d.pitch);
       offset.applyQuaternion(qPitch);
-      camera.position.copy(look).add(offset);
+      camera.position.copy(pivot).add(offset);
+      // gaze eases from the path's look-ahead onto the station as the
+      // peek deepens, so starting a drag never snaps the view
+      const strength = Math.min(
+        1,
+        (Math.abs(d.yaw) + Math.abs(d.pitch)) / 0.12,
+      );
+      look.lerp(pivot, strength);
     } else {
       camera.position.copy(target);
     }
