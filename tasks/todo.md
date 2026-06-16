@@ -1,4 +1,4 @@
-# Todo — Inside the Model
+# Todo — Learn LLM: Inside the Model
 
 Details + acceptance criteria: `tasks/plan.md`. Check off only after task's verify step passes.
 
@@ -30,16 +30,16 @@ Details + acceptance criteria: `tasks/plan.md`. Check off only after task's veri
 - [ ] (polish backlog) token stream slab overlaps attention matrix; attention 3D lines between token chips; matrix slightly right-cropped on small windows
 
 ## M3 Remaining stages
-- [ ] T3.1 Multi-head attention
-- [ ] T3.2 Feed-forward network
-- [ ] T3.3 Residual stream
-- [ ] T3.4 Layer normalization
-- [ ] T3.5 Next-token prediction (temperature, sampling, live probs)
-- [ ] T3.6 Architecture vs trained weights (finale)
+- [x] T3.1 Multi-head attention
+- [x] T3.2 Feed-forward network
+- [x] T3.3 Residual stream
+- [x] T3.4 Layer normalization
+- [x] T3.5 Next-token prediction (temperature, sampling, live probs)
+- [x] T3.6 Architecture vs trained weights (finale)
 - [ ] ✅ CHECKPOINT D — user validates full journey
 
 ## M4 OSS polish
-- [ ] T4.1 README + CONTRIBUTING + screenshots
+- [ ] T4.1 README + CONTRIBUTING + screenshots — README refreshed; CONTRIBUTING/screenshots pending
 - [ ] T4.2 CI (GitHub Actions: lint, typecheck, test, build)
 - [ ] T4.3 Lighthouse/axe/bundle/cross-browser audit
 - [ ] T4.4 Deploy (ASK USER FIRST)

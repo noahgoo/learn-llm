@@ -21,9 +21,9 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Inside the Model — an interactive journey through a transformer",
+  title: "Learn LLM: Inside the Model",
   description:
-    "Fly through a real LLM. Type any text and watch your tokens move through tokenization, embeddings, attention, and next-token prediction — GPT-2 running live in your browser.",
+    "An interactive 3D guide to how transformer-based LLMs work, powered by an instrumented GPT-2 small model running in your browser.",
 };
 
 export default function RootLayout({
