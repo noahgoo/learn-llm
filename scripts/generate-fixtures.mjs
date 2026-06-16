@@ -10,12 +10,15 @@ const N_LAYER = 12;
 const VOCAB = 50257;
 const SENTENCES = [
   "The cat sat on the",
+  "Photosynthesis is the process by",
+  "Tokenization is",
   "Once upon a time, there was a",
   "The capital of France is",
   "She opened the door and saw",
   "To be or not to be, that is the",
   "The quick brown fox jumps over the",
   "It was a dark and stormy",
+  "Antidisestablishmentarianism is a",
 ];
 
 // keep in sync with lib/model/math.ts (tested there)
