@@ -99,7 +99,6 @@ function Station({ index }: { index: number }) {
           </Billboard>
         </>
       )}
-      <pointLight color={color} intensity={stage.built ? 14 : 4} distance={26} decay={2} />
     </group>
   );
 }

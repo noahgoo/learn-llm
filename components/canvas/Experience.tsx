@@ -1,8 +1,8 @@
 "use client";
 
 import { Canvas } from "@react-three/fiber";
-import { Stars } from "@react-three/drei";
-import { useEffect, useSyncExternalStore } from "react";
+import { PerformanceMonitor, Stars } from "@react-three/drei";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { useFixtureStore } from "@/lib/model/data";
 import { CameraRig } from "./CameraRig";
 import { Stations } from "./Stations";
@@ -58,19 +58,33 @@ export function Experience() {
   const loadFixtures = useFixtureStore((s) => s.loadFixtures);
   useEffect(() => loadFixtures(), [loadFixtures]);
 
+  // adaptive resolution: start mid, let PerformanceMonitor scale 1..2 by GPU headroom
+  const [dpr, setDpr] = useState(1.5);
+  // stop rendering entirely while the tab is backgrounded (saves CPU/GPU/battery)
+  const [frameloop, setFrameloop] = useState<"always" | "never">("always");
+  useEffect(() => {
+    const onVisibility = () =>
+      setFrameloop(document.hidden ? "never" : "always");
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, []);
+
   if (webgl === null) return null;
   if (!webgl) return <WebGLFallback />;
 
   return (
     <Canvas
+      frameloop={frameloop}
       camera={{ fov: 42, near: 0.1, far: 400, position: [0, 4.5, 17] }}
-      dpr={[1, 2]}
+      dpr={dpr}
       gl={{ antialias: true, powerPreference: "high-performance" }}
     >
+      <PerformanceMonitor
+        onChange={({ factor }) => setDpr(Math.min(2, Math.max(1, 1 + factor)))}
+      />
       <color attach="background" args={["#06040c"]} />
       <fog attach="fog" args={["#06040c", 60, 220]} />
       <Stars radius={180} depth={120} count={3200} factor={3} saturation={0.6} fade speed={0.4} />
-      <ambientLight intensity={0.15} />
       <CameraRig />
       <TokenStream />
       <TokenFlow />
