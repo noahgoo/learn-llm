@@ -13,3 +13,9 @@ tail of low-quality options while preserving some diversity.<Cite id="holtzman20
 The bars here are computed from the live or fixture final logits for your
 prompt; changing temperature reshapes the distribution without rerunning
 the model.
+
+Autoregressive generation repeats this step one token at a time: choose a
+token, append it, run the next position, and stop on an end token or length
+limit. Production systems avoid recomputing the whole prefix by caching
+the earlier keys and values; modern variants like grouped-query attention
+reduce that cache's memory cost.<Cite id="ainslie2023" />

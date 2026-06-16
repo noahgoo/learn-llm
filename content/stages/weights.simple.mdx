@@ -7,5 +7,11 @@ differently if their weights differ. Random weights are just machinery
 without learned memory. Trained weights contain the statistical patterns
 learned from text.<Cite id="radford2019" />
 
+The live demo uses GPT-2 small as the concrete specimen, but modern LLMs
+are variations on the same family: different tokenizers, widths, depths,
+position systems, normalization choices, attention layouts, FFN gates, and
+sometimes expert routing. Those choices shape the machine; the trained
+weights and post-training shape how it behaves.<Cite id="su2021" /><Cite id="zhang2019" /><Cite id="ainslie2023" /><Cite id="ouyang2022" />
+
 That is the final split: an LLM is not only code, and not only data. It is
-a fixed computation filled with learned parameters.
+a transformer-family computation filled with learned parameters.

@@ -17,3 +17,9 @@ Three generations of solutions:
 The live view shows your sequence's actual `pos_emb` rows from the model
 in your browser. Note they're not noise: training organized neighboring
 positions into smooth trajectories.
+
+RoPE helps modern models handle relative distance and longer contexts, but
+it does not guarantee uniform use of the whole prompt. Long-context
+evaluations show a "lost in the middle" pattern: models often retrieve
+information more reliably from the start or end than from the middle of a
+long input.<Cite id="liu2023" />

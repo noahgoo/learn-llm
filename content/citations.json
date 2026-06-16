@@ -68,5 +68,61 @@
     "year": 2020,
     "venue": "ICML 2020",
     "url": "https://arxiv.org/abs/2002.04745"
+  },
+  "kudo2018": {
+    "title": "SentencePiece: A Simple and Language Independent Subword Tokenizer and Detokenizer for Neural Text Processing",
+    "authors": "Kudo & Richardson",
+    "year": 2018,
+    "venue": "EMNLP 2018 System Demonstrations",
+    "url": "https://aclanthology.org/D18-2012/"
+  },
+  "zhang2019": {
+    "title": "Root Mean Square Layer Normalization",
+    "authors": "Zhang & Sennrich",
+    "year": 2019,
+    "venue": "NeurIPS 2019",
+    "url": "https://arxiv.org/abs/1910.07467"
+  },
+  "shazeer2020": {
+    "title": "GLU Variants Improve Transformer",
+    "authors": "Shazeer",
+    "year": 2020,
+    "venue": "arXiv preprint",
+    "url": "https://arxiv.org/abs/2002.05202"
+  },
+  "geva2021": {
+    "title": "Transformer Feed-Forward Layers Are Key-Value Memories",
+    "authors": "Geva, Schuster, Berant & Levy",
+    "year": 2021,
+    "venue": "EMNLP 2021",
+    "url": "https://arxiv.org/abs/2012.14913"
+  },
+  "fedus2022": {
+    "title": "Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity",
+    "authors": "Fedus, Zoph & Shazeer",
+    "year": 2022,
+    "venue": "JMLR 2022",
+    "url": "https://arxiv.org/abs/2101.03961"
+  },
+  "ouyang2022": {
+    "title": "Training Language Models to Follow Instructions with Human Feedback",
+    "authors": "Ouyang, Wu, Jiang, Almeida, Wainwright, Mishkin, Zhang et al.",
+    "year": 2022,
+    "venue": "NeurIPS 2022",
+    "url": "https://arxiv.org/abs/2203.02155"
+  },
+  "ainslie2023": {
+    "title": "GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints",
+    "authors": "Ainslie, Lee-Thorp, de Jong, Zemlyanskiy, Lebron & Sanghai",
+    "year": 2023,
+    "venue": "EMNLP 2023",
+    "url": "https://arxiv.org/abs/2305.13245"
+  },
+  "liu2023": {
+    "title": "Lost in the Middle: How Language Models Use Long Contexts",
+    "authors": "Liu, Emerson, Cholak, Stengel-Eskin, Newman, Lyu, Callison-Burch & Neubig",
+    "year": 2023,
+    "venue": "arXiv preprint",
+    "url": "https://arxiv.org/abs/2307.03172"
   }
 }

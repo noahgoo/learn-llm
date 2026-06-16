@@ -8,3 +8,7 @@ next part of the model to read.
 
 GPT-2 uses normalization inside every block, so this stabilizing step is
 part of the repeated rhythm of the model.<Cite id="radford2019" />
+
+Modern LLMs often use a close relative called RMSNorm. It keeps the
+important rescaling behavior but skips the recentering step, which makes
+the operation cheaper while serving the same stabilizing role.<Cite id="zhang2019" />

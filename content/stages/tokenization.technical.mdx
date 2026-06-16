@@ -6,13 +6,15 @@ inference, text is segmented greedily by those same merge rules —
 deterministic and reversible. That's why a leading space matters:
 " the" and "the" are different vocabulary entries.
 
-**Byte-level** BPE, introduced with GPT-2 and still standard, uses the
+**Byte-level** BPE, introduced with GPT-2 and still common, uses the
 256 byte values as the base alphabet — any string in any language is
 representable with zero out-of-vocabulary tokens.<Cite id="radford2019" />
+Other modern model families use related SentencePiece tokenizers, often
+with BPE or unigram segmentation under the hood.<Cite id="kudo2018" />
 
 The live model here is GPT-2 small: vocabulary **50,257** = 256 bytes
 + 50,000 learned merges + 1 end-of-text token, with merges forbidden
 from crossing character categories.<Cite id="radford2019" /> Modern
-frontier models keep the same algorithm with larger vocabularies
-(~100k–250k entries) traded against sequence length. The output of this
-stage — for any LLM — is just a sequence of integer IDs, shape `[seq]`.
+frontier models often use larger vocabularies (~100k–250k entries) to
+trade tokenizer size against sequence length. The output of this stage —
+for any LLM — is just a sequence of integer IDs, shape `[seq]`.

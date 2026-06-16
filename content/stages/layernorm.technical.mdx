@@ -7,5 +7,10 @@ and before the MLP sublayer reads the residual stream.<Cite id="radford2019" />
 Pre-LN variants are known to improve optimization behavior in deeper
 Transformers compared with the original post-LN placement.<Cite id="xiong2020" />
 
+Many modern open-weight LLMs replace LayerNorm with RMSNorm, which drops
+mean subtraction and keeps only root-mean-square rescaling plus learned
+scale parameters. The goal is the same stable residual stream with less
+normalization work per token.<Cite id="zhang2019" />
+
 The visual keeps the operation local to one token vector, because LayerNorm
 does not mix information across sequence positions.

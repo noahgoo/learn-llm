@@ -7,4 +7,12 @@ wider hidden space, passes through a smooth gate, then compresses back to
 the normal model width.
 
 So attention mixes across positions; the FFN transforms each position's
-own representation.
+own representation. That makes it easy to underestimate, but these layers
+hold a large share of the learned structure in dense transformers: many
+features, facts, and associations live in how the FFN weights respond to a
+token's current context.<Cite id="geva2021" />
+
+Modern LLMs still use this expand-gate-compress idea, but the details have
+changed. GPT-2 uses GELU; many newer models use SwiGLU-style gates, and
+some very large systems use mixture-of-experts layers that route each
+token through only a few FFNs.<Cite id="shazeer2020" /><Cite id="fedus2022" />

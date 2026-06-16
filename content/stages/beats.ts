@@ -6,7 +6,7 @@ import type { CitationId } from "@/components/ui/Cite";
  * the camera dwells on a station, the active beat's headline fades into a
  * screen region (varying per beat, so text appears where the action is).
  * Full cited prose still lives in the per-stage MDX, surfaced on demand via
- * the Deep Dive panel — these are the hooks, not the textbook.
+ * the explanation drawer — these are the hooks, not the textbook.
  */
 export type BeatAnchor = "center" | "top-left" | "bottom-left" | "right";
 
@@ -124,8 +124,9 @@ export const STAGE_BEATS: Partial<Record<StageId, Beat[]>> = {
   "multi-head": [
     {
       key: "mh-split",
-      headline: "One attention map becomes many.",
-      caption: "The same tokens branch into parallel heads, each with its own pattern.",
+      headline: "One attention step becomes many.",
+      caption:
+        "Learned projections branch the same stream into parallel heads, each with its own pattern.",
       anchor: "center",
       cite: ["vaswani2017"],
     },
@@ -147,15 +148,16 @@ export const STAGE_BEATS: Partial<Record<StageId, Beat[]>> = {
     {
       key: "ffn-local",
       headline: "Now each token thinks alone.",
-      caption: "The feed-forward network transforms every token independently.",
+      caption: "The feed-forward network transforms each token without mixing positions.",
       anchor: "center",
     },
     {
       key: "ffn-expand",
-      headline: "The vector expands through GELU.",
-      caption: "GPT-2 widens each 768-value vector to 3072 channels, then gates it.",
+      headline: "The vector expands through a gate.",
+      caption:
+        "GPT-2 uses GELU; many newer LLMs use SwiGLU-style gates or routed experts.",
       anchor: "bottom-left",
-      cite: ["hendrycks2016"],
+      cite: ["hendrycks2016", "shazeer2020", "fedus2022"],
     },
     {
       key: "ffn-compress",
@@ -202,9 +204,11 @@ export const STAGE_BEATS: Partial<Record<StageId, Beat[]>> = {
     },
     {
       key: "ln-pre",
-      headline: "GPT-2 normalizes before sublayers.",
-      caption: "Pre-LN keeps deep residual paths easier to train and follow.",
+      headline: "Normalization steadies each block.",
+      caption:
+        "GPT-2 uses pre-LayerNorm; many newer LLMs use RMSNorm for cheaper rescaling.",
       anchor: "right",
+      cite: ["xiong2020", "zhang2019"],
     },
   ],
   prediction: [
@@ -223,30 +227,32 @@ export const STAGE_BEATS: Partial<Record<StageId, Beat[]>> = {
     {
       key: "pred-sample",
       headline: "Temperature reshapes the choice.",
-      caption: "Lower temperature sharpens; higher temperature spreads probability out.",
+      caption:
+        "Sample one token, append it, and repeat; temperature controls how sharp each choice is.",
       anchor: "right",
-      cite: ["holtzman2020"],
+      cite: ["holtzman2020", "radford2019"],
     },
   ],
   weights: [
     {
       key: "weights-architecture",
-      headline: "The architecture is the recipe.",
-      caption: "The same blocks can run with useful weights or random ones.",
+      headline: "The architecture is the family pattern.",
+      caption:
+        "The live path is GPT-2; modern LLMs swap pieces like RoPE, RMSNorm, and GQA.",
       anchor: "center",
-      cite: ["vaswani2017"],
+      cite: ["vaswani2017", "su2021", "zhang2019", "ainslie2023"],
     },
     {
       key: "weights-trained",
       headline: "Training fills in the machinery.",
-      caption: "Learned weights turn the recipe into behavior.",
+      caption: "Weights and post-training turn the family pattern into behavior.",
       anchor: "bottom-left",
-      cite: ["radford2019"],
+      cite: ["radford2019", "ouyang2022"],
     },
     {
       key: "weights-finale",
-      headline: "A model is code plus memory.",
-      caption: "The journey ends where architecture and learned parameters meet.",
+      headline: "A model is architecture plus weights.",
+      caption: "The journey ends where design choices and learned parameters meet.",
       anchor: "right",
     },
   ],

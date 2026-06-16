@@ -7,3 +7,7 @@ the most likely next tokens.<Cite id="vaswani2017" />
 Temperature changes how bold the model is. Low temperature concentrates
 probability on the top choices. High temperature spreads probability out,
 which can make text more varied but also less reliable.<Cite id="holtzman2020" />
+
+Generation is this same move repeated. The model samples one token, appends
+it to the text, then predicts again from the longer sequence until it hits
+a stop token or length limit.<Cite id="radford2019" />

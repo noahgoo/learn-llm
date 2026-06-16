@@ -7,9 +7,14 @@ There are a few ways to do it. The model running here learned a second
 table alongside the meaning-table: one vector for "position 1", one for
 "position 2", and so on, **added** onto each token's meaning vector
 before the journey continues.<Cite id="radford2019" /> Most recent
-models instead *rotate* vectors by an angle that depends on position —
+models instead *rotate* query and key vectors by an angle that depends on
+position, so attention can read relative distance more directly —
 different mechanics, same job.<Cite id="su2021" />
 
 Either way, what flows forward is a blend: *what* the token means plus
 *where* it sits. The same word in a different position enters the model
 as a slightly different point in space — which is exactly the point.
+
+Better position math does not make long prompts perfect. Modern
+long-context models can still use information near the beginning and end
+more reliably than information buried in the middle.<Cite id="liu2023" />

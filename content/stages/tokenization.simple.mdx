@@ -4,10 +4,11 @@ that each have an ID number in a fixed dictionary.
 
 Common words like " the" are usually a single token. Rarer words get
 split into pieces — "transformer" might become "transform" + "er". The
-pieces aren't chosen by hand: the dictionary is built by scanning a huge
-amount of text and repeatedly merging whichever pair of symbols appears
-together most often.<Cite id="sennrich2016" /> Every major LLM — ChatGPT,
-Claude, Llama — starts exactly this way, just with its own dictionary.
+pieces aren't chosen by hand: BPE-style tokenizers build the dictionary by
+repeatedly merging frequent symbol pairs, while related SentencePiece
+tokenizers learn subword pieces with similar goals.<Cite id="sennrich2016" /><Cite id="kudo2018" />
+Every major LLM starts with this same idea — text becomes vocabulary IDs —
+but each model family brings its own tokenizer.
 
 The live model on this site, GPT-2, uses a dictionary of 50,257
 entries.<Cite id="radford2019" /> Watch your own sentence shatter: each

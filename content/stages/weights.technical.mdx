@@ -9,3 +9,15 @@ The finale compares the same machine outline under two parameter stories:
 random weights, which have no trained language structure, and trained
 weights, which produce the next-token distribution you saw in the previous
 stage.
+
+Modern decoder LLMs still sit in this transformer-family design space, but
+the common defaults have shifted since GPT-2. Many use RoPE instead of
+learned absolute position embeddings, RMSNorm instead of LayerNorm,
+SwiGLU-style FFNs instead of GELU MLPs, and grouped-query attention to
+reduce KV-cache memory.<Cite id="su2021" /><Cite id="zhang2019" /><Cite id="shazeer2020" /><Cite id="ainslie2023" />
+
+The biggest differences are not one switch in the code. They are the
+trained weights themselves, the tokenizer and vocabulary, scale choices
+like layer count and width, dense versus mixture-of-experts FFNs, the data
+distribution, and the post-training that turns a base next-token model
+into an instruction-following assistant.<Cite id="shazeer2020" /><Cite id="ouyang2022" />

@@ -8,3 +8,13 @@ This stage is token-local. For a sequence tensor X in
 R<sup>seq x 768</sup>, the same FFN is applied independently at every
 sequence position. Cross-token communication already happened in
 attention; here the model reshapes each token's own features.
+
+This token-local block is still where much of the model's parameter count
+and stored structure lives. One useful view treats FFN layers as learned
+key-value memories: the input pattern selects features, and the output
+vectors write those features back into the residual stream.<Cite id="geva2021" />
+
+The modern stack keeps the same per-token shape but often changes the
+gate. Llama- and PaLM-style models use SwiGLU variants instead of GELU,
+and mixture-of-experts models replace one dense FFN with many expert FFNs
+plus a router that activates only a few experts per token.<Cite id="shazeer2020" /><Cite id="fedus2022" />

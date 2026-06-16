@@ -1,7 +1,8 @@
-GPT-2 small uses 12 attention heads per layer. Each head has dimension
-d<sub>k</sub> = 64, so the 768-wide residual stream is split into parallel
-Q/K/V projections, attended independently, concatenated, and projected
-back through W<sub>O</sub>.<Cite id="vaswani2017" />
+GPT-2 small uses 12 attention heads per layer. The 768-wide residual
+stream is not cut into fixed chunks; learned matrices first project it
+into Q/K/V vectors, and those projections are reshaped into parallel head
+spaces with d<sub>k</sub> = 64. Each head attends independently, then the
+head outputs are concatenated and projected back through W<sub>O</sub>.<Cite id="vaswani2017" />
 
 The head gallery visualizes the live softmax matrices for one layer. These
 patterns are real model outputs for your prompt, but head interpretation
@@ -11,3 +12,7 @@ single clean human label.<Cite id="michel2019" />
 
 After concatenation, the output projection mixes head results into one
 768-dimensional write to the residual stream.
+
+Many modern decoder LLMs keep many query heads but share fewer key/value
+heads through grouped-query attention. That keeps several query views
+while shrinking the KV cache used during long-context generation.<Cite id="ainslie2023" />
