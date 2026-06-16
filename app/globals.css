@@ -6,7 +6,7 @@
   --color-abyss: #0c0916; /* panel fills */
   --color-ink: #ede9f7; /* primary text */
   --color-dim: #948da8; /* secondary text */
-  --color-faint: #4f4a63; /* tertiary / disabled */
+  --color-faint: #7b7596; /* tertiary / disabled, still readable on void */
   --color-line: rgb(237 233 247 / 0.14); /* hairline rules */
   --color-line-strong: rgb(237 233 247 / 0.32);
   --color-accent: #9d7bff; /* violet — live data, active state */

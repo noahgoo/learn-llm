@@ -29,14 +29,14 @@ const noopSubscribe = () => () => {};
 function WebGLFallback() {
   return (
     <div className="flex h-full items-center justify-center">
-      <div className="max-w-md border border-line bg-abyss/70 p-8 text-center">
+      <div className="max-w-md border border-line bg-abyss/80 p-8 text-center backdrop-blur-sm">
         <p className="font-mono text-[11px] uppercase tracking-wide3 text-accent">
-          Signal lost
+          3D signal unavailable
         </p>
         <p className="mt-4 text-sm leading-relaxed text-dim">
-          This experience needs WebGL, which your browser doesn&apos;t
-          support or has disabled. The written journey — every stage, fully
-          cited — still works without it (coming in a later milestone).
+          The 3D journey is best on a desktop browser with WebGL enabled. If
+          this device cannot render the scene, open Explain for the written
+          journey through each stage.
         </p>
       </div>
     </div>

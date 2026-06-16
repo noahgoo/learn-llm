@@ -31,7 +31,7 @@ export function LensToggle() {
             role="radio"
             aria-checked={selected}
             onClick={() => setLens(value)}
-            className={`px-3 py-1.5 font-mono text-[10px] uppercase tracking-wide2 transition-colors duration-200 outline-none focus-visible:bg-accent-dim ${
+            className={`px-3 py-1.5 font-mono text-[11px] uppercase tracking-wide2 transition-colors duration-200 outline-none focus-visible:bg-accent-dim ${
               selected
                 ? "bg-ink text-void"
                 : "text-dim hover:text-ink"

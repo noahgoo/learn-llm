@@ -26,10 +26,10 @@ interface TelemetryState {
 export const useTelemetryStore = create<TelemetryState>()(
   persist(
     (set) => ({
-      visible: true,
+      visible: false,
       setVisible: (visible) => set({ visible }),
     }),
-    { name: "itm-telemetry" },
+    { name: "itm-diagnostics" },
   ),
 );
 

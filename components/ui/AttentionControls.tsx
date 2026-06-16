@@ -16,7 +16,7 @@ function Stepper({
 }) {
   return (
     <div className="flex items-center justify-between gap-2">
-      <span className="font-mono text-[10px] uppercase tracking-wide2 text-faint">
+      <span className="font-mono text-[11px] uppercase tracking-wide2 text-faint">
         {label}
       </span>
       <div className="flex items-center gap-1.5">
@@ -46,14 +46,14 @@ function Stepper({
 
 /** Layer/head/view selectors — visible only at the attention stage. */
 export function AttentionControls() {
-  const visible = useJourneyStore((s) => s.activeStage === 3 && s.beat >= 2);
+  const visible = useJourneyStore((s) => s.activeStage === 3 && s.beat >= 1);
   const { layer, head, view, setLayer, setHead, setView } =
     useAttentionStore();
   if (!visible) return null;
 
   return (
-    <aside className="pointer-events-auto fixed top-28 right-6 z-20 w-56 space-y-3 border border-line bg-abyss/80 p-4 backdrop-blur-sm">
-      <p className="font-mono text-[10px] uppercase tracking-wide3 text-accent">
+    <aside className="pointer-events-auto fixed top-36 right-6 z-20 w-56 space-y-3 border border-line bg-abyss/80 p-4 backdrop-blur-sm">
+      <p className="font-mono text-[11px] uppercase tracking-wide3 text-accent">
         Attention scope
       </p>
       <Stepper label="Layer" value={layer} max={N_LAYER} onChange={setLayer} />
@@ -64,7 +64,7 @@ export function AttentionControls() {
             key={v}
             type="button"
             onClick={() => setView(v)}
-            className={`flex-1 px-2 py-1 font-mono text-[10px] uppercase tracking-wide2 transition-colors ${
+            className={`flex-1 px-2 py-1 font-mono text-[11px] uppercase tracking-wide2 transition-colors ${
               view === v ? "bg-ink text-void" : "text-dim hover:text-ink"
             }`}
           >
@@ -72,7 +72,7 @@ export function AttentionControls() {
           </button>
         ))}
       </div>
-      <p className="font-mono text-[9px] leading-relaxed text-faint">
+      <p className="font-mono text-[11px] leading-relaxed text-faint">
         Rows ask, columns answer. Scores = Q·Kᵀ/√d before softmax.
       </p>
     </aside>

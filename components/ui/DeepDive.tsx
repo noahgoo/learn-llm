@@ -27,7 +27,7 @@ export function DeepDive() {
         type="button"
         onClick={() => setOpen(!open)}
         aria-expanded={open}
-        className="pointer-events-auto fixed right-6 top-5 z-30 flex items-center gap-2 border border-line bg-abyss/80 px-3 py-2 font-mono text-[10px] uppercase tracking-wide2 text-dim backdrop-blur-sm transition-colors hover:border-line-strong hover:text-ink"
+        className="pointer-events-auto fixed right-6 top-20 z-30 flex items-center gap-2 border border-line bg-abyss/80 px-3 py-2 font-mono text-[11px] uppercase tracking-wide2 text-dim backdrop-blur-sm transition-colors hover:border-line-strong hover:text-ink"
       >
         <span className="text-accent">{open ? "✕" : "≡"}</span>
         Explain
@@ -41,18 +41,18 @@ export function DeepDive() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 24 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="pointer-events-auto fixed right-6 top-16 bottom-24 z-30 flex w-[26rem] max-w-[80vw] flex-col border border-line bg-abyss/95 backdrop-blur-sm"
+            className="pointer-events-auto fixed right-6 top-32 bottom-24 z-30 flex w-[26rem] max-w-[80vw] flex-col border border-line bg-abyss/95 backdrop-blur-sm"
           >
             <div className="border-b border-line px-5 py-4">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="font-mono text-[10px] uppercase tracking-wide3 text-accent">
+                  <p className="font-mono text-[11px] uppercase tracking-wide3 text-accent">
                     {stage.phase}
                   </p>
                   <h2 className="mt-1 font-display text-2xl leading-tight text-ink">
                     {stage.title}
                   </h2>
-                  <p className="mt-2 font-mono text-[10px] uppercase tracking-wide2 text-faint">
+                  <p className="mt-2 font-mono text-[11px] uppercase tracking-wide2 text-faint">
                     {lensLabel}
                   </p>
                 </div>

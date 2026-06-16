@@ -25,6 +25,7 @@ export function StageCaptions() {
   const activeStage = useJourneyStore((s) => s.activeStage);
   const beat = useJourneyStore((s) => s.beat);
   const traveling = useJourneyStore((s) => s.traveling);
+  const deepDiveOpen = useJourneyStore((s) => s.deepDiveOpen);
   const reduceMotion = useReducedMotion();
   const stage = STAGES[activeStage];
   const beats = beatsFor(stage.id);
@@ -32,6 +33,12 @@ export function StageCaptions() {
   if (!current) return null;
 
   const centered = current.anchor === "center";
+  const region =
+    current.anchor === "right"
+      ? deepDiveOpen
+        ? "right-[30rem] top-1/2 -translate-y-1/2 max-w-[22rem] text-right items-end"
+        : "right-[18rem] top-1/2 -translate-y-1/2 max-w-[22rem] text-right items-end"
+      : REGION[current.anchor];
 
   return (
     <div aria-live="polite" className="pointer-events-none">
@@ -42,7 +49,7 @@ export function StageCaptions() {
           animate={{ opacity: traveling ? 0.35 : 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.45, ease: "easeOut" }}
-          className={`fixed z-10 flex flex-col gap-3 ${REGION[current.anchor]}`}
+          className={`fixed z-10 flex flex-col gap-3 ${region}`}
         >
           <h2
             className={`font-display leading-[1.05] text-ink [text-shadow:_0_2px_24px_rgb(6_4_12_/_0.95)] ${centered ? "text-5xl" : "text-[2rem]"
@@ -64,7 +71,7 @@ export function StageCaptions() {
           )}
           {current.cue && !traveling && (
             <div className="mt-3 flex flex-col items-center gap-2 text-accent">
-              <span className="rounded-full border border-accent-dim bg-abyss/90 px-4 py-1.5 font-mono text-[10px] uppercase tracking-wide2 backdrop-blur-sm">
+              <span className="rounded-full border border-accent-dim bg-abyss/90 px-4 py-1.5 font-mono text-[11px] uppercase tracking-wide2 backdrop-blur-sm">
                 {current.cue}
               </span>
               <motion.span
@@ -78,6 +85,23 @@ export function StageCaptions() {
             </div>
           )}
         </motion.div>
+      </AnimatePresence>
+      <AnimatePresence>
+        {traveling && (
+          <motion.div
+            key="travel-marker"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="fixed bottom-[22%] left-1/2 z-10 -translate-x-1/2 border border-line bg-abyss/82 px-4 py-3 text-center font-mono uppercase tracking-wide2 backdrop-blur-sm"
+          >
+            <p className="text-[11px] text-accent">In transit</p>
+            <p className="mt-1 text-[11px] text-faint">
+              Arriving at {stage.title}
+            </p>
+          </motion.div>
+        )}
       </AnimatePresence>
     </div>
   );

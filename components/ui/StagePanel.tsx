@@ -29,7 +29,11 @@ export function StagePanel() {
         <motion.div
           key={stage.id}
           initial={{ opacity: 0, x: -8 }}
-          animate={{ opacity: quiet ? 0.22 : 1, x: quiet ? -10 : 0 }}
+          animate={{
+            opacity: quiet ? 0.48 : 1,
+            scale: quiet ? 0.98 : 1,
+            x: quiet ? -8 : 0,
+          }}
           exit={{ opacity: 0, x: -8 }}
           transition={{ duration: 0.35, ease: "easeOut" }}
         >
@@ -40,12 +44,12 @@ export function StagePanel() {
             {stage.title}
           </h1>
           {!stage.built && (
-            <p className="mt-2 font-mono text-[10px] uppercase tracking-wide2 text-faint">
+            <p className="mt-2 font-mono text-[11px] uppercase tracking-wide2 text-faint">
               Station under construction
             </p>
           )}
           <div className="rule-x mt-4 w-16" />
-          <dl className="mt-4 space-y-1.5 font-mono text-[10px] uppercase tracking-wide2">
+          <dl className="mt-4 space-y-1.5 font-mono text-[11px] uppercase tracking-wide2">
             <div className="flex gap-3">
               <dt className="w-8 text-faint">In</dt>
               <dd className="text-peri">▸ {stage.input}</dd>

@@ -25,8 +25,9 @@ export function PromptInput() {
   const setPrompt = useJourneyStore((s) => s.setPrompt);
   const activeStage = useJourneyStore((s) => s.activeStage);
   const beat = useJourneyStore((s) => s.beat);
+  const journeyProgress = useJourneyStore((s) => s.progress);
   const status = useModelStore((s) => s.status);
-  const progress = useModelStore((s) => s.progress);
+  const loadProgress = useModelStore((s) => s.progress);
   const backend = useModelStore((s) => s.backend);
   const load = useModelStore((s) => s.load);
   const run = useModelStore((s) => s.run);
@@ -36,7 +37,7 @@ export function PromptInput() {
   const [chips, setChips] = useState<string[]>(() => SUGGESTIONS.slice(0, 3));
   const [manuallyOpen, setManuallyOpen] = useState(false);
 
-  const introVisible = activeStage === 0 && beat < 2;
+  const introVisible = activeStage === 0 && beat === 0 && journeyProgress < 0.003;
   const expanded = introVisible || manuallyOpen;
 
   // run the initial prompt once the model becomes ready
@@ -66,21 +67,32 @@ export function PromptInput() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 16 }}
           transition={{ duration: 0.35, ease: "easeOut" }}
-          className="pointer-events-auto fixed bottom-8 left-1/2 z-20 w-[34rem] max-w-[80vw] -translate-x-1/2"
+          className="pointer-events-auto fixed bottom-8 left-1/2 z-20 w-[38rem] max-w-[88vw] -translate-x-1/2 border border-line bg-abyss/88 p-4 backdrop-blur-sm"
         >
           {!introVisible && (
             <div className="mb-2 flex justify-center">
               <button
                 type="button"
                 onClick={() => setManuallyOpen(false)}
-                className="border border-line bg-abyss/75 px-3 py-1.5 font-mono text-[10px] uppercase tracking-wide2 text-faint backdrop-blur-sm transition-colors hover:border-line-strong hover:text-ink"
+                className="border border-line bg-abyss/75 px-3 py-1.5 font-mono text-[11px] uppercase tracking-wide2 text-faint backdrop-blur-sm transition-colors hover:border-line-strong hover:text-ink"
               >
                 Hide payload
               </button>
             </div>
           )}
-          <div className="mb-2 flex items-center justify-center gap-1.5">
-            <span className="font-mono text-[9px] uppercase tracking-wide2 text-faint">
+          {introVisible && (
+            <div className="mb-4 text-center">
+              <p className="font-mono text-[11px] uppercase tracking-wide3 text-accent">
+                Start here
+              </p>
+              <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-dim">
+                Pick sample text or type your own. Samples work immediately;
+                loading GPT-2 enables live inference in your browser.
+              </p>
+            </div>
+          )}
+          <div className="mb-3 flex flex-wrap items-center justify-center gap-1.5">
+            <span className="font-mono text-[11px] uppercase tracking-wide2 text-faint">
               Try
             </span>
             {chips.map((s) => (
@@ -88,7 +100,7 @@ export function PromptInput() {
                 key={s}
                 type="button"
                 onClick={() => choose(s)}
-                className="max-w-44 truncate border border-line px-2 py-1 font-mono text-[10px] text-dim transition-colors hover:border-line-strong hover:text-peri"
+                className="max-w-44 truncate border border-line px-2 py-1 font-mono text-[11px] text-dim transition-colors hover:border-line-strong hover:text-peri"
               >
                 {s}
               </button>
@@ -97,14 +109,14 @@ export function PromptInput() {
               type="button"
               aria-label="Shuffle suggestions"
               onClick={() => setChips(pickThree())}
-              className="border border-line px-2 py-1 font-mono text-[10px] text-faint transition-colors hover:border-line-strong hover:text-ink"
+              className="border border-line px-2 py-1 font-mono text-[11px] text-faint transition-colors hover:border-line-strong hover:text-ink"
             >
               ↻
             </button>
           </div>
           <label
             htmlFor="prompt"
-            className="mb-2 block text-center font-mono text-[10px] uppercase tracking-wide3 text-faint"
+            className="mb-2 block text-center font-mono text-[11px] uppercase tracking-wide3 text-faint"
           >
             Payload
           </label>
@@ -118,24 +130,34 @@ export function PromptInput() {
             placeholder="Type any text — watch it think"
             className="w-full border border-line bg-abyss/70 px-4 py-3 text-center font-mono text-sm text-ink placeholder:text-faint backdrop-blur-sm transition-colors duration-200 outline-none focus:border-line-strong focus:bg-abyss"
           />
-          <div className="mt-2 flex items-center justify-center gap-2 font-mono text-[10px] uppercase tracking-wide2 text-faint">
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-3 font-mono text-[11px] uppercase tracking-wide2 text-faint">
             {status === "idle" && (
-              <button
-                type="button"
-                onClick={load}
-                className="border border-line px-2 py-1 text-dim transition-colors hover:border-line-strong hover:text-ink"
-              >
-                Load GPT-2 · 168 MB
-              </button>
+              <>
+                <span>Sample mode is ready</span>
+                <button
+                  type="button"
+                  onClick={load}
+                  className="bg-accent px-4 py-2 text-void transition-colors hover:bg-lavender"
+                >
+                  Load GPT-2 · 168 MB
+                </button>
+              </>
             )}
             {status === "loading" && (
-              <span className="text-peri">
-                Loading model · {Math.round(progress * 100)}%
-              </span>
+              <div className="flex min-w-56 flex-col gap-2 text-peri">
+                <span>Loading GPT-2 · {Math.round(loadProgress * 100)}%</span>
+                <span className="h-1.5 bg-void/70">
+                  <span
+                    className="block h-full bg-accent"
+                    style={{ width: `${Math.round(loadProgress * 100)}%` }}
+                  />
+                </span>
+              </div>
             )}
             {status === "ready" && (
-              <span>
-                Live · GPT-2 small · <span className="text-accent">{backend}</span>
+              <span className="border border-accent-dim bg-accent/10 px-3 py-1.5 text-lavender">
+                Live · GPT-2 small ·{" "}
+                <span className="text-accent">{backend}</span>
               </span>
             )}
             {status === "error" && (
@@ -144,18 +166,27 @@ export function PromptInput() {
           </div>
         </motion.div>
       ) : (
-        <motion.button
+        <motion.div
           key="payload-compact"
-          type="button"
-          onClick={() => setManuallyOpen(true)}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
-          className="pointer-events-auto fixed right-6 bottom-6 z-20 border border-line bg-abyss/75 px-3 py-2 font-mono text-[10px] uppercase tracking-wide2 text-dim backdrop-blur-sm transition-colors hover:border-line-strong hover:text-ink"
+          className="pointer-events-auto fixed right-6 bottom-6 z-20 flex flex-col items-end gap-2 font-mono text-[11px] uppercase tracking-wide2"
         >
-          Edit payload
-        </motion.button>
+          {status === "ready" && (
+            <span className="border border-accent-dim bg-accent/10 px-3 py-2 text-lavender backdrop-blur-sm">
+              Live · GPT-2 small · <span className="text-accent">{backend}</span>
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={() => setManuallyOpen(true)}
+            className="border border-line bg-abyss/75 px-3 py-2 text-dim backdrop-blur-sm transition-colors hover:border-line-strong hover:text-ink"
+          >
+            Edit payload
+          </button>
+        </motion.div>
       )}
     </AnimatePresence>
   );
