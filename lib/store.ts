@@ -18,30 +18,68 @@ export const useLensStore = create<LensState>()(
   ),
 );
 
+interface TelemetryState {
+  visible: boolean;
+  setVisible: (visible: boolean) => void;
+}
+
+export const useTelemetryStore = create<TelemetryState>()(
+  persist(
+    (set) => ({
+      visible: true,
+      setVisible: (visible) => set({ visible }),
+    }),
+    { name: "itm-telemetry" },
+  ),
+);
+
 interface JourneyState {
   /** Index of the stage currently in view (derived from scroll progress) */
   activeStage: number;
   setActiveStage: (index: number) => void;
-  /** Scroll progress through the whole journey, 0..1. Read per-frame by the camera rig. */
+  /** Active beat within the current stage (0-based) */
+  beat: number;
+  /** Progress through the active beat, 0..1 */
+  beatProgress: number;
+  /** True while the camera is flying between stations */
+  traveling: boolean;
+  /** Update the beat-scroll position in one shot (called per scroll event) */
+  setJourney: (j: {
+    activeStage: number;
+    beat: number;
+    beatProgress: number;
+    traveling: boolean;
+  }) => void;
+  /** Camera path parameter, 0..1. Read per-frame by the camera rig. */
+  cameraT: number;
+  setCameraT: (cameraT: number) => void;
+  /** Raw scroll progress through the whole journey, 0..1. */
   progress: number;
   setProgress: (progress: number) => void;
   /** Raw user prompt; inference wiring lands in M1 */
   prompt: string;
   setPrompt: (prompt: string) => void;
-  /** Free-explore breakout: orbit the current station, scroll suspended */
-  exploring: boolean;
-  setExploring: (exploring: boolean) => void;
+  /** Opt-in deep-dive panel: full cited copy for the active stage */
+  deepDiveOpen: boolean;
+  setDeepDiveOpen: (open: boolean) => void;
 }
 
 export const useJourneyStore = create<JourneyState>()((set) => ({
   activeStage: 0,
   setActiveStage: (activeStage) => set({ activeStage }),
+  beat: 0,
+  beatProgress: 0,
+  traveling: false,
+  setJourney: ({ activeStage, beat, beatProgress, traveling }) =>
+    set({ activeStage, beat, beatProgress, traveling }),
+  cameraT: 0,
+  setCameraT: (cameraT) => set({ cameraT }),
   progress: 0,
   setProgress: (progress) => set({ progress }),
-  prompt: "The cat sat on the",
+  prompt: "Photosynthesis is the process by",
   setPrompt: (prompt) => set({ prompt }),
-  exploring: false,
-  setExploring: (exploring) => set({ exploring }),
+  deepDiveOpen: false,
+  setDeepDiveOpen: (deepDiveOpen) => set({ deepDiveOpen }),
 }));
 
 export type AttentionView = "softmax" | "scores";

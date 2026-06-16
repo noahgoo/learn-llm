@@ -27,6 +27,13 @@ export interface Stage {
   output: string;
   /** Stages 5–10 are stations only until M3 */
   built: boolean;
+  /**
+   * How many scroll-driven beats this station holds. Each beat is a
+   * micro-moment the camera dwells on (text + visual state advance);
+   * between stations the camera travels. Built stages get a richer
+   * sequence; placeholder stations get a single beat.
+   */
+  beats: number;
 }
 
 export const STAGES: Stage[] = [
@@ -39,6 +46,7 @@ export const STAGES: Stage[] = [
     input: "raw text",
     output: "token ids",
     built: true,
+    beats: 3,
   },
   {
     id: "embeddings",
@@ -49,6 +57,7 @@ export const STAGES: Stage[] = [
     input: "token ids",
     output: "meaning vectors",
     built: true,
+    beats: 3,
   },
   {
     id: "positional",
@@ -59,6 +68,7 @@ export const STAGES: Stage[] = [
     input: "meaning vectors",
     output: "vectors + position",
     built: true,
+    beats: 3,
   },
   {
     id: "attention",
@@ -69,6 +79,7 @@ export const STAGES: Stage[] = [
     input: "vectors + position",
     output: "context-mixed vectors",
     built: true,
+    beats: 3,
   },
   {
     id: "multi-head",
@@ -79,6 +90,7 @@ export const STAGES: Stage[] = [
     input: "vectors + position",
     output: "all heads, recombined",
     built: false,
+    beats: 1,
   },
   {
     id: "ffn",
@@ -89,6 +101,7 @@ export const STAGES: Stage[] = [
     input: "context-mixed vectors",
     output: "transformed vectors",
     built: false,
+    beats: 1,
   },
   {
     id: "residual",
@@ -99,6 +112,7 @@ export const STAGES: Stage[] = [
     input: "every layer's output",
     output: "the accumulated stream",
     built: false,
+    beats: 1,
   },
   {
     id: "layernorm",
@@ -109,6 +123,7 @@ export const STAGES: Stage[] = [
     input: "raw activations",
     output: "normalized activations",
     built: false,
+    beats: 1,
   },
   {
     id: "prediction",
@@ -119,6 +134,7 @@ export const STAGES: Stage[] = [
     input: "final position's vector",
     output: "probabilities over the vocabulary",
     built: false,
+    beats: 1,
   },
   {
     id: "weights",
@@ -129,10 +145,104 @@ export const STAGES: Stage[] = [
     input: "the architecture (code)",
     output: "the learned model (parameters)",
     built: false,
+    beats: 1,
   },
 ];
 
 export const STAGE_COUNT = STAGES.length;
+
+/**
+ * Beat-scroll timeline. The journey is a sequence of bands laid end to end:
+ * each stage contributes a `dwell` band `beats` units long (camera parked,
+ * text + visuals advance beat by beat) followed by a `travel` band of
+ * `TRAVEL_UNITS` (camera flies to the next station). One unit ≈ one
+ * viewport-height of scroll.
+ */
+const TRAVEL_UNITS = 1;
+
+/** Total scroll units across the whole journey (dwell beats + travels). */
+export const JOURNEY_UNITS =
+  STAGES.reduce((sum, s) => sum + s.beats, 0) +
+  (STAGE_COUNT - 1) * TRAVEL_UNITS;
+
+/** Unit offset where stage `index`'s dwell band begins. */
+function stageBandStart(index: number): number {
+  let cursor = 0;
+  for (let i = 0; i < index; i++) {
+    cursor += STAGES[i].beats + TRAVEL_UNITS;
+  }
+  return cursor;
+}
+
+export interface JourneyPosition {
+  /** Stage currently framed (during travel, flips at the midpoint). */
+  stageIndex: number;
+  /** Active beat within the stage (0-based). */
+  beatIndex: number;
+  /** Progress through the active beat, 0..1. */
+  beatProgress: number;
+  /** Camera path parameter, 0..1, fed to the Catmull-Rom rig. */
+  cameraT: number;
+  /** True while flying between stations (dwell bands set false). */
+  traveling: boolean;
+}
+
+const smoothstep = (t: number) => t * t * (3 - 2 * t);
+
+/**
+ * Map scroll progress (0..1) to a position on the beat-scroll timeline.
+ * Pure and unit-testable; the camera rig and stage visuals both read it.
+ */
+export function journeyFromProgress(progress: number): JourneyPosition {
+  const p = Math.min(1, Math.max(0, progress));
+  const denom = Math.max(1, STAGE_COUNT - 1);
+  const pos = p * JOURNEY_UNITS;
+  let cursor = 0;
+
+  for (let i = 0; i < STAGE_COUNT; i++) {
+    const beats = STAGES[i].beats;
+    // dwell band for stage i
+    if (pos <= cursor + beats || i === STAGE_COUNT - 1) {
+      const local = Math.min(beats, Math.max(0, pos - cursor));
+      const beatIndex = Math.min(beats - 1, Math.floor(local));
+      return {
+        stageIndex: i,
+        beatIndex,
+        beatProgress: Math.min(1, local - beatIndex),
+        cameraT: i / denom,
+        traveling: false,
+      };
+    }
+    cursor += beats;
+    // travel band between stage i and i+1
+    if (pos <= cursor + TRAVEL_UNITS) {
+      const f = (pos - cursor) / TRAVEL_UNITS;
+      const here = f < 0.5 ? i : i + 1;
+      return {
+        stageIndex: here,
+        beatIndex: here === i ? STAGES[i].beats - 1 : 0,
+        beatProgress: here === i ? 1 : 0,
+        cameraT: (i + smoothstep(f)) / denom,
+        traveling: true,
+      };
+    }
+    cursor += TRAVEL_UNITS;
+  }
+  // unreachable (last stage handled above), but keep types happy
+  return {
+    stageIndex: STAGE_COUNT - 1,
+    beatIndex: STAGES[STAGE_COUNT - 1].beats - 1,
+    beatProgress: 1,
+    cameraT: 1,
+    traveling: false,
+  };
+}
+
+/** Scroll progress (0..1) at which stage `index`'s dwell band begins. */
+export function scrollOffsetForStage(index: number): number {
+  const clamped = Math.min(STAGE_COUNT - 1, Math.max(0, index));
+  return stageBandStart(clamped) / JOURNEY_UNITS;
+}
 
 /**
  * Station positions: a gentle serpentine descent through the void.
@@ -148,15 +258,18 @@ export function stationPosition(index: number): Vec3 {
 
 export function cameraKeyframe(index: number): Vec3 {
   const [x, y, z] = stationPosition(index);
+  const zoomOutByStage: Partial<Record<StageId, number>> = {
+    embeddings: 10,
+    positional: 9,
+    attention: 10,
+  };
+  const extraDistance = zoomOutByStage[STAGES[index]?.id] ?? 0;
   // offset left + above so the station frames right-of-center,
   // clear of the HUD's left-side stage panel
-  return [x - 7.5, y + 4.5, z + 17];
+  return [x - 7.5, y + 4.5, z + 17 + extraDistance];
 }
 
-/** Map scroll progress (0..1) to the nearest stage index. */
+/** Map scroll progress (0..1) to the framed stage index. */
 export function stageIndexForProgress(progress: number): number {
-  return Math.min(
-    STAGE_COUNT - 1,
-    Math.max(0, Math.round(progress * (STAGE_COUNT - 1))),
-  );
+  return journeyFromProgress(progress).stageIndex;
 }

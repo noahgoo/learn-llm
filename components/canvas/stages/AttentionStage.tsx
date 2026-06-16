@@ -14,6 +14,7 @@ const CELL = 0.5;
 const VOID = new THREE.Color("#16121f");
 const ACCENT = new THREE.Color("#9d7bff");
 const HOT = new THREE.Color("#e7dcff");
+const smoothstep = (t: number) => t * t * (3 - 2 * t);
 
 /**
  * Phase 04 — the attention pattern for the user's text, one head at a
@@ -24,6 +25,9 @@ const HOT = new THREE.Color("#e7dcff");
 export function AttentionStage() {
   const prompt = useJourneyStore((s) => s.prompt);
   const output = useActiveOutput(prompt);
+  const activeStage = useJourneyStore((s) => s.activeStage);
+  const beat = useJourneyStore((s) => s.beat);
+  const beatProgress = useJourneyStore((s) => s.beatProgress);
   const layer = useAttentionStore((s) => s.layer);
   const head = useAttentionStore((s) => s.head);
   const view = useAttentionStore((s) => s.view);
@@ -41,6 +45,14 @@ export function AttentionStage() {
 
   const n = output?.seq ?? 0;
   const half = ((n - 1) * CELL) / 2;
+  const matrixReveal =
+    activeStage < STAGE_INDEX
+      ? 0
+      : activeStage > STAGE_INDEX
+        ? 1
+        : beat < 2
+          ? 0
+          : smoothstep(beatProgress);
 
   // cell weights for the selected layer/head
   const weights = useMemo(() => {
@@ -78,16 +90,18 @@ export function AttentionStage() {
     if (!m || !weights) return;
     const dummy = new THREE.Object3D();
     const color = new THREE.Color();
+    const rowReveal = matrixReveal * n;
     for (let i = 0; i < n; i++) {
       for (let j = 0; j < n; j++) {
         const idx = i * n + j;
         const w = weights[idx];
+        const cellReveal = THREE.MathUtils.clamp(rowReveal - i, 0, 1);
         // cells extrude toward the viewer by weight — a relief map you can
         // read from any angle
-        const depth = w < 0 ? 0.02 : 0.08 + 1.6 * Math.min(1, w);
+        const depth = (w < 0 ? 0.02 : 0.08 + 1.6 * Math.min(1, w)) * cellReveal;
         dummy.position.set(j * CELL - half, half - i * CELL, depth / 2);
-        const s = w < 0 ? 0.12 : 0.3 + 0.68 * Math.min(1, w);
-        dummy.scale.set(s, s, depth);
+        const s = (w < 0 ? 0.12 : 0.3 + 0.68 * Math.min(1, w)) * cellReveal;
+        dummy.scale.set(Math.max(0.001, s), Math.max(0.001, s), Math.max(0.001, depth));
         dummy.updateMatrix();
         m.setMatrixAt(idx, dummy.matrix);
         if (w < 0) color.copy(VOID);
@@ -99,7 +113,7 @@ export function AttentionStage() {
     m.count = n * n;
     m.instanceMatrix.needsUpdate = true;
     if (m.instanceColor) m.instanceColor.needsUpdate = true;
-  }, [weights, n, half]);
+  }, [weights, n, half, matrixReveal]);
 
   if (!output || !weights) return null;
 
@@ -114,9 +128,10 @@ export function AttentionStage() {
           <boxGeometry args={[CELL * 0.86, CELL * 0.86, 1]} />
           {/* per-instance colors come from setColorAt; vertexColors would
               read a missing geometry attribute and render black */}
-          <meshBasicMaterial />
+          <meshBasicMaterial transparent opacity={matrixReveal} />
         </instancedMesh>
-        {output.tokens.map((tok, i) => (
+        {matrixReveal > 0.05 &&
+          output.tokens.map((tok, i) => (
           <group key={`${i}-${output.ids[i]}`}>
             {/* query rows (left) */}
             <Text
@@ -141,17 +156,19 @@ export function AttentionStage() {
             </Text>
           </group>
         ))}
-        <Text
-          font={FONT}
-          fontSize={0.24}
-          color="#8d97a7"
-          anchorX="center"
-          position={[0, -half - CELL * 1.8, 0]}
-        >
-          {`layer ${layer + 1} · head ${head + 1} · ${
-            view === "softmax" ? "softmax(QKᵀ/√d + mask)" : "QKᵀ/√d (masked)"
-          }`}
-        </Text>
+        {matrixReveal > 0.05 && (
+          <Text
+            font={FONT}
+            fontSize={0.24}
+            color="#8d97a7"
+            anchorX="center"
+            position={[0, -half - CELL * 1.8, 0]}
+          >
+            {`layer ${layer + 1} · head ${head + 1} · ${
+              view === "softmax" ? "softmax(QKᵀ/√d + mask)" : "QKᵀ/√d (masked)"
+            }`}
+          </Text>
+        )}
       </group>
     </group>
   );

@@ -2,6 +2,7 @@
 
 import { useModelStore } from "@/lib/model/client";
 import { N_HEAD, N_LAYER } from "@/lib/model/protocol";
+import { useTelemetryStore } from "@/lib/store";
 
 /**
  * Dev/diagnostic readout (Checkpoint B): proves real tokens, attention
@@ -11,13 +12,36 @@ import { N_HEAD, N_LAYER } from "@/lib/model/protocol";
 export function Telemetry() {
   const output = useModelStore((s) => s.output);
   const error = useModelStore((s) => s.error);
+  const visible = useTelemetryStore((s) => s.visible);
+  const setVisible = useTelemetryStore((s) => s.setVisible);
   if (!output && !error) return null;
+
+  if (!visible) {
+    return (
+      <button
+        type="button"
+        onClick={() => setVisible(true)}
+        className="pointer-events-auto fixed right-6 bottom-20 z-20 border border-line bg-abyss/80 px-3 py-2 font-mono text-[10px] uppercase tracking-wide2 text-dim backdrop-blur-sm transition-colors hover:border-line-strong hover:text-ink"
+      >
+        Show telemetry
+      </button>
+    );
+  }
 
   return (
     <aside className="pointer-events-auto fixed right-6 bottom-20 z-20 w-72 border border-line bg-abyss/70 p-4 backdrop-blur-sm">
-      <p className="font-mono text-[10px] uppercase tracking-wide3 text-accent">
-        Telemetry
-      </p>
+      <div className="flex items-center justify-between gap-3">
+        <p className="font-mono text-[10px] uppercase tracking-wide3 text-accent">
+          Telemetry
+        </p>
+        <button
+          type="button"
+          onClick={() => setVisible(false)}
+          className="font-mono text-[10px] uppercase tracking-wide2 text-faint transition-colors hover:text-ink"
+        >
+          Hide
+        </button>
+      </div>
       {error && (
         <p className="mt-2 font-mono text-[10px] text-signal">{error}</p>
       )}
