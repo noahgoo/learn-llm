@@ -10,7 +10,8 @@ import { Cite } from "./Cite";
  * Hybrid text lane (DOM half): the active beat's headline + caption fades
  * into a screen region that varies per beat, so narration appears where the
  * action is instead of in one fixed wall. In-canvas object labels (the other
- * half) live inside each stage visual. Full cited copy lives in Deep Dive.
+ * half) live inside each stage visual. Full cited copy lives in the
+ * explanation drawer.
  */
 
 const REGION: Record<BeatAnchor, string> = {

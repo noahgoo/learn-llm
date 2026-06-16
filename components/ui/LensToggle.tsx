@@ -9,8 +9,8 @@ const LENSES: { value: Lens; label: string }[] = [
 ];
 
 /**
- * Segmented Simple/Technical depth switch. Persisted (localStorage) so the
- * chosen lens follows the reader across stages and visits.
+ * Segmented Simple/Technical explanation switch. Persisted (localStorage)
+ * so the chosen lens follows the reader across stages and visits.
  */
 export function LensToggle() {
   const lens = useLensStore((s) => s.lens);
@@ -19,7 +19,7 @@ export function LensToggle() {
   return (
     <div
       role="radiogroup"
-      aria-label="Explanation depth"
+      aria-label="Explanation style"
       className="pointer-events-auto flex items-center border border-line"
     >
       {LENSES.map(({ value, label }) => {

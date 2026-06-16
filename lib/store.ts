@@ -74,7 +74,7 @@ interface JourneyState {
   /** Raw user prompt; inference wiring lands in M1 */
   prompt: string;
   setPrompt: (prompt: string) => void;
-  /** Opt-in deep-dive panel: full cited copy for the active stage */
+  /** Opt-in explanation drawer: full cited copy for the active stage */
   deepDiveOpen: boolean;
   setDeepDiveOpen: (open: boolean) => void;
 }
