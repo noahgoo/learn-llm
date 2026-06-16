@@ -1,11 +1,14 @@
 "use client";
 
+import { Billboard, Text } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import type { ComponentType } from "react";
 import { useRef } from "react";
 import * as THREE from "three";
 import { STAGES, stationPosition, type StageId } from "@/lib/journey";
 import { useJourneyStore } from "@/lib/store";
+
+const FONT = "/fonts/IBMPlexMono-Regular.ttf";
 import { AttentionStage } from "./stages/AttentionStage";
 import { EmbeddingsStage } from "./stages/EmbeddingsStage";
 import { PositionalStage } from "./stages/PositionalStage";
@@ -56,13 +59,34 @@ function Station({ index }: { index: number }) {
 
   const Visual = STAGE_VISUALS[stage.id];
   const color = stage.built ? VIOLET : FAINT;
+
   return (
     <group position={stationPosition(index)}>
-      <mesh ref={ring} rotation={[Math.PI / 2.4, 0, 0]}>
-        <torusGeometry args={[6.4, 0.045, 8, 96]} />
-        <meshBasicMaterial color={color} transparent opacity={stage.built ? 0.6 : 0.3} />
-      </mesh>
+      {/* the ring marks a station that has no visual yet; once a stage is
+          built its own visualization fills the space and the ring would just
+          clutter it, so we drop it there */}
+      {!stage.built && (
+        <mesh ref={ring} rotation={[Math.PI / 2.4, 0, 0]}>
+          <torusGeometry args={[6.4, 0.045, 8, 96]} />
+          <meshBasicMaterial color={color} transparent opacity={0.3} />
+        </mesh>
+      )}
       {Visual ? (near && <Visual />) : <PlaceholderCore built={stage.built} />}
+      {/* connective handoff: what the stream delivers in / hands off out */}
+      {near && stage.built && (
+        <>
+          <Billboard position={[0, -7.2, 6]}>
+            <Text font={FONT} fontSize={0.34} color="#a5b8ff" anchorX="center">
+              {`IN ▸ ${stage.input}`}
+            </Text>
+          </Billboard>
+          <Billboard position={[0, -7.2, -6]}>
+            <Text font={FONT} fontSize={0.34} color="#c9b4ff" anchorX="center">
+              {`OUT ▸ ${stage.output}`}
+            </Text>
+          </Billboard>
+        </>
+      )}
       <pointLight color={color} intensity={stage.built ? 14 : 4} distance={26} decay={2} />
     </group>
   );

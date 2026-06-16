@@ -35,6 +35,9 @@ export function TokenChip({
       <lineSegments geometry={edges}>
         <lineBasicMaterial color={color} transparent opacity={0.7} />
       </lineSegments>
+      {/* labels draw on top of any panel (depthTest off) so an overlapping
+          neighbor chip can never clip the text when the row is viewed at an
+          angle */}
       <Text
         font={FONT}
         fontSize={0.34 * scale}
@@ -42,6 +45,9 @@ export function TokenChip({
         anchorX="center"
         anchorY="middle"
         position={[0, 0, 0.01]}
+        renderOrder={2}
+        material-depthTest={false}
+        material-transparent
       >
         {label}
       </Text>
@@ -53,6 +59,9 @@ export function TokenChip({
           anchorX="center"
           anchorY="top"
           position={[0, -0.5 * scale, 0.01]}
+          renderOrder={2}
+          material-depthTest={false}
+          material-transparent
         >
           {sublabel}
         </Text>
