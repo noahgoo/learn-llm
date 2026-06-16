@@ -262,12 +262,12 @@ export function cameraKeyframe(index: number): Vec3 {
     embeddings: 10,
     positional: 9,
     attention: 10,
-    "multi-head": 11,
-    ffn: 10,
-    residual: 11,
-    layernorm: 10,
-    prediction: 11,
-    weights: 11,
+    "multi-head": 6,
+    ffn: 6,
+    residual: 7,
+    layernorm: 6,
+    prediction: 7,
+    weights: 7,
   };
   const extraDistance = zoomOutByStage[STAGES[index]?.id] ?? 0;
   // offset left + above so the station frames right-of-center,

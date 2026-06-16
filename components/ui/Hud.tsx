@@ -2,6 +2,7 @@
 
 import { AttentionControls } from "./AttentionControls";
 import { DeepDive } from "./DeepDive";
+import { EndCard } from "./EndCard";
 import { ProgressRail } from "./ProgressRail";
 import { PromptInput } from "./PromptInput";
 import { PredictionControls } from "./PredictionControls";
@@ -26,6 +27,7 @@ export function Hud() {
       <AttentionControls />
       <PredictionControls />
       <Telemetry />
+      <EndCard />
     </div>
   );
 }

@@ -48,7 +48,9 @@ export function nucleusIndices(
   probs: ArrayLike<number>,
   topP: number,
 ): number[] {
-  const sorted = topkIndices(probs, probs.length);
+  const sorted = Array.from({ length: probs.length }, (_, i) => i).sort(
+    (a, b) => probs[b] - probs[a],
+  );
   const out: number[] = [];
   let cumulative = 0;
   const threshold = Math.min(1, Math.max(0, topP));

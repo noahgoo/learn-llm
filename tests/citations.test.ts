@@ -41,8 +41,7 @@ describe("citation integrity", () => {
   it("no orphan citations (every entry is cited somewhere)", () => {
     const used = new Set(mdxFiles.flatMap(citeIdsIn));
     const orphans = Object.keys(citations).filter((id) => !used.has(id));
-    // hendrycks2016/ba2016/holtzman2020 become non-orphans in M3 stages
-    const allowedUntilM3 = new Set(["hendrycks2016", "ba2016", "holtzman2020"]);
+    const allowedUntilM3 = new Set<string>();
     expect(orphans.filter((o) => !allowedUntilM3.has(o))).toEqual([]);
   });
 });

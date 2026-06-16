@@ -2,7 +2,6 @@
 
 import { Text } from "@react-three/drei";
 import { useMemo } from "react";
-import * as THREE from "three";
 import { N_HEAD } from "@/lib/model/protocol";
 import { useActiveOutput } from "@/lib/model/data";
 import { useAttentionStore, useJourneyStore } from "@/lib/store";

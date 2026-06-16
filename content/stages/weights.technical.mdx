@@ -1,0 +1,11 @@
+The Transformer architecture defines the computation graph: attention,
+MLPs, residual additions, normalization, and output projection.<Cite id="vaswani2017" />
+
+GPT-2 small instantiates that graph with learned parameter tensors: token
+embeddings, positional embeddings, Q/K/V projections, MLP weights,
+LayerNorm parameters, and the tied output embedding matrix.<Cite id="radford2019" />
+
+The finale compares the same machine outline under two parameter stories:
+random weights, which have no trained language structure, and trained
+weights, which produce the next-token distribution you saw in the previous
+stage.
