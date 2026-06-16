@@ -31,7 +31,10 @@ function getWorker(set: (partial: Partial<ModelState>) => void): Worker {
       case "progress":
         set({
           status: "loading",
-          progress: msg.total > 0 ? msg.loaded / msg.total : 0,
+          // Content-Length is the *compressed* size when the asset is served
+          // gzip/brotli, but the worker reads decompressed bytes off the
+          // stream — so loaded can exceed total (the >100% bug). Clamp it.
+          progress: msg.total > 0 ? Math.min(1, msg.loaded / msg.total) : 0,
         });
         break;
       case "ready": {
