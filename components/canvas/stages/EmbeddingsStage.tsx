@@ -8,7 +8,7 @@ import { CLOUD_VIEW_SCALE, type EmbeddingCloud } from "@/lib/model/embedding";
 import { useJourneyStore } from "@/lib/store";
 
 const cloud = cloudData as EmbeddingCloud;
-const FONT = "/fonts/IBMPlexMono-Regular.ttf";
+import { FONT } from "@/lib/public-path";
 
 /**
  * Phase 02 backdrop: the embedding space as a dim point field you fly into.

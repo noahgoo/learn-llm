@@ -49,6 +49,11 @@ describe("model fixtures (real GPT-2 outputs)", () => {
         expect(f.topk[i].prob).toBeLessThanOrEqual(f.topk[i - 1].prob);
       }
       expect(f.topk[0].prob).toBeGreaterThan(0);
+      expect(f.finalLogits).toHaveLength(50257);
+      expect(f.hiddens).toHaveLength(N_LAYER + 1);
+      for (const hidden of f.hiddens) {
+        expect(hidden).toHaveLength(f.seq * 768);
+      }
     },
   );
 

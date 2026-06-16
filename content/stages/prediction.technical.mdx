@@ -1,0 +1,15 @@
+GPT-2 ties its output projection to the token embedding matrix: the final
+hidden vector is multiplied by the vocabulary embedding table to produce
+one logit per vocabulary token.<Cite id="radford2019" />
+
+Softmax converts logits z into probabilities:
+
+P(token_i) = exp(z_i / T) / sum_j exp(z_j / T)
+
+The temperature T controls sharpness. Nucleus sampling keeps the smallest
+set of tokens whose cumulative probability exceeds p, avoiding the long
+tail of low-quality options while preserving some diversity.<Cite id="holtzman2020" />
+
+The bars here are computed from the live or fixture final logits for your
+prompt; changing temperature reshapes the distribution without rerunning
+the model.

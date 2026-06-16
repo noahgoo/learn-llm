@@ -33,6 +33,11 @@ export interface ModelOutput {
   tokEmb: Float32Array;
   /** Position embeddings for this sequence length: [seq * 768] row-major. */
   posEmb: Float32Array;
+  /**
+   * Residual stream snapshots: hidden_0 is token+position embedding, then one
+   * snapshot after each transformer block. Each is [seq * 768] row-major.
+   */
+  hiddens: Float32Array[];
   /** Top-k next-token candidates (softmax at final position, T=1). */
   topk: TopToken[];
   /** Final-position logits for the full vocab (for temperature/sampling UI). */

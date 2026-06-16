@@ -89,8 +89,8 @@ export const STAGES: Stage[] = [
     teaser: "Many heads attend in parallel, each watching for something different.",
     input: "vectors + position",
     output: "all heads, recombined",
-    built: false,
-    beats: 1,
+    built: true,
+    beats: 3,
   },
   {
     id: "ffn",
@@ -100,8 +100,8 @@ export const STAGES: Stage[] = [
     teaser: "Each token, alone, passes through the layer's thinking machinery.",
     input: "context-mixed vectors",
     output: "transformed vectors",
-    built: false,
-    beats: 1,
+    built: true,
+    beats: 3,
   },
   {
     id: "residual",
@@ -111,8 +111,8 @@ export const STAGES: Stage[] = [
     teaser: "A highway of information that every layer reads from and writes to.",
     input: "every layer's output",
     output: "the accumulated stream",
-    built: false,
-    beats: 1,
+    built: true,
+    beats: 3,
   },
   {
     id: "layernorm",
@@ -122,8 +122,8 @@ export const STAGES: Stage[] = [
     teaser: "Keeping the signal steady as it travels through the layers.",
     input: "raw activations",
     output: "normalized activations",
-    built: false,
-    beats: 1,
+    built: true,
+    beats: 3,
   },
   {
     id: "prediction",
@@ -133,8 +133,8 @@ export const STAGES: Stage[] = [
     teaser: "Logits, softmax, a roll of the dice — the next word appears.",
     input: "final position's vector",
     output: "probabilities over the vocabulary",
-    built: false,
-    beats: 1,
+    built: true,
+    beats: 3,
   },
   {
     id: "weights",
@@ -144,8 +144,8 @@ export const STAGES: Stage[] = [
     teaser: "The same machine, before and after it learned everything.",
     input: "the architecture (code)",
     output: "the learned model (parameters)",
-    built: false,
-    beats: 1,
+    built: true,
+    beats: 3,
   },
 ];
 
@@ -262,6 +262,12 @@ export function cameraKeyframe(index: number): Vec3 {
     embeddings: 10,
     positional: 9,
     attention: 10,
+    "multi-head": 11,
+    ffn: 10,
+    residual: 11,
+    layernorm: 10,
+    prediction: 11,
+    weights: 11,
   };
   const extraDistance = zoomOutByStage[STAGES[index]?.id] ?? 0;
   // offset left + above so the station frames right-of-center,

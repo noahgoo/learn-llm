@@ -19,7 +19,9 @@ interface FixtureSentence {
   scores: number[][];
   tokEmb: number[];
   posEmb: number[];
+  hiddens: number[][];
   topk: { id: number; token: string; prob: number }[];
+  finalLogits: number[];
 }
 
 function toModelOutput(f: FixtureSentence): ModelOutput {
@@ -33,8 +35,9 @@ function toModelOutput(f: FixtureSentence): ModelOutput {
     scores: f.scores.map((l) => Float32Array.from(l)),
     tokEmb: Float32Array.from(f.tokEmb),
     posEmb: Float32Array.from(f.posEmb),
+    hiddens: f.hiddens.map((h) => Float32Array.from(h)),
     topk: f.topk,
-    finalLogits: new Float32Array(0), // not stored in fixtures
+    finalLogits: Float32Array.from(f.finalLogits),
   };
 }
 

@@ -15,13 +15,19 @@ import { useActiveOutput } from "@/lib/model/data";
 import { useAttentionStore, useJourneyStore } from "@/lib/store";
 import { TokenChip } from "./stages/TokenChip";
 
-const FONT = "/fonts/IBMPlexMono-Regular.ttf";
+import { FONT } from "@/lib/public-path";
 const cloud = cloudData as EmbeddingCloud;
 const D_MODEL = 768;
 const TOK = STAGES.findIndex((s) => s.id === "tokenization");
 const EMB = STAGES.findIndex((s) => s.id === "embeddings");
 const POS = STAGES.findIndex((s) => s.id === "positional");
 const ATT = STAGES.findIndex((s) => s.id === "attention");
+const MHD = STAGES.findIndex((s) => s.id === "multi-head");
+const FFN = STAGES.findIndex((s) => s.id === "ffn");
+const RES = STAGES.findIndex((s) => s.id === "residual");
+const LYN = STAGES.findIndex((s) => s.id === "layernorm");
+const PRD = STAGES.findIndex((s) => s.id === "prediction");
+const WGT = STAGES.findIndex((s) => s.id === "weights");
 
 type Vec3 = [number, number, number];
 
@@ -75,6 +81,7 @@ export function TokenFlow() {
     const s1 = stationPosition(EMB);
     const s2 = stationPosition(POS);
     const s3 = stationPosition(ATT);
+    const laterStages = [MHD, FFN, RES, LYN, PRD, WGT];
 
     // packed bar slots at the tokenization station (local → world)
     const widths = labels.map((l) => Math.max(0.9, l.length * 0.34));
@@ -126,6 +133,15 @@ export function TokenFlow() {
       s3[1] - 3.1,
       s3[2] + 4.8,
     ]);
+    const laterRows: Vec3[][] = laterStages.map((stageIndex, stageOffset) => {
+      const [sx, sy, sz] = stationPosition(stageIndex);
+      const rowSpacing = Math.max(0.9, Math.min(1.9, 8.5 / Math.max(1, n - 1)));
+      return labels.map((_, i) => [
+        sx + (i - (n - 1) / 2) * rowSpacing,
+        sy - 2.8 + Math.sin(i * 0.8 + stageOffset) * 0.18,
+        sz + 4.8,
+      ]);
+    });
     // nearest cloud neighbor per token (world)
     const neighbors = coords.map((p) => {
       let best = 0;
@@ -149,7 +165,20 @@ export function TokenFlow() {
     const splits = labels
       .map((_, i) => i)
       .filter((i) => i > 0 && !output.tokens[i].startsWith(" "));
-    return { n, labels, bar, row, arrival, coords, posIntro, posSlots, attRow, neighbors, splits };
+    return {
+      n,
+      labels,
+      bar,
+      row,
+      arrival,
+      coords,
+      posIntro,
+      posSlots,
+      attRow,
+      laterRows,
+      neighbors,
+      splits,
+    };
   }, [output]);
 
   useFrame((_, rawDelta) => {
@@ -189,7 +218,7 @@ export function TokenFlow() {
               : 1;
     // flow cursor: station-to-station glide, driven by the smooth camera param
     const camDenom = Math.max(1, STAGE_COUNT - 1);
-    const flowTarget = THREE.MathUtils.clamp(s.cameraT * camDenom, TOK, ATT);
+    const flowTarget = THREE.MathUtils.clamp(s.cameraT * camDenom, TOK, WGT);
 
     crack.current += (crackTarget - crack.current) * (1 - Math.exp(-5 * delta));
     land.current += (landTarget - land.current) * (1 - Math.exp(-4 * delta));
@@ -213,14 +242,19 @@ export function TokenFlow() {
       const s1pos = lerpVec([ax, ay, az], [cx, cy, cz], ld);
       const s2pos = lerpVec(data.posIntro[i], data.posSlots[i], pos);
       const s3pos = data.attRow[i];
-      let p: Vec3;
-      if (cursor <= EMB) {
-        p = lerpVec(s0pos, s1pos, smoothstep(clamp01(cursor - TOK)));
-      } else if (cursor <= POS) {
-        p = lerpVec(s1pos, s2pos, smoothstep(clamp01(cursor - EMB)));
-      } else {
-        p = lerpVec(s2pos, s3pos, smoothstep(clamp01(cursor - POS)));
-      }
+      const anchors = [
+        s0pos,
+        s1pos,
+        s2pos,
+        s3pos,
+        ...data.laterRows.map((stageRow) => stageRow[i]),
+      ];
+      const segment = Math.min(anchors.length - 2, Math.max(0, Math.floor(cursor)));
+      const p = lerpVec(
+        anchors[segment],
+        anchors[segment + 1],
+        smoothstep(clamp01(cursor - segment)),
+      );
       g.position.set(p[0], p[1], p[2]);
       // token cards appear as the raw strip cracks, then become vector beads
       const m = smoothstep(ld);
@@ -232,8 +266,8 @@ export function TokenFlow() {
   });
 
   if (!output || !data) return null;
-  // only relevant around the first four stations
-  if (activeStage > ATT) return null;
+  // only relevant around the modeled journey stations
+  if (activeStage > WGT) return null;
 
   const seamVisible = activeStage === TOK && beat >= 2;
   const settled = activeStage === EMB && beat >= 2;
@@ -290,7 +324,7 @@ export function TokenFlow() {
               >
                 {output.tokens[i].trim() || "·"}
               </Text>
-              {activeStage >= POS && (
+              {activeStage >= POS && activeStage <= ATT && (
                 <Text
                   font={FONT}
                   fontSize={0.18}
@@ -301,7 +335,7 @@ export function TokenFlow() {
                   material-depthTest={false}
                   material-transparent
                 >
-                  {activeStage >= ATT ? (i === queryIndex ? "query" : "key") : `pos ${i}`}
+                  {activeStage === ATT ? (i === queryIndex ? "query" : "key") : `pos ${i}`}
                 </Text>
               )}
             </group>

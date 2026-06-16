@@ -1,0 +1,11 @@
+LayerNorm normalizes across the feature dimension of one token: subtract
+the token's mean activation, divide by its standard deviation, then apply
+learned scale and bias parameters.<Cite id="ba2016" />
+
+GPT-2 uses a pre-LN block layout: normalization happens before attention
+and before the MLP sublayer reads the residual stream.<Cite id="radford2019" />
+Pre-LN variants are known to improve optimization behavior in deeper
+Transformers compared with the original post-LN placement.<Cite id="xiong2020" />
+
+The visual keeps the operation local to one token vector, because LayerNorm
+does not mix information across sequence positions.

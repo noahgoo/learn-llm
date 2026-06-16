@@ -1,0 +1,9 @@
+The model does not throw away a token's vector after each block. It keeps a
+running stream and adds new information into it.<Cite id="elhage2021" />
+
+That stream is like a shared notebook. Attention writes context into it.
+The feed-forward network writes another update. The next layer reads the
+same notebook and adds more.
+
+The line here follows real hidden-state snapshots from your prompt, so you
+can see one token's representation changing as it moves through layers.

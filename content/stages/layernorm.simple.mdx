@@ -1,0 +1,10 @@
+LayerNorm keeps a token's signal in a workable range. If some channels get
+too large while others shrink, the next layer can become harder to use.
+LayerNorm recenters and rescales the token vector.<Cite id="ba2016" />
+
+The bars show a compact before-and-after view. The exact details are
+technical, but the intuition is simple: steady signals are easier for the
+next part of the model to read.
+
+GPT-2 uses normalization inside every block, so this stabilizing step is
+part of the repeated rhythm of the model.<Cite id="radford2019" />

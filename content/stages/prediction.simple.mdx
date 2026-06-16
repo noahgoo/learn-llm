@@ -1,0 +1,9 @@
+At the end, the model does not directly choose a word. It scores every
+token in its vocabulary. Those raw scores are called logits.
+
+Softmax turns the logits into probabilities, so the highest scores become
+the most likely next tokens.<Cite id="vaswani2017" />
+
+Temperature changes how bold the model is. Low temperature concentrates
+probability on the top choices. High temperature spreads probability out,
+which can make text more varied but also less reliable.<Cite id="holtzman2020" />

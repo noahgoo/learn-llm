@@ -32,3 +32,53 @@ export function topkIndices(values: ArrayLike<number>, k: number): number[] {
   }
   return idx;
 }
+
+export interface RankedValue {
+  index: number;
+  value: number;
+}
+
+/** Top values with their scores, descending. */
+export function topkValues(values: ArrayLike<number>, k: number): RankedValue[] {
+  return topkIndices(values, k).map((index) => ({ index, value: values[index] }));
+}
+
+/** Smallest descending set whose cumulative probability reaches `topP`. */
+export function nucleusIndices(
+  probs: ArrayLike<number>,
+  topP: number,
+): number[] {
+  const sorted = topkIndices(probs, probs.length);
+  const out: number[] = [];
+  let cumulative = 0;
+  const threshold = Math.min(1, Math.max(0, topP));
+  for (const index of sorted) {
+    out.push(index);
+    cumulative += probs[index];
+    if (cumulative >= threshold) break;
+  }
+  return out;
+}
+
+export function vectorNorm(values: ArrayLike<number>): number {
+  let sum = 0;
+  for (let i = 0; i < values.length; i++) sum += values[i] * values[i];
+  return Math.sqrt(sum);
+}
+
+/** Average absolute activation per bucket, useful for compact visual summaries. */
+export function summarizeAbsBuckets(
+  values: ArrayLike<number>,
+  buckets: number,
+): Float32Array {
+  const n = Math.max(1, buckets);
+  const out = new Float32Array(n);
+  const counts = new Uint16Array(n);
+  for (let i = 0; i < values.length; i++) {
+    const b = Math.min(n - 1, Math.floor((i / values.length) * n));
+    out[b] += Math.abs(values[i]);
+    counts[b] += 1;
+  }
+  for (let i = 0; i < n; i++) out[i] = counts[i] ? out[i] / counts[i] : 0;
+  return out;
+}

@@ -1,0 +1,10 @@
+Attention lets tokens exchange information. The feed-forward network is
+different: each token now passes through the same little neural network by
+itself.<Cite id="radford2019" />
+
+Think of it as a per-token refinement step. The vector expands into a much
+wider hidden space, passes through a smooth gate, then compresses back to
+the normal model width.
+
+So attention mixes across positions; the FFN transforms each position's
+own representation.

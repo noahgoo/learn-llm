@@ -1,0 +1,13 @@
+GPT-2 small uses 12 attention heads per layer. Each head has dimension
+d<sub>k</sub> = 64, so the 768-wide residual stream is split into parallel
+Q/K/V projections, attended independently, concatenated, and projected
+back through W<sub>O</sub>.<Cite id="vaswani2017" />
+
+The head gallery visualizes the live softmax matrices for one layer. These
+patterns are real model outputs for your prompt, but head interpretation
+should be treated carefully: analysis and pruning work shows some heads
+are more important or specialized than others, while many do not map to a
+single clean human label.<Cite id="michel2019" />
+
+After concatenation, the output projection mixes head results into one
+768-dimensional write to the residual stream.

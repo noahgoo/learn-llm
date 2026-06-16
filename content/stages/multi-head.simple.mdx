@@ -1,0 +1,12 @@
+One attention head is one way of looking. Multi-head attention runs many
+of those looks in parallel, then combines them into one update for each
+token.<Cite id="vaswani2017" />
+
+That matters because a sentence has many relationships at once. One head
+might focus on nearby words, another on repeated structure, another on the
+token that resolves a reference. The gallery shows those head patterns
+side by side for your text.
+
+The important idea is not that every head has a neat English job. It is
+that the model gets several chances to ask different questions before it
+writes back to the stream.

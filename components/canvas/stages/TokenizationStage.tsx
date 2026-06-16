@@ -7,7 +7,7 @@ import * as THREE from "three";
 import { useJourneyStore } from "@/lib/store";
 import { useActiveOutput } from "@/lib/model/data";
 
-const FONT = "/fonts/IBMPlexMono-Regular.ttf";
+import { FONT } from "@/lib/public-path";
 
 /**
  * Phase 01 backdrop. The token chips themselves live in TokenFlow (they

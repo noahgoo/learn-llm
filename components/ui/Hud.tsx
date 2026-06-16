@@ -4,6 +4,7 @@ import { AttentionControls } from "./AttentionControls";
 import { DeepDive } from "./DeepDive";
 import { ProgressRail } from "./ProgressRail";
 import { PromptInput } from "./PromptInput";
+import { PredictionControls } from "./PredictionControls";
 import { StageCaptions } from "./StageCaptions";
 import { StagePanel } from "./StagePanel";
 import { Telemetry } from "./Telemetry";
@@ -23,6 +24,7 @@ export function Hud() {
       <DeepDive />
       <PromptInput />
       <AttentionControls />
+      <PredictionControls />
       <Telemetry />
     </div>
   );

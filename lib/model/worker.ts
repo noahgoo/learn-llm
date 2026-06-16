@@ -14,16 +14,18 @@ import {
   type WorkerResponse,
 } from "./protocol";
 
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 // tokenizer + model are vendored under public/ — fully self-hosted, no hub calls
 env.allowRemoteModels = false;
 env.allowLocalModels = true;
-env.localModelPath = "/tokenizer/";
+env.localModelPath = `${BASE}/tokenizer/`;
 
 // ORT's .wasm/.mjs runtime files resolve badly through bundlers; self-host
 // them (copied from node_modules/onnxruntime-web/dist by scripts/setup.sh)
-ort.env.wasm.wasmPaths = "/ort/";
+ort.env.wasm.wasmPaths = `${BASE}/ort/`;
 
-const MODEL_URL = "/model/gpt2-instrumented.onnx";
+const MODEL_URL = `${BASE}/model/gpt2-instrumented.onnx`;
 const VOCAB = 50257;
 
 let tokenizer: PreTrainedTokenizer | null = null;
@@ -104,9 +106,13 @@ async function run(id: number, text: string): Promise<void> {
 
   const attention: Float32Array[] = [];
   const scores: Float32Array[] = [];
+  const hiddens: Float32Array[] = [];
   for (let l = 0; l < N_LAYER; l++) {
     attention.push(new Float32Array(out[`attn_${l}`].data as Float32Array));
     scores.push(new Float32Array(out[`scores_${l}`].data as Float32Array));
+  }
+  for (let l = 0; l <= N_LAYER; l++) {
+    hiddens.push(new Float32Array(out[`hidden_${l}`].data as Float32Array));
   }
 
   const tokEmb = new Float32Array(out.tok_emb.data as Float32Array);
@@ -133,12 +139,14 @@ async function run(id: number, text: string): Promise<void> {
     scores,
     tokEmb,
     posEmb,
+    hiddens,
     topk,
     finalLogits,
   };
   post({ type: "result", id, output }, [
     ...attention.map((a) => a.buffer),
     ...scores.map((s) => s.buffer),
+    ...hiddens.map((h) => h.buffer),
     tokEmb.buffer,
     posEmb.buffer,
     finalLogits.buffer,

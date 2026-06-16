@@ -1,0 +1,10 @@
+In GPT-2 small, the MLP maps each token vector from 768 channels to 3072
+channels, applies GELU, then projects back to 768 channels.<Cite id="radford2019" />
+
+GELU is a smooth nonlinear gate: values are not simply cut off like ReLU;
+they are weighted by a Gaussian-shaped probability curve.<Cite id="hendrycks2016" />
+
+This stage is token-local. For a sequence tensor X in
+R<sup>seq x 768</sup>, the same FFN is applied independently at every
+sequence position. Cross-token communication already happened in
+attention; here the model reshapes each token's own features.

@@ -8,11 +8,17 @@ import * as THREE from "three";
 import { STAGES, stationPosition, type StageId } from "@/lib/journey";
 import { useJourneyStore } from "@/lib/store";
 
-const FONT = "/fonts/IBMPlexMono-Regular.ttf";
+import { FONT } from "@/lib/public-path";
 import { AttentionStage } from "./stages/AttentionStage";
 import { EmbeddingsStage } from "./stages/EmbeddingsStage";
+import { FeedForwardStage } from "./stages/FeedForwardStage";
+import { LayerNormStage } from "./stages/LayerNormStage";
+import { MultiHeadStage } from "./stages/MultiHeadStage";
+import { PredictionStage } from "./stages/PredictionStage";
 import { PositionalStage } from "./stages/PositionalStage";
+import { ResidualStage } from "./stages/ResidualStage";
 import { TokenizationStage } from "./stages/TokenizationStage";
+import { WeightsStage } from "./stages/WeightsStage";
 
 const VIOLET = new THREE.Color("#9d7bff");
 const FAINT = new THREE.Color("#4f4a63");
@@ -23,6 +29,12 @@ const STAGE_VISUALS: Partial<Record<StageId, ComponentType>> = {
   embeddings: EmbeddingsStage,
   positional: PositionalStage,
   attention: AttentionStage,
+  "multi-head": MultiHeadStage,
+  ffn: FeedForwardStage,
+  residual: ResidualStage,
+  layernorm: LayerNormStage,
+  prediction: PredictionStage,
+  weights: WeightsStage,
 };
 
 function PlaceholderCore({ built }: { built: boolean }) {

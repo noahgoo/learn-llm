@@ -4,7 +4,7 @@ import { Text } from "@react-three/drei";
 import { useMemo } from "react";
 import * as THREE from "three";
 
-const FONT = "/fonts/IBMPlexMono-Regular.ttf";
+import { FONT } from "@/lib/public-path";
 
 /** A single token rendered as a floating labeled chip with a hairline border. */
 export function TokenChip({

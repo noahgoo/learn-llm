@@ -9,7 +9,7 @@ import { useAttentionStore, useJourneyStore } from "@/lib/store";
 
 const STAGE_INDEX = STAGES.findIndex((s) => s.id === "attention");
 
-const FONT = "/fonts/IBMPlexMono-Regular.ttf";
+import { FONT } from "@/lib/public-path";
 const CELL = 0.5;
 const VOID = new THREE.Color("#16121f");
 const ACCENT = new THREE.Color("#9d7bff");

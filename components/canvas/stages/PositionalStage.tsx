@@ -6,7 +6,7 @@ import { cosineSimilarity } from "@/lib/model/embedding";
 import { useActiveOutput } from "@/lib/model/data";
 import { useJourneyStore } from "@/lib/store";
 
-const FONT = "/fonts/IBMPlexMono-Regular.ttf";
+import { FONT } from "@/lib/public-path";
 const D_MODEL = 768;
 const STAGE_INDEX = 2;
 const smoothstep = (t: number) => t * t * (3 - 2 * t);

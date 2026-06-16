@@ -33,6 +33,21 @@ export const useTelemetryStore = create<TelemetryState>()(
   ),
 );
 
+interface PredictionState {
+  temperature: number;
+  topP: number;
+  setTemperature: (temperature: number) => void;
+  setTopP: (topP: number) => void;
+}
+
+export const usePredictionStore = create<PredictionState>()((set) => ({
+  temperature: 1,
+  topP: 0.9,
+  setTemperature: (temperature) =>
+    set({ temperature: Math.min(2, Math.max(0.2, temperature)) }),
+  setTopP: (topP) => set({ topP: Math.min(1, Math.max(0.1, topP)) }),
+}));
+
 interface JourneyState {
   /** Index of the stage currently in view (derived from scroll progress) */
   activeStage: number;

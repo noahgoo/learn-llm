@@ -54,5 +54,19 @@
     "year": 2020,
     "venue": "ICLR 2020",
     "url": "https://arxiv.org/abs/1904.09751"
+  },
+  "michel2019": {
+    "title": "Are Sixteen Heads Really Better than One?",
+    "authors": "Michel, Levy & Neubig",
+    "year": 2019,
+    "venue": "NeurIPS 2019",
+    "url": "https://arxiv.org/abs/1905.10650"
+  },
+  "xiong2020": {
+    "title": "On Layer Normalization in the Transformer Architecture",
+    "authors": "Xiong, Yang, He, Zheng, Zheng, Xing, Zhang, Lan, Wang & Liu",
+    "year": 2020,
+    "venue": "ICML 2020",
+    "url": "https://arxiv.org/abs/2002.04745"
   }
 }

@@ -1,0 +1,12 @@
+Transformer blocks use residual connections: a sublayer computes an update,
+and that update is added to the existing stream rather than replacing it.
+This makes the residual stream a natural place to think about information
+being read and written across layers.<Cite id="elhage2021" />
+
+The app's ONNX graph exports hidden_0 through hidden_12. hidden_0 is the
+token embedding plus position embedding. Each later hidden_i is the stream
+after one GPT-2 block.
+
+The visualization summarizes the norm of a selected token's stream across
+those snapshots. It is not claiming norm equals meaning; it is a compact
+way to show that the same token state persists and evolves.

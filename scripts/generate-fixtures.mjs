@@ -66,9 +66,14 @@ for (const text of SENTENCES) {
   const round3 = (v) => Math.round(v * 1e3) / 1e3;
   const tokEmb = Array.from(out.tok_emb.data, round3);
   const posEmb = Array.from(out.pos_emb.data, round3);
+  const hiddens = [];
+  for (let l = 0; l <= N_LAYER; l++) {
+    hiddens.push(Array.from(out[`hidden_${l}`].data, round3));
+  }
 
   const logits = out.logits.data;
   const final = logits.subarray((seq - 1) * VOCAB, seq * VOCAB);
+  const finalLogits = Array.from(final, round3);
   const probs = softmax(final);
   const topk = [...probs.keys()]
     .sort((a, b) => probs[b] - probs[a])
@@ -84,7 +89,9 @@ for (const text of SENTENCES) {
     scores,
     tokEmb,
     posEmb,
+    hiddens,
     topk,
+    finalLogits,
   });
   console.log(`${JSON.stringify(text)} -> ${seq} tokens, top: ${topk[0].token}`);
 }
