@@ -2,7 +2,6 @@
 
 import { STAGES } from "@/lib/journey";
 import { useJourneyStore } from "@/lib/store";
-import { LensToggle } from "./LensToggle";
 
 export function TopBar() {
   const activeStage = useJourneyStore((s) => s.activeStage);
@@ -28,9 +27,7 @@ export function TopBar() {
           </p>
           <p className="mt-1 text-faint">Scroll / arrow keys / rail</p>
         </div>
-        <div className="pointer-events-auto justify-self-end">
-          <LensToggle />
-        </div>
+        <div aria-hidden />
       </header>
       <aside className="pointer-events-auto fixed right-4 bottom-28 left-4 z-40 border border-line bg-abyss/92 p-4 text-center backdrop-blur-sm md:hidden">
         <p className="font-mono text-[11px] uppercase tracking-wide3 text-accent">

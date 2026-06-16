@@ -18,7 +18,8 @@ const REGION: Record<BeatAnchor, string> = {
   center: "left-1/2 top-[34%] -translate-x-1/2 -translate-y-1/2 text-center items-center max-w-[40rem]",
   "top-left": "left-16 top-28 max-w-[26rem]",
   "bottom-left": "left-16 bottom-32 max-w-[26rem]",
-  right: "right-12 top-1/2 -translate-y-1/2 max-w-[22rem] text-right items-end",
+  right:
+    "left-[19rem] top-[42%] -translate-y-1/2 max-w-[24rem] text-left items-start",
 };
 
 export function StageCaptions() {
@@ -36,8 +37,8 @@ export function StageCaptions() {
   const region =
     current.anchor === "right"
       ? deepDiveOpen
-        ? "right-[30rem] top-1/2 -translate-y-1/2 max-w-[22rem] text-right items-end"
-        : "right-[18rem] top-1/2 -translate-y-1/2 max-w-[22rem] text-right items-end"
+        ? "left-[19rem] top-[42%] -translate-y-1/2 max-w-[22rem] text-left items-start"
+        : REGION.right
       : REGION[current.anchor];
 
   return (
