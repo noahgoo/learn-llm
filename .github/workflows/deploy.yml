@@ -15,6 +15,13 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      DEPLOY_TARGET: gh-pages
+      NEXT_PUBLIC_BASE_PATH: /learn-llm
+      # Model weights ship as a Release asset (160 MB — too large for git).
+      # Bump this tag and upload a fresh gpt2-instrumented.onnx whenever the
+      # export changes:  gh release create <tag> public/model/gpt2-instrumented.onnx
+      MODEL_RELEASE_TAG: model-v1
     steps:
       - uses: actions/checkout@v4
 
@@ -26,11 +33,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Vendor ONNX Runtime wasm runtime
+        run: bash scripts/vendor-ort.sh
+
+      - name: Fetch model weights from release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p public/model
+          gh release download "$MODEL_RELEASE_TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern gpt2-instrumented.onnx \
+            --dir public/model \
+            --clobber
+
       - name: Build
         run: npm run build
-        env:
-          DEPLOY_TARGET: gh-pages
-          NEXT_PUBLIC_BASE_PATH: /learn-llm
 
       - name: Add .nojekyll
         run: touch out/.nojekyll

@@ -4,11 +4,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-echo "==> ORT wasm runtime -> public/ort/"
-mkdir -p public/ort
-cp node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.jsep.{mjs,wasm} \
-   node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.{mjs,wasm} \
-   public/ort/
+bash "$(dirname "$0")/vendor-ort.sh"
 
 if [ ! -f public/model/gpt2-instrumented.onnx ]; then
   echo "==> Python venv + instrumented GPT-2 export (one-time, ~5 min)"
