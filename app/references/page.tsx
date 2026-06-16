@@ -1,7 +1,7 @@
 import Link from "next/link";
 import citations from "@/content/citations.json";
 
-export const metadata = { title: "References — Inside the Model" };
+export const metadata = { title: "References — Learn LLM: Inside the Model" };
 
 /** Every source cited anywhere in the journey, in one place. */
 export default function ReferencesPage() {
