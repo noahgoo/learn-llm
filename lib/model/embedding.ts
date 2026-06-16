@@ -1,5 +1,14 @@
 /** Pure projection math for the embedding-space visualization. */
 
+/**
+ * World-space scale applied to every projected point (cloud + user tokens)
+ * when rendering the embedding space. The raw PCA spread is ~30 units wide;
+ * compressing it keeps the user's scattered tokens inside a single camera
+ * frame. Applied identically to the cloud and the tokens so they stay
+ * aligned (and neighbor links stay correct).
+ */
+export const CLOUD_VIEW_SCALE = 0.6;
+
 export interface EmbeddingCloud {
   scale: number;
   mean: number[];

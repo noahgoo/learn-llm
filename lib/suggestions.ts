@@ -5,6 +5,8 @@
  * for illustrative mode.
  */
 export const SUGGESTIONS = [
+  "Photosynthesis is the process by",
+  "Tokenization is",
   "The cat sat on the",
   "Once upon a time, there was a",
   "The capital of France is",
@@ -12,4 +14,5 @@ export const SUGGESTIONS = [
   "To be or not to be, that is the",
   "The quick brown fox jumps over the",
   "It was a dark and stormy",
+  "Antidisestablishmentarianism is a",
 ] as const;
