@@ -12,6 +12,7 @@ import {
   type EmbeddingCloud,
 } from "@/lib/model/embedding";
 import { useActiveOutput } from "@/lib/model/data";
+import type { ModelOutput } from "@/lib/model/protocol";
 import { useAttentionStore, useJourneyStore } from "@/lib/store";
 import { TokenChip } from "./stages/TokenChip";
 
@@ -60,9 +61,6 @@ export function TokenFlow() {
   const output = useActiveOutput(prompt);
   const activeStage = useJourneyStore((s) => s.activeStage);
   const beat = useJourneyStore((s) => s.beat);
-  const beatProgress = useJourneyStore((s) => s.beatProgress);
-  const layer = useAttentionStore((s) => s.layer);
-  const head = useAttentionStore((s) => s.head);
 
   const groups = useRef<(THREE.Group | null)[]>([]);
   const chipScale = useRef<(THREE.Group | null)[]>([]);
@@ -273,10 +271,6 @@ export function TokenFlow() {
   const settled = activeStage === EMB && beat >= 2;
   const attentionVisible = activeStage === ATT;
   const queryIndex = Math.max(0, data.n - 1);
-  const attentionSource = output.attention[layer];
-  const attentionWeight = (keyIndex: number) =>
-    attentionSource?.[(head * data.n + queryIndex) * data.n + keyIndex] ?? 0;
-  const sweepCount = Math.ceil(queryIndex * beatProgress);
 
   return (
     <group>
@@ -393,38 +387,87 @@ export function TokenFlow() {
         ))}
 
       {/* one query token visibly looks back before the matrix takes over */}
-      {attentionVisible &&
-        beat === 0 &&
-        data.attRow.slice(0, queryIndex).map((p, i) => {
-          const shown = i >= queryIndex - Math.max(1, sweepCount);
-          if (!shown) return null;
-          return (
+      {attentionVisible && <AttentionArcs attRow={data.attRow} output={output} />}
+    </group>
+  );
+}
+
+/**
+ * Attention look-back arcs for the attention stage. Split out of TokenFlow so
+ * the beat/beatProgress that drive the sweep and matrix-fade re-render only this
+ * small component each scroll frame instead of the whole token tree. The arc
+ * geometry is memoized (stable across beat/beatProgress) so drei <Line> reuses
+ * its geometry; only opacity and which lines mount change per frame.
+ */
+function AttentionArcs({
+  attRow,
+  output,
+}: {
+  attRow: Vec3[];
+  output: ModelOutput;
+}) {
+  const layer = useAttentionStore((s) => s.layer);
+  const head = useAttentionStore((s) => s.head);
+  const beat = useJourneyStore((s) => s.beat);
+  const beatProgress = useJourneyStore((s) => s.beatProgress);
+  const n = attRow.length;
+  const queryIndex = Math.max(0, n - 1);
+
+  // geometry + per-weight styling; rebuilt only when head/layer/tokens change
+  const { sweep, attn } = useMemo(() => {
+    const source = output.attention[layer];
+    const weight = (k: number) =>
+      source?.[(head * n + queryIndex) * n + k] ?? 0;
+    const sweep = attRow
+      .slice(0, queryIndex)
+      .map((p) => arcPoints(attRow[queryIndex], p, 0.7));
+    const attn = attRow.slice(0, queryIndex + 1).map((p, i) => {
+      const w = weight(i);
+      return {
+        points: arcPoints(attRow[queryIndex], p, 0.8 + w * 1.2),
+        color: i === queryIndex ? "#ffb454" : "#c9b4ff",
+        opacity: 0.22 + Math.min(0.78, w * 3),
+        width: 1 + Math.min(5, w * 18),
+      };
+    });
+    return { sweep, attn };
+  }, [attRow, output.attention, layer, head, n, queryIndex]);
+
+  // beat 0: one query token sweeps its look-back, revealing arcs right-to-left
+  if (beat === 0) {
+    const sweepCount = Math.max(1, Math.ceil(queryIndex * beatProgress));
+    return (
+      <>
+        {sweep.map((points, i) =>
+          i >= queryIndex - sweepCount ? (
             <Line
               key={`sweep-${i}`}
-              points={arcPoints(data.attRow[queryIndex], p, 0.7)}
+              points={points}
               color="#ffb454"
               transparent
               opacity={0.35}
               lineWidth={1}
             />
-          );
-        })}
-      {attentionVisible &&
-        beat >= 1 &&
-        data.attRow.slice(0, queryIndex + 1).map((p, i) => {
-          const w = attentionWeight(i);
-          const fadeForMatrix = beat >= 2 ? 1 - smoothstep(beatProgress) : 1;
-          return (
-            <Line
-              key={`attn-${i}`}
-              points={arcPoints(data.attRow[queryIndex], p, 0.8 + w * 1.2)}
-              color={i === queryIndex ? "#ffb454" : "#c9b4ff"}
-              transparent
-              opacity={(0.22 + Math.min(0.78, w * 3)) * fadeForMatrix}
-              lineWidth={1 + Math.min(5, w * 18)}
-            />
-          );
-        })}
-    </group>
+          ) : null,
+        )}
+      </>
+    );
+  }
+
+  // beat >=1: weighted arcs; beat >=2: fade out as the matrix takes over
+  const fade = beat >= 2 ? 1 - smoothstep(beatProgress) : 1;
+  return (
+    <>
+      {attn.map((arc, i) => (
+        <Line
+          key={`attn-${i}`}
+          points={arc.points}
+          color={arc.color}
+          transparent
+          opacity={arc.opacity * fade}
+          lineWidth={arc.width}
+        />
+      ))}
+    </>
   );
 }
