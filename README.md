@@ -4,6 +4,8 @@ An interactive 3D guide to how transformer-based LLMs work. Type text and watch 
 
 The live demo uses an instrumented GPT-2 small model in the browser, while the explanations connect each step to modern LLM design.
 
+Built with Next.js 16, React 19, and TypeScript, with the 3D scene rendered via Three.js (@react-three/fiber + drei) and styled with Tailwind CSS v4. Tests run on Vitest.
+
 ## Highlights
 
 - Scroll-driven 3D journey through the model pipeline
