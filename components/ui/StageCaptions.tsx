@@ -1,10 +1,39 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useEffect, useState } from "react";
 import { beatsFor, type BeatAnchor } from "@/content/stages/beats";
 import { STAGES } from "@/lib/journey";
 import { useJourneyStore } from "@/lib/store";
 import { Cite } from "./Cite";
+
+/**
+ * Landing garnish: the suggested prompt types itself out, cursor and all —
+ * the hero says "this thing is alive and takes input" before a single
+ * scroll. Static under reduced motion.
+ */
+function TypedPrompt() {
+  const prompt = useJourneyStore((s) => s.prompt);
+  const reduceMotion = useReducedMotion();
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    if (reduceMotion) return;
+    let i = 0;
+    const timer = setInterval(() => {
+      i += 1;
+      setN(i);
+      if (i >= prompt.length) clearInterval(timer);
+    }, 55);
+    return () => clearInterval(timer);
+  }, [prompt, reduceMotion]);
+  const shown = reduceMotion ? prompt : prompt.slice(0, n);
+  return (
+    <p className="font-mono text-[13px] text-peri">
+      &ldquo;{shown}
+      <span className="animate-pulse text-accent">▌</span>&rdquo;
+    </p>
+  );
+}
 
 /**
  * Hybrid text lane (DOM half): the active beat's headline + caption fades
@@ -55,6 +84,7 @@ export function StageCaptions() {
             tokens, embeddings, attention, and its next-word guess. The whole
             model runs live, right here in your browser.
           </p>
+          <TypedPrompt />
           <div className="mt-3 flex flex-col items-center gap-2 text-accent">
             <span className="rounded-full border border-accent-dim bg-abyss/90 px-5 py-2 font-mono text-[11px] uppercase tracking-wide2 backdrop-blur-sm">
               Scroll to begin

@@ -2,11 +2,13 @@
 
 import { Canvas } from "@react-three/fiber";
 import { PerformanceMonitor, Stars } from "@react-three/drei";
+import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { useFixtureStore } from "@/lib/model/data";
 import { BlockTower } from "./BlockTower";
 import { CameraRig } from "./CameraRig";
 import { Conduit } from "./Conduit";
+import { PhaseColor } from "./PhaseColor";
 import { Stations } from "./Stations";
 import { TheatreDriver } from "./TheatreDriver";
 import { TokenFlow } from "./TokenFlow";
@@ -63,6 +65,8 @@ export function Experience() {
 
   // adaptive resolution: start mid, let PerformanceMonitor scale 1..2 by GPU headroom
   const [dpr, setDpr] = useState(1.5);
+  // bloom is the first thing to go when the GPU struggles
+  const [bloom, setBloom] = useState(true);
   // stop rendering entirely while the tab is backgrounded (saves CPU/GPU/battery)
   const [frameloop, setFrameloop] = useState<"always" | "never">("always");
   useEffect(() => {
@@ -83,10 +87,14 @@ export function Experience() {
       gl={{ antialias: true, powerPreference: "high-performance" }}
     >
       <PerformanceMonitor
-        onChange={({ factor }) => setDpr(Math.min(2, Math.max(1, 1 + factor)))}
+        onChange={({ factor }) => {
+          setDpr(Math.min(2, Math.max(1, 1 + factor)));
+          setBloom(factor > 0.25);
+        }}
       />
       <color attach="background" args={["#06040c"]} />
       <fog attach="fog" args={["#06040c", 60, 220]} />
+      <PhaseColor />
       <Stars radius={180} depth={120} count={3200} factor={3} saturation={0.6} fade speed={0.4} />
       <CameraRig />
       <TheatreDriver />
@@ -95,6 +103,16 @@ export function Experience() {
       <TokenStream />
       <TokenFlow />
       <Stations />
+      {bloom && (
+        <EffectComposer>
+          <Bloom
+            mipmapBlur
+            luminanceThreshold={0.35}
+            intensity={0.65}
+            radius={0.7}
+          />
+        </EffectComposer>
+      )}
     </Canvas>
   );
 }

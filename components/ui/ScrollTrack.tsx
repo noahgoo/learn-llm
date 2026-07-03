@@ -143,12 +143,35 @@ export function ScrollTrack() {
       raf = requestAnimationFrame(loop);
     }
 
+    // Soft snap gravity: when scrolling rests mid-beat NEAR a beat boundary,
+    // drift gently to it so readers settle on complete states. Deliberately
+    // weak — only pulls within 0.3 units, never mid-dwell, and any user
+    // input interrupts it (Lenis). Off under reduced motion (no Lenis).
+    let snapTimer: ReturnType<typeof setTimeout> | null = null;
+    const armSnap = () => {
+      if (!lenis) return;
+      if (snapTimer) clearTimeout(snapTimer);
+      snapTimer = setTimeout(() => {
+        const state = useJourneyStore.getState();
+        if (!state.entered) return;
+        const pos = state.progress * JOURNEY_UNITS;
+        const nearest = Math.round(pos);
+        const dist = Math.abs(pos - nearest);
+        if (dist > 0.02 && dist < 0.3) {
+          scrollToProgress(nearest / JOURNEY_UNITS);
+        }
+      }, 700);
+    };
+    window.addEventListener("scroll", armSnap, { passive: true });
+
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("keydown", onKeyDown);
     return () => {
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("scroll", armSnap);
       window.removeEventListener("keydown", onKeyDown);
+      if (snapTimer) clearTimeout(snapTimer);
       if (raf !== null) cancelAnimationFrame(raf);
       lenis?.destroy();
       lenis = null;

@@ -4,6 +4,7 @@ import { useFrame } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { STAGE_COUNT, TOWER_AXIS } from "@/lib/journey";
+import { useModelStore } from "@/lib/model/client";
 import { useJourneyStore } from "@/lib/store";
 
 const SLAB_COUNT = 12; // GPT-2 small: 12 transformer blocks
@@ -45,9 +46,17 @@ export function BlockTower() {
   const groups = useRef<(THREE.Group | null)[]>([]);
   const fills = useRef<(THREE.MeshBasicMaterial | null)[]>([]);
   const lines = useRef<(THREE.LineBasicMaterial | null)[]>([]);
+  const weights = useRef<(THREE.MeshBasicMaterial | null)[]>([]);
 
   useFrame(() => {
     const { cameraT } = useJourneyStore.getState();
+    // Preloader-as-lesson: while the real GPT-2 downloads, its weights
+    // visibly pour into the skeleton, slab by slab, bottom-up. In fixture
+    // mode (no download) the tower stays an empty frame — architecture
+    // without learned parameters, which is exactly the lesson.
+    const { status, progress } = useModelStore.getState();
+    const weightsFill =
+      status === "ready" ? 1 : status === "loading" ? progress : 0;
     for (let i = 0; i < SLAB_COUNT; i++) {
       const g = groups.current[i];
       if (!g) continue;
@@ -61,6 +70,12 @@ export function BlockTower() {
       const line = lines.current[i];
       if (fill) fill.opacity = 0.03 * s;
       if (line) line.opacity = 0.18 * s;
+      const w = weights.current[i];
+      if (w) {
+        // slab i's share of the download: fills when progress passes i/12
+        const filled = Math.min(1, Math.max(0, weightsFill * SLAB_COUNT - i));
+        w.opacity = 0.09 * filled * s;
+      }
     }
   });
 
@@ -96,6 +111,19 @@ export function BlockTower() {
               depthWrite={false}
             />
           </lineSegments>
+          {/* the weights: an inner glow that exists only once downloaded */}
+          <mesh scale={[0.86, 0.68, 0.86]} geometry={slabGeometry}>
+            <meshBasicMaterial
+              ref={(el) => {
+                weights.current[i] = el;
+              }}
+              color="#c9b4ff"
+              transparent
+              opacity={0}
+              blending={THREE.AdditiveBlending}
+              depthWrite={false}
+            />
+          </mesh>
         </group>
       ))}
     </group>

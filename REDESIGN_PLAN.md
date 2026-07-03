@@ -99,15 +99,23 @@ camera and organs *do* along that spine — it does not replace the timeline.
 
 ## Phase 4 — Cinematic polish
 
-- [ ] **Preloader-as-lesson**: model download % visibly fills the empty tower skeleton
-      with weights. Loading teaches "a model is weights."
-- [ ] `@react-three/postprocessing`: selective bloom on the conduit, DoF in the POV
-      shot — perf-budgeted; adaptive DPR already handles fallback.
-- [ ] Phase color temperature: input = peri → compute = violet → output = signal amber
-      (fog/light tint only; tokens unchanged).
-- [ ] Scrub-symmetric captions (MotionValue-driven, reverse scroll mirrors forward).
-- [ ] Soft snap gravity to beat boundaries at rest (weak; reduced-motion off).
-- [ ] Landing: suggested prompt types itself into the scene.
+- [x] **Preloader-as-lesson**: while GPT-2 downloads, weights visibly pour into the
+      tower slab-by-slab, bottom-up (inner additive glow per slab, gated by build
+      state). Fixture mode leaves the skeleton empty — architecture without
+      parameters, which is the lesson.
+- [x] Bloom (`@react-three/postprocessing`): mipmap bloom catches the conduit
+      particles, core, and glow markers; first thing disabled when
+      PerformanceMonitor reports low headroom. _DoF in the POV shot deferred —
+      wants live tuning._
+- [x] Phase color temperature (`PhaseColor`): background + fog drift peri → violet →
+      ember across acts, blended over the boundary travels. Near-black tints; brand
+      tokens untouched.
+- [ ] Scrub-symmetric captions (MotionValue-driven, reverse scroll mirrors forward) —
+      the interstitial already scrubs; beat captions still crossfade on time.
+- [x] Soft snap gravity: at rest within 0.3 units of a beat boundary, drift to it
+      (700ms idle arm, ±0.02 dead zone, user input interrupts, off with
+      reduced motion).
+- [x] Landing: the suggested prompt types itself out under the hero, cursor and all.
 
 ## Standing constraints
 
