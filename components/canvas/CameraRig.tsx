@@ -46,10 +46,11 @@ export function CameraRig() {
 
   const smoothed = useRef(0);
   const dolly = useRef(0);
+  const parallax = useRef({ x: 0, y: 0 });
   const target = useMemo(() => new THREE.Vector3(), []);
   const look = useMemo(() => new THREE.Vector3(), []);
 
-  useFrame((_, rawDelta) => {
+  useFrame(({ pointer }, rawDelta) => {
     const { cameraT, activeStage, beat, beatProgress, traveling } =
       useJourneyStore.getState();
 
@@ -83,6 +84,16 @@ export function CameraRig() {
     }
     camera.position.copy(target);
     camera.lookAt(look);
+    // Noomo-style aliveness: ±1° camera drift toward the pointer, spring-
+    // smoothed so it trails the mouse rather than tracking it rigidly.
+    if (!reducedMotion) {
+      const p = parallax.current;
+      const ease = 1 - Math.exp(-3 * delta);
+      p.x += (pointer.x - p.x) * ease;
+      p.y += (pointer.y - p.y) * ease;
+      camera.rotation.y -= p.x * 0.02;
+      camera.rotation.x += p.y * 0.014;
+    }
   });
 
   return null;

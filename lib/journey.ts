@@ -185,6 +185,12 @@ export interface JourneyPosition {
   cameraT: number;
   /** True while flying between stations (dwell bands set false). */
   traveling: boolean;
+  /**
+   * Progress through the current travel band, 0..1 (0 whenever dwelling).
+   * Scrubs travel choreography — ghost numerals, arrival titles, builds —
+   * so reverse scrolling mirrors forward exactly.
+   */
+  travelProgress: number;
 }
 
 const smoothstep = (t: number) => t * t * (3 - 2 * t);
@@ -211,6 +217,7 @@ export function journeyFromProgress(progress: number): JourneyPosition {
         beatProgress: Math.min(1, local - beatIndex),
         cameraT: i / denom,
         traveling: false,
+        travelProgress: 0,
       };
     }
     cursor += beats;
@@ -224,6 +231,7 @@ export function journeyFromProgress(progress: number): JourneyPosition {
         beatProgress: here === i ? 1 : 0,
         cameraT: (i + smoothstep(f)) / denom,
         traveling: true,
+        travelProgress: f,
       };
     }
     cursor += TRAVEL_UNITS;
@@ -235,6 +243,7 @@ export function journeyFromProgress(progress: number): JourneyPosition {
     beatProgress: 1,
     cameraT: 1,
     traveling: false,
+    travelProgress: 0,
   };
 }
 

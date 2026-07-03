@@ -61,14 +61,18 @@ camera and organs *do* along that spine — it does not replace the timeline.
 
 ## Phase 2 — Choreography
 
-- [ ] **Build-on-approach**: Theatre sequences scrubbed by approach progress — tower
-      stacks floor-by-floor, embedding tiles fly in, heads unfold. Travel bands become
-      construction time; delete the "In transit" box.
-- [ ] Typographic arrivals: giant serif stage title docks into the StagePanel chip;
-      oversized ghost stage numerals during travel.
+- [x] **Build-on-approach, part 1**: BlockTower stacks floor-by-floor during the
+      flight into attention, scrubbed by `cameraT` (reverse scroll un-builds it).
+      "In transit" box deleted. _Remaining: per-organ builds (embedding tiles fly in,
+      heads unfold) — Theatre-authored once choreography is tuned in studio._
+- [x] Typographic arrivals: `TravelInterstitial` — oversized ghost stage numeral
+      peaks mid-flight; the arriving title rises through the back half and hands off
+      to the StagePanel chip at arrival. Scrubbed by the new `travelProgress`
+      (journey.ts → store), so it's fully scrub-symmetric. _Remaining: true
+      shared-element docking into the chip._
 - [ ] **One POV moment**: camera drops into the conduit and rides through a block
       interior first-person (Noomo tunnel transition, pedagogically loaded).
-- [ ] Mouse parallax drift (±1°) on the camera.
+- [x] Mouse parallax drift (±1°) on the camera, spring-smoothed, reduced-motion off.
 
 ## Phase 3 — Chrome & narrative (the Apple layer)
 

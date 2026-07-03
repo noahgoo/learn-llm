@@ -131,23 +131,6 @@ export function StageCaptions() {
           )}
         </motion.div>
       </AnimatePresence>
-      <AnimatePresence>
-        {traveling && (
-          <motion.div
-            key="travel-marker"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
-            className="fixed bottom-[22%] left-1/2 z-10 -translate-x-1/2 border border-line bg-abyss/82 px-4 py-3 text-center font-mono uppercase tracking-wide2 backdrop-blur-sm"
-          >
-            <p className="text-[11px] text-accent">In transit</p>
-            <p className="mt-1 text-[11px] text-faint">
-              Arriving at {stage.title}
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

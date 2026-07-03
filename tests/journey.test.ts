@@ -74,6 +74,30 @@ describe("journey", () => {
     }
   });
 
+  it("scrubs travelProgress through travel bands and zeroes it in dwells", () => {
+    let prevF = -1;
+    let wasTraveling = false;
+    let sawTravel = false;
+    for (let p = 0; p <= 1.0001; p += 0.002) {
+      const j = journeyFromProgress(Math.min(1, p));
+      if (j.traveling) {
+        sawTravel = true;
+        expect(j.travelProgress).toBeGreaterThanOrEqual(0);
+        expect(j.travelProgress).toBeLessThanOrEqual(1);
+        // monotonic within a single band
+        if (wasTraveling) {
+          expect(j.travelProgress).toBeGreaterThanOrEqual(prevF - 1e-9);
+        }
+        prevF = j.travelProgress;
+      } else {
+        expect(j.travelProgress).toBe(0);
+        prevF = -1;
+      }
+      wasTraveling = j.traveling;
+    }
+    expect(sawTravel).toBe(true);
+  });
+
   it("walks every stage in its dwell band, in order", () => {
     for (let i = 0; i < STAGE_COUNT; i++) {
       const j = journeyFromProgress(scrollOffsetForStage(i) + 1e-6);

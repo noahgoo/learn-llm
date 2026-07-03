@@ -10,6 +10,7 @@ import { StageCaptions } from "./StageCaptions";
 import { StagePanel } from "./StagePanel";
 import { Telemetry } from "./Telemetry";
 import { TopBar } from "./TopBar";
+import { TravelInterstitial } from "./TravelInterstitial";
 
 /**
  * Full DOM overlay above the 3D canvas. Everything here is HUD chrome;
@@ -20,6 +21,7 @@ export function Hud() {
     <div className="pointer-events-none fixed inset-0 z-10">
       <TopBar />
       <ProgressRail />
+      <TravelInterstitial />
       <StagePanel />
       <StageCaptions />
       <DeepDive />

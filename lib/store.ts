@@ -58,12 +58,15 @@ interface JourneyState {
   beatProgress: number;
   /** True while the camera is flying between stations */
   traveling: boolean;
+  /** Progress through the current travel band, 0..1 (0 while dwelling) */
+  travelProgress: number;
   /** Update the beat-scroll position in one shot (called per scroll event) */
   setJourney: (j: {
     activeStage: number;
     beat: number;
     beatProgress: number;
     traveling: boolean;
+    travelProgress: number;
   }) => void;
   /** Camera path parameter, 0..1. Read per-frame by the camera rig. */
   cameraT: number;
@@ -92,8 +95,9 @@ export const useJourneyStore = create<JourneyState>()((set) => ({
   beat: 0,
   beatProgress: 0,
   traveling: false,
-  setJourney: ({ activeStage, beat, beatProgress, traveling }) =>
-    set({ activeStage, beat, beatProgress, traveling }),
+  travelProgress: 0,
+  setJourney: ({ activeStage, beat, beatProgress, traveling, travelProgress }) =>
+    set({ activeStage, beat, beatProgress, traveling, travelProgress }),
   cameraT: 0,
   setCameraT: (cameraT) => set({ cameraT }),
   progress: 0,

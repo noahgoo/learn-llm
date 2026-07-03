@@ -93,13 +93,15 @@ export function ScrollTrack() {
         state.activeStage !== j.stageIndex ||
         state.beat !== j.beatIndex ||
         state.traveling !== j.traveling ||
-        Math.abs(state.beatProgress - j.beatProgress) > 0.001
+        Math.abs(state.beatProgress - j.beatProgress) > 0.001 ||
+        Math.abs(state.travelProgress - j.travelProgress) > 0.001
       ) {
         setJourney({
           activeStage: j.stageIndex,
           beat: j.beatIndex,
           beatProgress: j.beatProgress,
           traveling: j.traveling,
+          travelProgress: j.travelProgress,
         });
       }
     };

@@ -1,0 +1,76 @@
+"use client";
+
+import { motion, useMotionValue } from "motion/react";
+import { useEffect, useState } from "react";
+import { STAGES } from "@/lib/journey";
+import { useJourneyStore } from "@/lib/store";
+
+/**
+ * Travel-band typography, scrubbed directly by scroll (no time-fired
+ * animation, so reverse scrolling mirrors forward exactly):
+ *
+ *  - a huge ghost stage numeral behind the scene, peaking mid-flight
+ *  - the arriving stage's title, rising through the back half of the
+ *    flight and gone by arrival — the StagePanel chip takes over.
+ *
+ * High-frequency values ride MotionValues fed by a store subscription;
+ * React only re-renders when the *target stage* changes.
+ */
+export function TravelInterstitial() {
+  const numeralOpacity = useMotionValue(0);
+  const titleOpacity = useMotionValue(0);
+  const titleY = useMotionValue(24);
+  const [target, setTarget] = useState(-1);
+
+  useEffect(() => {
+    let currentTarget = -1;
+    return useJourneyStore.subscribe((s) => {
+      if (!s.traveling) {
+        numeralOpacity.set(0);
+        titleOpacity.set(0);
+        return;
+      }
+      const f = s.travelProgress;
+      // during the first half activeStage is still the departed station
+      const t = f < 0.5 ? s.activeStage + 1 : s.activeStage;
+      if (t !== currentTarget) {
+        currentTarget = t;
+        setTarget(t);
+      }
+      // numeral: swells in, dissolves before arrival
+      numeralOpacity.set(Math.sin(Math.PI * f) * 0.9);
+      // title: rises through the back half, gone by f = 1
+      const back = Math.max(0, (f - 0.45) / 0.55);
+      titleOpacity.set(Math.sin(Math.PI * back));
+      titleY.set((1 - back) * 24);
+    });
+  }, [numeralOpacity, titleOpacity, titleY]);
+
+  const stage = STAGES[target];
+  if (!stage) return null;
+
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none fixed inset-0 z-[5] flex flex-col items-center justify-center"
+    >
+      <motion.p
+        style={{ opacity: numeralOpacity }}
+        className="font-mono text-[24vw] leading-none font-bold tracking-tighter text-transparent [-webkit-text-stroke:1.5px_var(--color-line)]"
+      >
+        {String(target + 1).padStart(2, "0")}
+      </motion.p>
+      <motion.div
+        style={{ opacity: titleOpacity, y: titleY }}
+        className="absolute flex flex-col items-center gap-3 text-center"
+      >
+        <p className="font-mono text-[11px] uppercase tracking-wide3 text-accent">
+          {stage.phase}
+        </p>
+        <h2 className="font-display text-6xl leading-[1.02] text-ink [text-shadow:_0_2px_24px_rgb(6_4_12_/_0.95)]">
+          {stage.title}
+        </h2>
+      </motion.div>
+    </div>
+  );
+}
