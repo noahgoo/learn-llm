@@ -7,6 +7,8 @@ import { cameraKeyframe, STAGE_COUNT, STAGES, stationPosition } from "@/lib/jour
 import { useJourneyStore } from "@/lib/store";
 
 const EMBEDDINGS_INDEX = STAGES.findIndex((s) => s.id === "embeddings");
+/** Travel band that becomes the first-person conduit ride (ffn → residual). */
+const POV_FROM = STAGES.findIndex((s) => s.id === "ffn");
 /**
  * How far (0..1 of the way to the station) the embeddings dwell flies in.
  * Disabled for the authored first-four-phase pass: the embedding cloud needs
@@ -49,6 +51,8 @@ export function CameraRig() {
   const parallax = useRef({ x: 0, y: 0 });
   const target = useMemo(() => new THREE.Vector3(), []);
   const look = useMemo(() => new THREE.Vector3(), []);
+  const povPoint = useMemo(() => new THREE.Vector3(), []);
+  const povAhead = useMemo(() => new THREE.Vector3(), []);
 
   useFrame(({ pointer }, rawDelta) => {
     const { cameraT, activeStage, beat, beatProgress, traveling } =
@@ -81,6 +85,23 @@ export function CameraRig() {
     // fly toward the station center as the dolly deepens (embeddings push-in)
     if (dolly.current > 1e-3) {
       target.lerp(look, dolly.current);
+    }
+    // The POV moment: on the ffn → residual travel the camera dives onto
+    // the conduit itself and rides it first-person up the tower core —
+    // "this is what happens to your word". Blend is a sine of travel
+    // fraction, so it enters/exits seamlessly and scrubs symmetrically.
+    // (Skipped under reduced motion: the standard framing stays.)
+    if (!reducedMotion) {
+      const u = t * (STAGE_COUNT - 1) - POV_FROM;
+      if (u > 0 && u < 1) {
+        const dive = Math.sin(Math.PI * u);
+        stationPath.getPoint(Math.min(t + 0.008, 1), povPoint);
+        povPoint.setY(povPoint.y + 0.8); // ride just above the stream
+        target.lerp(povPoint, dive);
+        // gaze further down the tunnel while inside it
+        stationPath.getPoint(Math.min(t + 0.08, 1), povAhead);
+        look.lerp(povAhead, dive);
+      }
     }
     camera.position.copy(target);
     camera.lookAt(look);

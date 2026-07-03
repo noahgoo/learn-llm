@@ -63,15 +63,20 @@ camera and organs *do* along that spine — it does not replace the timeline.
 
 - [x] **Build-on-approach, part 1**: BlockTower stacks floor-by-floor during the
       flight into attention, scrubbed by `cameraT` (reverse scroll un-builds it).
-      "In transit" box deleted. _Remaining: per-organ builds (embedding tiles fly in,
-      heads unfold) — Theatre-authored once choreography is tuned in studio._
+      "In transit" box deleted.
+- [x] **Build-on-approach, part 2**: `ApproachReveal` in Stations — every station's
+      contents rise and scale into place across the final approach, complete just
+      before arrival. _Fine-grained interior builds (individual embedding tiles,
+      head fans) remain Theatre-studio work._
 - [x] Typographic arrivals: `TravelInterstitial` — oversized ghost stage numeral
       peaks mid-flight; the arriving title rises through the back half and hands off
       to the StagePanel chip at arrival. Scrubbed by the new `travelProgress`
       (journey.ts → store), so it's fully scrub-symmetric. _Remaining: true
       shared-element docking into the chip._
-- [ ] **One POV moment**: camera drops into the conduit and rides through a block
-      interior first-person (Noomo tunnel transition, pedagogically loaded).
+- [x] **One POV moment**: on the ffn → residual travel the camera dives onto the
+      conduit and rides it first-person up the tower core, gaze pushed down the
+      tunnel — arriving at the Residual Stream stage having just BEEN the stream.
+      Sine-blended in/out, scrub-symmetric, skipped under reduced motion.
 - [x] Mouse parallax drift (±1°) on the camera, spring-smoothed, reduced-motion off.
 
 ## Phase 3 — Chrome & narrative (the Apple layer)
