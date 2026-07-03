@@ -101,6 +101,15 @@ html.lenis body {
   background: var(--color-line);
 }
 
+/* One chrome recipe for every HUD pane and chip: hairline border, abyss
+   fill, soft backdrop blur. Replaces the drifting bg-abyss/70..95 mix. */
+@utility pane {
+  border-width: 1px;
+  border-color: var(--color-line);
+  background-color: rgb(12 9 22 / 0.88);
+  backdrop-filter: blur(6px);
+}
+
 /* Violet glow for active markers */
 .glow-accent {
   box-shadow:

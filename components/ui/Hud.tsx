@@ -3,6 +3,7 @@
 import { AttentionControls } from "./AttentionControls";
 import { DeepDive } from "./DeepDive";
 import { EndCard } from "./EndCard";
+import { KineticStat } from "./KineticStat";
 import { ProgressRail } from "./ProgressRail";
 import { PromptInput } from "./PromptInput";
 import { PredictionControls } from "./PredictionControls";
@@ -24,6 +25,7 @@ export function Hud() {
       <TravelInterstitial />
       <StagePanel />
       <StageCaptions />
+      <KineticStat />
       <DeepDive />
       <PromptInput />
       <AttentionControls />

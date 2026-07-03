@@ -152,6 +152,33 @@ export const STAGES: Stage[] = [
 export const STAGE_COUNT = STAGES.length;
 
 /**
+ * The three acts of the journey — the macro-rhythm above the 10 stages.
+ * Mirrors the model's real anatomy: the input pipeline, the repeated
+ * transformer block (×12), and the output head. Drives the progress rail
+ * grouping, the TopBar breadcrumb, and the chapter dividers shown when a
+ * travel band crosses an act boundary.
+ */
+export interface Act {
+  numeral: string;
+  title: string;
+  /** Inclusive stage-index range. */
+  range: [number, number];
+  /** Small badge shown next to the act label (e.g. the block's ×12). */
+  badge?: string;
+}
+
+export const ACTS: Act[] = [
+  { numeral: "I", title: "Input", range: [0, 2] },
+  { numeral: "II", title: "Compute", range: [3, 7], badge: "×12" },
+  { numeral: "III", title: "Output", range: [8, 9] },
+];
+
+export function actIndexForStage(stage: number): number {
+  const i = ACTS.findIndex((a) => stage >= a.range[0] && stage <= a.range[1]);
+  return i === -1 ? ACTS.length - 1 : i;
+}
+
+/**
  * Beat-scroll timeline. The journey is a sequence of bands laid end to end:
  * each stage contributes a `dwell` band `beats` units long (camera parked,
  * text + visuals advance beat by beat) followed by a `travel` band of

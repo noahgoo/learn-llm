@@ -32,9 +32,14 @@ export function Conduit() {
 
   const particles = useRef<THREE.InstancedMesh>(null);
   const dummy = useMemo(() => new THREE.Object3D(), []);
-  // per-particle phase offsets, fixed at mount
+  // per-particle phase offsets: golden-ratio sequence — evenly scattered,
+  // deterministic (render-pure), never clumps
   const phases = useMemo(
-    () => Float32Array.from({ length: PARTICLE_COUNT }, () => Math.random()),
+    () =>
+      Float32Array.from(
+        { length: PARTICLE_COUNT },
+        (_, i) => (i * 0.6180339887) % 1,
+      ),
     [],
   );
 

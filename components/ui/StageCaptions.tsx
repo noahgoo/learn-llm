@@ -14,12 +14,17 @@ import { Cite } from "./Cite";
  * explanation drawer.
  */
 
+/**
+ * Two lanes only (Apple rule: copy position is stable within a section).
+ * `center` beats are deliberate full-screen moments; every other anchor
+ * collapses into ONE side lane per stage, so beats swap content in place
+ * instead of hopping around the viewport.
+ */
 const REGION: Record<BeatAnchor, string> = {
   center: "left-1/2 top-[34%] -translate-x-1/2 -translate-y-1/2 text-center items-center max-w-[40rem]",
-  "top-left": "left-16 top-28 max-w-[26rem]",
-  "bottom-left": "left-16 bottom-32 max-w-[26rem]",
-  right:
-    "left-[19rem] top-[42%] -translate-y-1/2 max-w-[24rem] text-left items-start",
+  "top-left": "left-16 top-[46%] max-w-[26rem]",
+  "bottom-left": "left-16 top-[46%] max-w-[26rem]",
+  right: "left-16 top-[46%] max-w-[26rem]",
 };
 
 export function StageCaptions() {
@@ -27,7 +32,6 @@ export function StageCaptions() {
   const beat = useJourneyStore((s) => s.beat);
   const traveling = useJourneyStore((s) => s.traveling);
   const entered = useJourneyStore((s) => s.entered);
-  const deepDiveOpen = useJourneyStore((s) => s.deepDiveOpen);
   const reduceMotion = useReducedMotion();
   // Landing: a real title screen. Says what the site is and how to begin,
   // before the 3D journey and the rest of the chrome reveal on first scroll.
@@ -78,12 +82,7 @@ export function StageCaptions() {
   if (!current) return null;
 
   const centered = current.anchor === "center";
-  const region =
-    current.anchor === "right"
-      ? deepDiveOpen
-        ? "left-[19rem] top-[42%] -translate-y-1/2 max-w-[22rem] text-left items-start"
-        : REGION.right
-      : REGION[current.anchor];
+  const region = REGION[current.anchor];
 
   return (
     <div aria-live="polite" className="pointer-events-none">

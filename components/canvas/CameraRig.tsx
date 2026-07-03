@@ -91,8 +91,11 @@ export function CameraRig() {
       const ease = 1 - Math.exp(-3 * delta);
       p.x += (pointer.x - p.x) * ease;
       p.y += (pointer.y - p.y) * ease;
-      camera.rotation.y -= p.x * 0.02;
-      camera.rotation.x += p.y * 0.014;
+      camera.rotation.set(
+        camera.rotation.x + p.y * 0.014,
+        camera.rotation.y - p.x * 0.02,
+        camera.rotation.z,
+      );
     }
   });
 

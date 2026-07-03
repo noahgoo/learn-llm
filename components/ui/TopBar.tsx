@@ -1,5 +1,35 @@
 "use client";
 
+import { ACTS, actIndexForStage, STAGES } from "@/lib/journey";
+import { useJourneyStore } from "@/lib/store";
+
+/**
+ * Breadcrumb under the wordmark: `Part II · Attention · 2/3`. Always-on
+ * orientation at act + stage + beat granularity. Subscribes to low-frequency
+ * state only (stage/beat flips, not beatProgress).
+ */
+function Breadcrumb() {
+  const entered = useJourneyStore((s) => s.entered);
+  const activeStage = useJourneyStore((s) => s.activeStage);
+  const beat = useJourneyStore((s) => s.beat);
+  if (!entered) {
+    return (
+      <p className="mt-1 font-mono text-[11px] uppercase tracking-wide2 text-faint">
+        Inside the Model
+      </p>
+    );
+  }
+  const stage = STAGES[activeStage];
+  const act = ACTS[actIndexForStage(activeStage)];
+  return (
+    <p className="mt-1 font-mono text-[11px] uppercase tracking-wide2 text-faint">
+      Part {act.numeral} <span className="text-accent-dim">·</span>{" "}
+      <span className="text-dim">{stage.title}</span>{" "}
+      <span className="text-accent-dim">·</span> {beat + 1}/{stage.beats}
+    </p>
+  );
+}
+
 export function TopBar() {
   return (
     <>
@@ -8,12 +38,10 @@ export function TopBar() {
           <p className="font-mono text-[11px] uppercase tracking-wide3 text-ink">
             Learn <span className="text-accent">·</span> LLM
           </p>
-          <p className="mt-1 font-mono text-[11px] uppercase tracking-wide2 text-faint">
-            Inside the Model
-          </p>
+          <Breadcrumb />
         </div>
       </header>
-      <aside className="pointer-events-auto fixed right-4 bottom-28 left-4 z-40 border border-line bg-abyss/92 p-4 text-center backdrop-blur-sm md:hidden">
+      <aside className="pointer-events-auto fixed right-4 bottom-28 left-4 z-40 pane p-4 text-center md:hidden">
         <p className="font-mono text-[11px] uppercase tracking-wide3 text-accent">
           Best on desktop
         </p>

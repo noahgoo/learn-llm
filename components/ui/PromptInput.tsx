@@ -77,13 +77,13 @@ export function PromptInput() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 16 }}
           transition={{ duration: 0.35, ease: "easeOut" }}
-          className="pointer-events-auto fixed bottom-8 left-1/2 z-20 w-[38rem] max-w-[88vw] -translate-x-1/2 border border-line bg-abyss/88 p-4 backdrop-blur-sm"
+          className="pointer-events-auto fixed bottom-8 left-1/2 z-20 w-[38rem] max-w-[88vw] -translate-x-1/2 pane p-4"
         >
           <div className="mb-3 flex justify-center">
             <button
               type="button"
               onClick={() => setManuallyOpen(false)}
-              className="border border-line bg-abyss/75 px-3 py-1.5 font-mono text-[11px] uppercase tracking-wide2 text-faint backdrop-blur-sm transition-colors hover:border-line-strong hover:text-ink"
+              className="pane px-3 py-1.5 font-mono text-[11px] uppercase tracking-wide2 text-faint transition-colors hover:border-line-strong hover:text-ink"
             >
               Hide payload
             </button>
@@ -119,7 +119,7 @@ export function PromptInput() {
             spellCheck={false}
             maxLength={280}
             placeholder="Type any text — watch it think"
-            className="w-full border border-line bg-abyss/70 px-4 py-3 text-center font-mono text-sm text-ink placeholder:text-faint backdrop-blur-sm transition-colors duration-200 outline-none focus:border-line-strong focus:bg-abyss"
+            className="w-full pane px-4 py-3 text-center font-mono text-sm text-ink placeholder:text-faint transition-colors duration-200 outline-none focus:border-line-strong focus:bg-abyss"
           />
           <div className="mt-3 flex flex-wrap items-center justify-center gap-3 font-mono text-[11px] uppercase tracking-wide2 text-faint">
             {status === "idle" && (
@@ -175,7 +175,7 @@ export function PromptInput() {
           <button
             type="button"
             onClick={() => setManuallyOpen(true)}
-            className="border border-line bg-abyss/75 px-3 py-2 text-dim backdrop-blur-sm transition-colors hover:border-line-strong hover:text-ink"
+            className="pane px-3 py-2 text-dim transition-colors hover:border-line-strong hover:text-ink"
           >
             Edit payload
           </button>

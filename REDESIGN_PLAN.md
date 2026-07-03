@@ -76,14 +76,21 @@ camera and organs *do* along that spine — it does not replace the timeline.
 
 ## Phase 3 — Chrome & narrative (the Apple layer)
 
-- [ ] Stable caption lane per stage; beats swap content in place (no per-beat jumps).
-- [ ] Act structure: Input → Compute → Output; full-viewport typographic chapter
-      dividers at act boundaries.
-- [ ] Unified `.pane` recipe for all HUD chrome (one blur/hairline/radius/fill).
-- [ ] TopBar breadcrumb: `Part II · Attention · 3/5` (mono 11px).
-- [ ] Kinetic stats counting up on scroll: 50,257 vocab · 124M params · 12×12 heads
-      (tabular mono figures).
-- [ ] Ending recap strip of all stages + "run it with your own words" CTA.
+- [x] Stable caption lane: non-center anchors collapse into one side lane
+      (`left-16 top-[46%]`); beats swap content in place. `center` beats stay
+      full-screen moments.
+- [x] Act structure: `ACTS` metadata in journey.ts (Input / Compute ×12 / Output) —
+      single source for the rail grouping, breadcrumb, and chapter dividers.
+      TravelInterstitial becomes a full chapter divider (ghost act numeral,
+      "Part II · Compute") when a travel band crosses an act boundary.
+- [x] Unified `pane` utility (hairline + abyss fill + blur) swept across all HUD
+      chrome, replacing the drifting bg-abyss/70..95 mix.
+- [x] TopBar breadcrumb: `Part II · Attention · 2/3`, low-frequency subscription.
+- [x] Kinetic stats (`KineticStat`): 50,257 vocab · 768 dims · 144 heads ·
+      124,439,808 params — counting up with dwell progress, tabular mono,
+      scrub-reversible.
+- [x] Ending recap strip in EndCard: all 10 stops replayable + "run it with your
+      own words" line.
 
 ## Phase 4 — Cinematic polish
 

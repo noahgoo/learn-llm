@@ -1,21 +1,25 @@
 "use client";
 
 import { motion } from "motion/react";
-import { STAGES } from "@/lib/journey";
+import { ACTS, STAGES } from "@/lib/journey";
 import { useJourneyStore } from "@/lib/store";
 import { scrollToStage } from "./ScrollTrack";
 
 /**
  * The rail doubles as a miniature architecture diagram: stages grouped into
- * the three acts of the model (input pipeline → the repeated transformer
- * block → output head). Round nodes are tensors flowing between parts;
- * square nodes live inside the block, which repeats ×12.
+ * the model's three acts (see ACTS in journey.ts — input pipeline → the
+ * repeated transformer block → output head). Round nodes are tensors
+ * flowing between parts; diamond nodes live inside the block, which
+ * repeats ×12.
  */
-const GROUPS: { label: string; stages: number[]; repeat?: string }[] = [
-  { label: "Input", stages: [0, 1, 2] },
-  { label: "Block", stages: [3, 4, 5, 6, 7], repeat: "×12" },
-  { label: "Output", stages: [8, 9] },
-];
+const GROUPS = ACTS.map((act) => ({
+  label: act.title,
+  repeat: act.badge,
+  stages: Array.from(
+    { length: act.range[1] - act.range[0] + 1 },
+    (_, i) => act.range[0] + i,
+  ),
+}));
 
 /**
  * Isolated high-frequency subscriber (see CLAUDE.md per-frame pattern):
@@ -56,7 +60,7 @@ function StageNode({ index, square }: { index: number; square: boolean }) {
         />
         {/* label chip: revealed on hover/focus, pinned open while active */}
         <span
-          className={`pointer-events-none absolute left-full z-30 ml-3 border border-line bg-abyss/95 px-2 py-1 font-mono text-[11px] whitespace-nowrap uppercase tracking-wide2 backdrop-blur-sm transition-all duration-300 ${
+          className={`pointer-events-none absolute left-full z-30 ml-3 pane px-2 py-1 font-mono text-[11px] whitespace-nowrap uppercase tracking-wide2 transition-all duration-300 ${
             active ? "text-accent" : "text-dim"
           } ${
             active

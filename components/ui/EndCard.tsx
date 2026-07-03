@@ -26,7 +26,7 @@ export function EndCard() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 18 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
-          className="pointer-events-auto fixed left-1/2 bottom-10 z-30 w-[30rem] max-w-[86vw] -translate-x-1/2 border border-line bg-abyss/88 p-5 text-center backdrop-blur-sm"
+          className="pointer-events-auto fixed left-1/2 bottom-10 z-30 w-[30rem] max-w-[86vw] -translate-x-1/2 pane p-5 text-center"
         >
           <p className="font-mono text-[11px] uppercase tracking-wide3 text-accent">
             Journey complete
@@ -37,6 +37,26 @@ export function EndCard() {
           <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-dim">
             If this helped, leave a star on GitHub so more people can find the
             project.
+          </p>
+          {/* recap strip: the whole journey at a glance, each stop replayable */}
+          <ol className="mx-auto mt-4 flex max-w-md flex-wrap items-center justify-center gap-x-3 gap-y-1.5">
+            {STAGES.map((stage, i) => (
+              <li key={stage.id}>
+                <button
+                  type="button"
+                  onClick={() => scrollToStage(i)}
+                  className="font-mono text-[10px] uppercase tracking-wide2 text-faint transition-colors hover:text-accent"
+                >
+                  <span className="text-accent-dim">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>{" "}
+                  {stage.short}
+                </button>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-3 font-mono text-[11px] uppercase tracking-wide2 text-dim">
+            Or scroll back up and run it with your own words.
           </p>
           <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
             <a
