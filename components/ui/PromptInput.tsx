@@ -23,9 +23,7 @@ function pickThree(exclude?: string): string[] {
 export function PromptInput() {
   const prompt = useJourneyStore((s) => s.prompt);
   const setPrompt = useJourneyStore((s) => s.setPrompt);
-  const activeStage = useJourneyStore((s) => s.activeStage);
-  const beat = useJourneyStore((s) => s.beat);
-  const journeyProgress = useJourneyStore((s) => s.progress);
+  const entered = useJourneyStore((s) => s.entered);
   const status = useModelStore((s) => s.status);
   const loadProgress = useModelStore((s) => s.progress);
   const backend = useModelStore((s) => s.backend);
@@ -36,15 +34,24 @@ export function PromptInput() {
   // Deterministic initial chips (hydration-safe); shuffle is user-driven.
   const [chips, setChips] = useState<string[]>(() => SUGGESTIONS.slice(0, 3));
   const [manuallyOpen, setManuallyOpen] = useState(false);
+  const autoOpened = useRef(false);
 
-  const introVisible = activeStage === 0 && beat === 0 && journeyProgress < 0.003;
-  const expanded = introVisible || manuallyOpen;
+  const expanded = manuallyOpen;
 
   // run the initial prompt once the model becomes ready
   useEffect(() => {
     if (status === "ready") run(useJourneyStore.getState().prompt);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
+
+  // Auto-open the panel once, the first time the user scrolls in, so they
+  // notice they can set their own text. After that it's theirs to hide/show.
+  useEffect(() => {
+    if (entered && !autoOpened.current) {
+      autoOpened.current = true;
+      setManuallyOpen(true);
+    }
+  }, [entered]);
 
   const onChange = (text: string) => {
     setPrompt(text);
@@ -58,6 +65,9 @@ export function PromptInput() {
     setChips(pickThree(text));
   };
 
+  // No prompt panel on the landing; it reveals with the rest of the chrome.
+  if (!entered) return null;
+
   return (
     <AnimatePresence mode="wait">
       {expanded ? (
@@ -69,32 +79,16 @@ export function PromptInput() {
           transition={{ duration: 0.35, ease: "easeOut" }}
           className="pointer-events-auto fixed bottom-8 left-1/2 z-20 w-[38rem] max-w-[88vw] -translate-x-1/2 border border-line bg-abyss/88 p-4 backdrop-blur-sm"
         >
-          {!introVisible && (
-            <div className="mb-2 flex justify-center">
-              <button
-                type="button"
-                onClick={() => setManuallyOpen(false)}
-                className="border border-line bg-abyss/75 px-3 py-1.5 font-mono text-[11px] uppercase tracking-wide2 text-faint backdrop-blur-sm transition-colors hover:border-line-strong hover:text-ink"
-              >
-                Hide payload
-              </button>
-            </div>
-          )}
-          {introVisible && (
-            <div className="mb-4 text-center">
-              <p className="font-mono text-[11px] uppercase tracking-wide3 text-accent">
-                Start here
-              </p>
-              <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-dim">
-                Pick sample text or type your own. Samples work immediately;
-                loading GPT-2 enables live inference in your browser.
-              </p>
-            </div>
-          )}
+          <div className="mb-3 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setManuallyOpen(false)}
+              className="border border-line bg-abyss/75 px-3 py-1.5 font-mono text-[11px] uppercase tracking-wide2 text-faint backdrop-blur-sm transition-colors hover:border-line-strong hover:text-ink"
+            >
+              Hide payload
+            </button>
+          </div>
           <div className="mb-3 flex flex-wrap items-center justify-center gap-1.5">
-            <span className="font-mono text-[11px] uppercase tracking-wide2 text-faint">
-              Try
-            </span>
             {chips.map((s) => (
               <button
                 key={s}
@@ -114,11 +108,8 @@ export function PromptInput() {
               ↻
             </button>
           </div>
-          <label
-            htmlFor="prompt"
-            className="mb-2 block text-center font-mono text-[11px] uppercase tracking-wide3 text-faint"
-          >
-            Payload
+          <label htmlFor="prompt" className="sr-only">
+            Payload text
           </label>
           <input
             id="prompt"
@@ -133,7 +124,9 @@ export function PromptInput() {
           <div className="mt-3 flex flex-wrap items-center justify-center gap-3 font-mono text-[11px] uppercase tracking-wide2 text-faint">
             {status === "idle" && (
               <>
-                <span>Sample mode is ready</span>
+                <span className="normal-case tracking-normal text-faint">
+                  Samples work instantly · load GPT-2 for live inference
+                </span>
                 <button
                   type="button"
                   onClick={load}

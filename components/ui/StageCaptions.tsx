@@ -26,8 +26,52 @@ export function StageCaptions() {
   const activeStage = useJourneyStore((s) => s.activeStage);
   const beat = useJourneyStore((s) => s.beat);
   const traveling = useJourneyStore((s) => s.traveling);
+  const entered = useJourneyStore((s) => s.entered);
   const deepDiveOpen = useJourneyStore((s) => s.deepDiveOpen);
   const reduceMotion = useReducedMotion();
+  // Landing: a real title screen. Says what the site is and how to begin,
+  // before the 3D journey and the rest of the chrome reveal on first scroll.
+  if (!entered) {
+    return (
+      <div className="pointer-events-none fixed inset-0 z-10 flex items-center justify-center px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="flex max-w-[44rem] flex-col items-center gap-5 text-center"
+        >
+          <p className="font-mono text-[11px] uppercase tracking-wide3 text-accent">
+            An interactive 3D explainer
+          </p>
+          <h1 className="font-display text-6xl leading-[1.02] text-ink [text-shadow:_0_2px_24px_rgb(6_4_12_/_0.95)]">
+            Watch a language model think.
+          </h1>
+          <p className="max-w-[34rem] text-[15px] leading-relaxed text-dim">
+            Type a sentence and follow it through GPT-2, one stage at a time —
+            tokens, embeddings, attention, and its next-word guess. The whole
+            model runs live, right here in your browser.
+          </p>
+          <div className="mt-3 flex flex-col items-center gap-2 text-accent">
+            <span className="rounded-full border border-accent-dim bg-abyss/90 px-5 py-2 font-mono text-[11px] uppercase tracking-wide2 backdrop-blur-sm">
+              Scroll to begin
+            </span>
+            <motion.span
+              aria-hidden
+              animate={reduceMotion ? undefined : { y: [0, 7, 0] }}
+              transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+              className="text-base leading-none"
+            >
+              ↓
+            </motion.span>
+            <span className="mt-1 font-mono text-[11px] uppercase tracking-wide2 text-faint">
+              Scroll · arrow keys · rail · then make the words your own
+            </span>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
   const stage = STAGES[activeStage];
   const beats = beatsFor(stage.id);
   const current = beats[Math.min(beat, beats.length - 1)];

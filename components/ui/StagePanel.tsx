@@ -16,9 +16,13 @@ export function StagePanel() {
   const activeStage = useJourneyStore((s) => s.activeStage);
   const beat = useJourneyStore((s) => s.beat);
   const traveling = useJourneyStore((s) => s.traveling);
+  const entered = useJourneyStore((s) => s.entered);
   const stage = STAGES[activeStage];
   const currentBeat = beatsFor(stage.id)[beat];
   const quiet = stage.built && currentBeat?.anchor === "center" && !traveling;
+
+  // Hidden on the landing; revealed once the user scrolls.
+  if (!entered) return null;
 
   return (
     <section

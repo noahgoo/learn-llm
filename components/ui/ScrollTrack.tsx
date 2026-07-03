@@ -97,6 +97,13 @@ export function ScrollTrack() {
       const progress = Math.min(1, Math.max(0, window.scrollY / scrollMax()));
       const j = journeyFromProgress(progress);
       setProgress(progress);
+      // Reveal HUD chrome on the first deliberate scroll. Sticky: a small
+      // threshold ignores sub-pixel jitter at rest; never flips back, so
+      // scrolling home again won't re-bare the landing.
+      if (!useJourneyStore.getState().entered) {
+        const enterPx = Math.max(8, window.innerHeight * 0.02);
+        if (window.scrollY > enterPx) useJourneyStore.getState().setEntered(true);
+      }
       setCameraT(j.cameraT);
       const state = useJourneyStore.getState();
       if (

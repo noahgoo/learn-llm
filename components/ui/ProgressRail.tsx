@@ -1,18 +1,26 @@
 "use client";
 
+import { motion } from "motion/react";
 import { STAGES } from "@/lib/journey";
 import { useJourneyStore } from "@/lib/store";
 import { scrollToStage } from "./ScrollTrack";
 
 /**
  * Vertical mission rail on the left edge: one node per journey stage.
- * Clicking a node flies the camera there (via scroll position).
+ * Clicking a node flies the camera there (via scroll position). Hidden on the
+ * landing screen; fades in once the user has scrolled (`entered`).
  */
 export function ProgressRail() {
   const activeStage = useJourneyStore((s) => s.activeStage);
+  const entered = useJourneyStore((s) => s.entered);
+
+  if (!entered) return null;
 
   return (
-    <nav
+    <motion.nav
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
       aria-label="Journey stages"
       className="pointer-events-auto fixed left-6 top-1/2 z-20 -translate-y-1/2"
     >
@@ -60,6 +68,6 @@ export function ProgressRail() {
           );
         })}
       </ol>
-    </nav>
+    </motion.nav>
   );
 }

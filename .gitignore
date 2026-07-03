@@ -47,3 +47,6 @@ models/
 .venv/
 public/model/
 public/ort/
+
+
+graphify-out/

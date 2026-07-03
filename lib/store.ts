@@ -71,6 +71,13 @@ interface JourneyState {
   /** Raw scroll progress through the whole journey, 0..1. */
   progress: number;
   setProgress: (progress: number) => void;
+  /**
+   * Sticky: flips true on the first deliberate scroll and never back. The
+   * landing screen shows only the hero + scroll cue; all other HUD chrome
+   * (rail, stage panel, prompt panel, Explain) reveals once this is true.
+   */
+  entered: boolean;
+  setEntered: (entered: boolean) => void;
   /** Raw user prompt; inference wiring lands in M1 */
   prompt: string;
   setPrompt: (prompt: string) => void;
@@ -91,6 +98,8 @@ export const useJourneyStore = create<JourneyState>()((set) => ({
   setCameraT: (cameraT) => set({ cameraT }),
   progress: 0,
   setProgress: (progress) => set({ progress }),
+  entered: false,
+  setEntered: (entered) => set({ entered }),
   prompt: "Photosynthesis is the process by",
   setPrompt: (prompt) => set({ prompt }),
   deepDiveOpen: false,

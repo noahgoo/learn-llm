@@ -14,6 +14,7 @@ import { LensToggle } from "./LensToggle";
 export function DeepDive() {
   const open = useJourneyStore((s) => s.deepDiveOpen);
   const setOpen = useJourneyStore((s) => s.setDeepDiveOpen);
+  const entered = useJourneyStore((s) => s.entered);
   const activeStage = useJourneyStore((s) => s.activeStage);
   const lens = useLensStore((s) => s.lens);
   const stage = STAGES[activeStage];
@@ -23,15 +24,21 @@ export function DeepDive() {
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen(!open)}
-        aria-expanded={open}
-        className="pointer-events-auto fixed right-6 top-5 z-30 flex items-center gap-2 border border-line bg-abyss/80 px-3 py-2 font-mono text-[11px] uppercase tracking-wide2 text-dim backdrop-blur-sm transition-colors hover:border-line-strong hover:text-ink"
-      >
-        <span className="text-accent">{open ? "✕" : "≡"}</span>
-        Explain
-      </button>
+      {/* EXPLAIN trigger is part of the post-scroll chrome; hidden on landing */}
+      {entered && (
+        <motion.button
+          type="button"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          onClick={() => setOpen(!open)}
+          aria-expanded={open}
+          className="pointer-events-auto fixed right-6 top-5 z-30 flex items-center gap-2 border border-line bg-abyss/80 px-3 py-2 font-mono text-[11px] uppercase tracking-wide2 text-dim backdrop-blur-sm transition-colors hover:border-line-strong hover:text-ink"
+        >
+          <span className="text-accent">{open ? "✕" : "≡"}</span>
+          Explain
+        </motion.button>
+      )}
 
       <AnimatePresence>
         {open && (
