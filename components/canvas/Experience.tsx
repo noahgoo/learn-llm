@@ -4,7 +4,9 @@ import { Canvas } from "@react-three/fiber";
 import { PerformanceMonitor, Stars } from "@react-three/drei";
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { useFixtureStore } from "@/lib/model/data";
+import { BlockTower } from "./BlockTower";
 import { CameraRig } from "./CameraRig";
+import { Conduit } from "./Conduit";
 import { Stations } from "./Stations";
 import { TheatreDriver } from "./TheatreDriver";
 import { TokenFlow } from "./TokenFlow";
@@ -88,6 +90,8 @@ export function Experience() {
       <Stars radius={180} depth={120} count={3200} factor={3} saturation={0.6} fade speed={0.4} />
       <CameraRig />
       <TheatreDriver />
+      <Conduit />
+      <BlockTower />
       <TokenStream />
       <TokenFlow />
       <Stations />

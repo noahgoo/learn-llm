@@ -32,26 +32,32 @@ camera and organs *do* along that spine — it does not replace the timeline.
 
 ## Phase 0 — Tooling foundation
 
-- [ ] Add **Lenis**: single inertial scroll source feeding `ScrollTrack`; canvas + DOM
+- [x] Add **Lenis**: single inertial scroll source feeding `ScrollTrack`; canvas + DOM
       glide together. Disabled under `prefers-reduced-motion`.
-- [ ] Add **Leva** (dev-only) for live tuning of camera/fog/build params.
-- [ ] Add **Theatre.js**, studio stripped from prod builds. Proof-of-wiring: one Theatre
+- [x] Add **Leva** (dev-only) for live tuning of camera/fog/build params. _(installed;
+      panel activates with the first `useControls`)_
+- [x] Add **Theatre.js**, studio stripped from prod builds. Proof-of-wiring: one Theatre
       sequence whose position is driven by `cameraT` from `journeyFromProgress` inside
-      the frame loop.
-- [ ] Reduced-motion story: Lenis off, builds resolve to final state, fades only.
+      the frame loop. _(`@theatre/r3f` skipped — pins R3F 8; manual binding instead)_
+- [x] Reduced-motion story: Lenis off, builds resolve to final state, fades only.
 
 ## Phase 1 — Spatial rebuild
 
-- [ ] New layout: path along the residual conduit replaces the serpentine
-      `stationPosition`. Order: prompt text → tokenizer gate → embedding hall (vocab
-      wall; the prompt's rows ignite) → positional spiral → **12-slab block tower**
-      (camera enters one slab: attention chamber with 12 head-fans → FFN chamber) →
-      LM head funnel → prediction podium.
-- [ ] Conduit mesh: tube + instanced particles (token vectors flowing), selective glow.
-- [ ] All organs procedural (instanced meshes, lines, shaders) in the current palette.
-- [ ] **ProgressRail v2 = mini transformer-architecture diagram**, current position
-      highlighted. Wayfinding that teaches.
-- [ ] Update layout-dependent tests.
+- [x] New layout: authored `STATION_LAYOUT` replaces the serpentine formula. Three
+      acts: intake corridor (tokenization → embeddings → positional descend into the
+      machine) → **vertical tower climb** (attention → heads → MLP → residual →
+      layernorm ascend the block floors) → summit exit (prediction) and the weights
+      hall beyond. `TOWER_AXIS` exported for structural elements.
+- [x] Conduit mesh: tube + instanced particles (token vectors flowing), additive glow
+      (`components/canvas/Conduit.tsx`).
+- [x] BlockTower shell: 12 translucent slabs = 12 GPT-2 layers wrapping the climb
+      (`components/canvas/BlockTower.tsx`).
+- [ ] Reshape per-stage visuals into organs (tokenizer gate, vocab wall, head fans…) —
+      iterative, continues through Phase 2.
+- [x] **ProgressRail v2 = mini transformer-architecture diagram**: acts grouped
+      (Input / Block ×12 / Output), diamond nodes inside the block, continuous
+      progress fill rising along the spine.
+- [x] Update layout-dependent tests (z-spacing → 3D-distance invariant).
 
 ## Phase 2 — Choreography
 

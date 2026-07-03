@@ -28,10 +28,13 @@ describe("journey", () => {
   });
 
   it("keeps stations spaced apart along the path", () => {
+    // 3D distance, not z-distance: the tower segment (stages 3-7) climbs
+    // vertically at near-constant z.
     for (let i = 1; i < STAGE_COUNT; i++) {
-      const [, , zPrev] = stationPosition(i - 1);
-      const [, , z] = stationPosition(i);
-      expect(zPrev - z).toBeGreaterThan(20);
+      const [xa, ya, za] = stationPosition(i - 1);
+      const [xb, yb, zb] = stationPosition(i);
+      const dist = Math.hypot(xb - xa, yb - ya, zb - za);
+      expect(dist).toBeGreaterThan(20);
     }
   });
 

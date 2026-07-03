@@ -245,34 +245,71 @@ export function scrollOffsetForStage(index: number): number {
 }
 
 /**
- * Station positions: a gentle serpentine descent through the void.
- * Camera keyframes sit behind/above each station, looking down-path.
+ * Diegetic layout — the space IS the transformer. Three acts:
+ *
+ *   Intake (0–2):  a straight descending corridor into the machine —
+ *                  tokenization gate, embedding hall, positional bend.
+ *   Tower  (3–7):  the transformer block. The path turns VERTICAL and
+ *                  climbs floor by floor: attention → heads → MLP →
+ *                  residual stream → layernorm. The BlockTower shell
+ *                  (12 slabs = 12 layers) wraps this segment.
+ *   Summit (8–9):  prediction exits the tower top; the weights hall
+ *                  lies beyond.
+ *
+ * Authored table, not a formula: each position is a set piece. Small
+ * x/z jitter on the tower floors keeps the climb from reading as an
+ * elevator shaft. Consecutive stations stay >20 world units apart
+ * (see journey.test.ts).
  */
+const STATION_LAYOUT: Vec3[] = [
+  [0, 6, 0], //       00 tokenization — the gate at the mouth
+  [5, 1, -48], //     01 embeddings — descending into the hall
+  [-4, -3, -96], //   02 positional — the corridor bends
+  [0, -4, -140], //   03 attention — tower base
+  [3, 18, -144], //   04 multi-head — floor 2
+  [-3, 40, -140], //  05 ffn — floor 3
+  [2, 62, -144], //   06 residual — the core conduit
+  [-2, 84, -140], //  07 layernorm — top floor
+  [0, 98, -192], //   08 prediction — out through the summit
+  [0, 92, -246], //   09 weights — the hall beyond
+];
+
+/** Central axis of the block tower (x, z) and its vertical extent. */
+export const TOWER_AXIS = { x: 0, z: -142, yMin: -12, yMax: 92 };
+
 export function stationPosition(index: number): Vec3 {
-  return [
-    Math.sin(index * 0.85) * 16,
-    Math.cos(index * 0.6) * 5,
-    -index * 42,
-  ];
+  return STATION_LAYOUT[Math.min(STATION_LAYOUT.length - 1, Math.max(0, index))];
 }
+
+/**
+ * Per-stage camera offsets (relative to the station), authored so each stop
+ * has its own shot instead of one repeated framing. Constraints: x stays
+ * negative (station frames right-of-center, clear of the left HUD lane) and
+ * z stays positive (camera in front of the station — see journey.test.ts).
+ *
+ *   intake:  eye-level drift down the corridor, each shot a little wider
+ *   tower:   low angle looking UP at the base (arrival drama), swinging
+ *            side to side and tightening as the climb goes on
+ *   summit:  high crane shot for prediction, then settling wide and level
+ *            before the weights hall
+ */
+const CAMERA_OFFSETS: Record<StageId, Vec3> = {
+  tokenization: [-7.5, 4.5, 17], //  close, eye level — the gate
+  embeddings: [-10, 6, 27], //       wider + higher — the hall opens up
+  positional: [-6, 2, 26], //        drops low — the corridor bends
+  attention: [-9, -3, 27], //        LOW angle at the tower base, looking up
+  "multi-head": [-11, 3, 23], //     swings left, level with floor 2
+  ffn: [-5, 5, 23], //               tighter, slightly above floor 3
+  residual: [-12, 1, 25], //         pulled out — see the conduit climb
+  layernorm: [-6, 7, 23], //         high, near the top floor
+  prediction: [-8, 10, 24], //       crane shot down onto the summit exit
+  weights: [-7.5, 4.5, 24], //       settles wide and level — the hall
+};
 
 export function cameraKeyframe(index: number): Vec3 {
   const [x, y, z] = stationPosition(index);
-  const zoomOutByStage: Partial<Record<StageId, number>> = {
-    embeddings: 10,
-    positional: 9,
-    attention: 10,
-    "multi-head": 6,
-    ffn: 6,
-    residual: 7,
-    layernorm: 6,
-    prediction: 7,
-    weights: 7,
-  };
-  const extraDistance = zoomOutByStage[STAGES[index]?.id] ?? 0;
-  // offset left + above so the station frames right-of-center,
-  // clear of the HUD's left-side stage panel
-  return [x - 7.5, y + 4.5, z + 17 + extraDistance];
+  const [dx, dy, dz] = CAMERA_OFFSETS[STAGES[index]?.id] ?? [-7.5, 4.5, 17];
+  return [x + dx, y + dy, z + dz];
 }
 
 /** Map scroll progress (0..1) to the framed stage index. */
