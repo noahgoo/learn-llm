@@ -6,6 +6,7 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { useFixtureStore } from "@/lib/model/data";
 import { CameraRig } from "./CameraRig";
 import { Stations } from "./Stations";
+import { TheatreDriver } from "./TheatreDriver";
 import { TokenFlow } from "./TokenFlow";
 import { TokenStream } from "./TokenStream";
 
@@ -86,6 +87,7 @@ export function Experience() {
       <fog attach="fog" args={["#06040c", 60, 220]} />
       <Stars radius={180} depth={120} count={3200} factor={3} saturation={0.6} fade speed={0.4} />
       <CameraRig />
+      <TheatreDriver />
       <TokenStream />
       <TokenFlow />
       <Stations />

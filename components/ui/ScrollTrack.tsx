@@ -1,5 +1,6 @@
 "use client";
 
+import Lenis from "lenis";
 import { useEffect } from "react";
 import {
   JOURNEY_UNITS,
@@ -12,56 +13,35 @@ function prefersReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-let scrollAnim: number | null = null;
-/** Progress (0..1) an in-flight animation is heading to (rapid keypresses chain). */
-let flightProgress: number | null = null;
-
-function cancelScrollAnimation() {
-  if (scrollAnim !== null) {
-    cancelAnimationFrame(scrollAnim);
-    scrollAnim = null;
-  }
-  flightProgress = null;
-}
+/**
+ * Inertial scroll source (Noomo-style glide). Owns wheel smoothing AND
+ * programmatic flights (rail clicks, keyboard nav); user wheel input
+ * interrupts an in-flight scrollTo natively. Null under
+ * prefers-reduced-motion — everything falls back to instant jumps.
+ */
+let lenis: Lenis | null = null;
 
 /** Max scrollable pixels for the current runway height. */
 function scrollMax() {
   return Math.max(1, (JOURNEY_UNITS - 1) * window.innerHeight);
 }
 
-/**
- * Smoothly scroll so the journey sits at `progress` (0..1).
- * Animated via rAF rather than `behavior: "smooth"` — native smooth
- * scrolling is unreliable (observed scrolling 0px in Chrome profiles
- * with smooth scrolling disabled).
- */
+const easeInOutCubic = (t: number) =>
+  t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
+
+/** Smoothly scroll so the journey sits at `progress` (0..1). */
 function scrollToProgress(progress: number) {
   const clamped = Math.min(1, Math.max(0, progress));
   const target = clamped * scrollMax();
-  cancelScrollAnimation();
-  flightProgress = clamped;
-  if (prefersReducedMotion()) {
+  if (!lenis) {
     window.scrollTo(0, target);
-    flightProgress = null;
     return;
   }
-  const start = window.scrollY;
-  const distance = target - start;
-  const duration = Math.min(900, 350 + Math.abs(distance) * 0.25);
-  const t0 = performance.now();
-  const easeInOutCubic = (t: number) =>
-    t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
-  const step = (now: number) => {
-    const t = Math.min(1, (now - t0) / duration);
-    window.scrollTo(0, start + distance * easeInOutCubic(t));
-    if (t < 1) {
-      scrollAnim = requestAnimationFrame(step);
-    } else {
-      scrollAnim = null;
-      flightProgress = null;
-    }
-  };
-  scrollAnim = requestAnimationFrame(step);
+  const distance = Math.abs(target - lenis.scroll);
+  lenis.scrollTo(target, {
+    duration: Math.min(0.9, 0.35 + distance * 0.00025),
+    easing: easeInOutCubic,
+  });
 }
 
 /** Fly to the first beat of a given stage (used by the progress rail). */
@@ -71,8 +51,11 @@ export function scrollToStage(index: number) {
 
 /** Step one beat/travel unit along the timeline (keyboard nav). */
 function scrollByUnit(dir: 1 | -1) {
-  const base =
-    flightProgress ?? useJourneyStore.getState().progress;
+  // targetScroll is where an in-flight animation is heading (equals the
+  // current position at rest), so rapid keypresses chain correctly.
+  const base = lenis
+    ? Math.min(1, Math.max(0, lenis.targetScroll / scrollMax()))
+    : useJourneyStore.getState().progress;
   const pos = base * JOURNEY_UNITS;
   const targetUnit = Math.min(
     JOURNEY_UNITS,
@@ -146,19 +129,27 @@ export function ScrollTrack() {
       }
     };
 
-    // user wheel/touch input takes over from any in-flight animation
-    const onUserScroll = () => cancelScrollAnimation();
+    // Lenis animates window scroll itself, so the native scroll listener
+    // above keeps working unchanged. Touch stays native (Lenis default).
+    let raf: number | null = null;
+    if (!prefersReducedMotion()) {
+      lenis = new Lenis();
+      const loop = (time: number) => {
+        lenis?.raf(time);
+        raf = requestAnimationFrame(loop);
+      };
+      raf = requestAnimationFrame(loop);
+    }
 
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("wheel", onUserScroll, { passive: true });
-    window.addEventListener("touchmove", onUserScroll, { passive: true });
     window.addEventListener("keydown", onKeyDown);
     return () => {
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("wheel", onUserScroll);
-      window.removeEventListener("touchmove", onUserScroll);
       window.removeEventListener("keydown", onKeyDown);
+      if (raf !== null) cancelAnimationFrame(raf);
+      lenis?.destroy();
+      lenis = null;
     };
   }, [setProgress, setJourney, setCameraT]);
 

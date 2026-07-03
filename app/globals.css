@@ -39,6 +39,15 @@ body::-webkit-scrollbar {
   display: none;
 }
 
+/* Lenis inertial scroll (classes applied to <html> while active) */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
 ::selection {
   background: var(--color-accent-dim);
   color: var(--color-ink);
