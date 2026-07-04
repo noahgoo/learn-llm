@@ -47,7 +47,7 @@ function StageNode({ index, square }: { index: number; square: boolean }) {
         onClick={() => scrollToStage(index)}
         aria-current={active ? "step" : undefined}
         aria-label={`Go to ${stage.title}`}
-        className="group relative -m-2 flex items-center p-2 outline-none"
+        className="pressable group relative -m-2 flex items-center p-2 outline-none"
       >
         <span
           className={`relative block h-2.5 w-2.5 transition-colors duration-300 ${

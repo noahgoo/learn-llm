@@ -75,6 +75,11 @@ export function AttentionControls() {
       <p className="font-mono text-[11px] leading-relaxed text-faint">
         Rows ask, columns answer. Scores = Q·Kᵀ/√d before softmax.
       </p>
+      {/* legend: the encoding must be stated, not just colored */}
+      <p className="border-t border-line pt-2 font-mono text-[11px] leading-relaxed text-faint">
+        Reading the scene: a <span className="text-lavender">thicker, brighter
+        arc</span> means this head pays more attention to that earlier token.
+      </p>
     </aside>
   );
 }

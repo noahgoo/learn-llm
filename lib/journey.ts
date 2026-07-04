@@ -79,7 +79,7 @@ export const STAGES: Stage[] = [
     input: "vectors + position",
     output: "context-mixed vectors",
     built: true,
-    beats: 3,
+    beats: 4,
   },
   {
     id: "multi-head",
@@ -90,7 +90,7 @@ export const STAGES: Stage[] = [
     input: "vectors + position",
     output: "all heads, recombined",
     built: true,
-    beats: 3,
+    beats: 4,
   },
   {
     id: "ffn",
@@ -112,7 +112,7 @@ export const STAGES: Stage[] = [
     input: "every layer's output",
     output: "the accumulated stream",
     built: true,
-    beats: 3,
+    beats: 2,
   },
   {
     id: "layernorm",
@@ -123,7 +123,7 @@ export const STAGES: Stage[] = [
     input: "raw activations",
     output: "normalized activations",
     built: true,
-    beats: 3,
+    beats: 2,
   },
   {
     id: "prediction",

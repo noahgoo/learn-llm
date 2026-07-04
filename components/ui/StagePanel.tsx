@@ -44,9 +44,9 @@ export function StagePanel() {
           <p className="font-mono text-[11px] uppercase tracking-wide3 text-accent">
             {stage.phase}
           </p>
-          <h1 className="mt-1.5 font-display text-3xl leading-[1.05] text-ink">
+          <h2 className="mt-1.5 font-display text-3xl leading-[1.05] text-ink">
             {stage.title}
-          </h1>
+          </h2>
           {!stage.built && (
             <p className="mt-2 font-mono text-[11px] uppercase tracking-wide2 text-faint">
               Station under construction

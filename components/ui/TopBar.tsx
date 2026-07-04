@@ -35,9 +35,10 @@ export function TopBar() {
     <>
       <header className="pointer-events-none fixed inset-x-0 top-0 z-30 px-6 py-5">
         <div className="pointer-events-auto inline-block">
-          <p className="font-mono text-[11px] uppercase tracking-wide3 text-ink">
+          {/* the page's single h1; stage/beat headings live below it */}
+          <h1 className="font-mono text-[11px] uppercase tracking-wide3 text-ink">
             Learn <span className="text-accent">·</span> LLM
-          </p>
+          </h1>
           <Breadcrumb />
         </div>
       </header>

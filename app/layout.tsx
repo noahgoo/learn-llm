@@ -20,10 +20,26 @@ const plexMono = IBM_Plex_Mono({
   subsets: ["latin"],
 });
 
+const TITLE = "Learn LLM: Inside the Model";
+const DESCRIPTION =
+  "An interactive 3D guide to how transformer-based LLMs work, powered by an instrumented GPT-2 small model running in your browser.";
+
 export const metadata: Metadata = {
-  title: "Learn LLM: Inside the Model",
-  description:
-    "An interactive 3D guide to how transformer-based LLMs work, powered by an instrumented GPT-2 small model running in your browser.",
+  // absolute URLs for og/twitter images (GH Pages deploy)
+  metadataBase: new URL("https://noahgoo.github.io/learn-llm"),
+  title: TITLE,
+  description: DESCRIPTION,
+  openGraph: {
+    title: TITLE,
+    description: DESCRIPTION,
+    type: "website",
+    siteName: "Learn LLM",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
 };
 
 export default function RootLayout({

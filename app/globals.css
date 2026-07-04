@@ -6,7 +6,9 @@
   --color-abyss: #0c0916; /* panel fills */
   --color-ink: #ede9f7; /* primary text */
   --color-dim: #948da8; /* secondary text */
-  --color-faint: #7b7596; /* tertiary / disabled, still readable on void */
+  --color-faint: #857e9f; /* tertiary / disabled — ≥5:1 on void AND abyss
+                             (the old #7b7596 sat at ~4.6:1 on abyss, too
+                             thin a margin for 11px mono labels) */
   --color-line: rgb(237 233 247 / 0.14); /* hairline rules */
   --color-line-strong: rgb(237 233 247 / 0.32);
   --color-accent: #9d7bff; /* violet — live data, active state */
@@ -110,6 +112,17 @@ html.lenis body {
   backdrop-filter: blur(6px);
 }
 
+/* Press feedback for interactive chips/buttons: subtle scale on :active so
+   taps and clicks read as physical. Composes with color transitions. */
+@utility pressable {
+  transition-property: transform, color, border-color, background-color;
+  transition-duration: 0.15s;
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
 /* Violet glow for active markers */
 .glow-accent {
   box-shadow:
@@ -151,12 +164,16 @@ html.lenis body {
   display: none;
 }
 
+/* Reduced motion: kill decorative animation outright, but CAP transitions
+   at 150ms instead of nuking them — quick opacity/color fades convey state
+   (stat traveling-fade, chip hover, panel reveals) and removing them loses
+   information; movement transitions become near-instant at this duration. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    transition-duration: 0.15s !important;
   }
 }

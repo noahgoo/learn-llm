@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useRef } from "react";
 import { STAGE_CONTENT } from "@/content/stages";
 import { STAGES } from "@/lib/journey";
 import { useJourneyStore, useLensStore } from "@/lib/store";
@@ -21,19 +22,37 @@ export function DeepDive() {
   const Content = STAGE_CONTENT[stage.id]?.[lens];
   const lensLabel =
     lens === "simple" ? "Simple explanation" : "Technical notes";
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const drawerRef = useRef<HTMLElement>(null);
+
+  // Focus management: opening moves focus into the drawer, Escape closes,
+  // closing returns focus to the toggle — standard escape-route contract.
+  useEffect(() => {
+    if (!open) return;
+    drawerRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        toggleRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, setOpen]);
 
   return (
     <>
       {/* EXPLAIN trigger is part of the post-scroll chrome; hidden on landing */}
       {entered && (
         <motion.button
+          ref={toggleRef}
           type="button"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
           onClick={() => setOpen(!open)}
           aria-expanded={open}
-          className="pointer-events-auto fixed right-6 top-5 z-30 flex items-center gap-2 pane px-3 py-2 font-mono text-[11px] uppercase tracking-wide2 text-dim transition-colors hover:border-line-strong hover:text-ink"
+          className="pressable pointer-events-auto fixed right-6 top-5 z-30 flex items-center gap-2 pane px-3 py-2 font-mono text-[11px] uppercase tracking-wide2 text-dim transition-colors hover:border-line-strong hover:text-ink"
         >
           <span className="text-accent">{open ? "✕" : "≡"}</span>
           Explain
@@ -44,11 +63,15 @@ export function DeepDive() {
         {open && (
           <motion.aside
             key="explanation-drawer"
+            ref={drawerRef}
+            tabIndex={-1}
+            role="dialog"
+            aria-label={`${stage.title} — ${lensLabel}`}
             initial={{ opacity: 0, x: 24 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 24 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="pointer-events-auto fixed right-6 top-16 bottom-24 z-30 flex w-[26rem] max-w-[80vw] flex-col pane"
+            className="pointer-events-auto fixed right-6 top-16 bottom-24 z-30 flex w-[26rem] max-w-[80vw] flex-col pane outline-none"
           >
             <div className="border-b border-line px-5 py-4">
               <div className="flex items-start justify-between gap-4">

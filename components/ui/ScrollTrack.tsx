@@ -6,6 +6,7 @@ import {
   JOURNEY_UNITS,
   journeyFromProgress,
   scrollOffsetForStage,
+  STAGES,
 } from "@/lib/journey";
 import { useJourneyStore } from "@/lib/store";
 
@@ -30,10 +31,11 @@ const easeInOutCubic = (t: number) =>
   t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
 
 /** Smoothly scroll so the journey sits at `progress` (0..1). */
-function scrollToProgress(progress: number) {
+function scrollToProgress(progress: number, immediate = false) {
   const clamped = Math.min(1, Math.max(0, progress));
   const target = clamped * scrollMax();
-  if (!lenis) {
+  if (!lenis || immediate) {
+    lenis?.scrollTo(target, { immediate: true });
     window.scrollTo(0, target);
     return;
   }
@@ -89,6 +91,12 @@ export function ScrollTrack() {
       }
       setCameraT(j.cameraT);
       const state = useJourneyStore.getState();
+      // Deep link: keep the URL hash on the active stage so any stop is
+      // shareable and reload resumes in place. replaceState — no history
+      // spam, no native anchor-jump.
+      if (state.entered && state.activeStage !== j.stageIndex) {
+        history.replaceState(null, "", `#${STAGES[j.stageIndex].id}`);
+      }
       if (
         state.activeStage !== j.stageIndex ||
         state.beat !== j.beatIndex ||
@@ -166,6 +174,17 @@ export function ScrollTrack() {
       }, 700);
     };
     window.addEventListener("scroll", armSnap, { passive: true });
+
+    // Deep-link restore: `#attention` (or a reload mid-journey) jumps
+    // straight to that stage's first beat, chrome revealed — no 40-screen
+    // re-scroll to get back to where you were.
+    const linked = STAGES.findIndex(
+      (s) => `#${s.id}` === window.location.hash,
+    );
+    if (linked > 0) {
+      useJourneyStore.getState().setEntered(true);
+      scrollToProgress(scrollOffsetForStage(linked) + 1e-4, true);
+    }
 
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });

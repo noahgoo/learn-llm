@@ -84,6 +84,9 @@ interface JourneyState {
   /** Raw user prompt; inference wiring lands in M1 */
   prompt: string;
   setPrompt: (prompt: string) => void;
+  /** Payload editor visibility — in the store so nudges can open it */
+  payloadOpen: boolean;
+  setPayloadOpen: (open: boolean) => void;
   /** Opt-in explanation drawer: full cited copy for the active stage */
   deepDiveOpen: boolean;
   setDeepDiveOpen: (open: boolean) => void;
@@ -106,6 +109,8 @@ export const useJourneyStore = create<JourneyState>()((set) => ({
   setEntered: (entered) => set({ entered }),
   prompt: "Photosynthesis is the process by",
   setPrompt: (prompt) => set({ prompt }),
+  payloadOpen: false,
+  setPayloadOpen: (payloadOpen) => set({ payloadOpen }),
   deepDiveOpen: false,
   setDeepDiveOpen: (deepDiveOpen) => set({ deepDiveOpen }),
 }));

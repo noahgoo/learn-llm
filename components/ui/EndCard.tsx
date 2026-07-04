@@ -45,7 +45,7 @@ export function EndCard() {
                 <button
                   type="button"
                   onClick={() => scrollToStage(i)}
-                  className="font-mono text-[10px] uppercase tracking-wide2 text-faint transition-colors hover:text-accent"
+                  className="pressable font-mono text-[10px] uppercase tracking-wide2 text-faint hover:text-accent"
                 >
                   <span className="text-accent-dim">
                     {String(i + 1).padStart(2, "0")}
@@ -64,7 +64,7 @@ export function EndCard() {
               target="_blank"
               rel="noreferrer"
               aria-label="Open GitHub repository"
-              className="inline-flex items-center justify-center gap-2 border border-accent-dim bg-accent/10 px-4 py-2 font-mono text-[11px] uppercase tracking-wide2 text-lavender transition-colors hover:border-accent hover:text-ink"
+              className="pressable inline-flex items-center justify-center gap-2 border border-accent-dim bg-accent/10 px-4 py-2 font-mono text-[11px] uppercase tracking-wide2 text-lavender transition-colors hover:border-accent hover:text-ink"
             >
               <svg
                 aria-hidden
@@ -78,7 +78,7 @@ export function EndCard() {
             <button
               type="button"
               onClick={() => scrollToStage(0)}
-              className="border border-line px-4 py-2 font-mono text-[11px] uppercase tracking-wide2 text-dim transition-colors hover:border-line-strong hover:text-ink"
+              className="pressable border border-line px-4 py-2 font-mono text-[11px] uppercase tracking-wide2 text-dim transition-colors hover:border-line-strong hover:text-ink"
             >
               Start over
             </button>

@@ -111,9 +111,10 @@ export function StageCaptions() {
           <p className="font-mono text-[11px] uppercase tracking-wide3 text-accent">
             An interactive 3D explainer
           </p>
-          <h1 className="font-display text-6xl leading-[1.02] text-ink [text-shadow:_0_2px_24px_rgb(6_4_12_/_0.95)]">
+          {/* h2: the TopBar wordmark is the page's single h1 */}
+          <h2 className="font-display text-6xl leading-[1.02] text-ink [text-shadow:_0_2px_24px_rgb(6_4_12_/_0.95)]">
             Watch a language model think.
-          </h1>
+          </h2>
           <p className="max-w-[34rem] text-[15px] leading-relaxed text-dim">
             Type a sentence and follow it through GPT-2, one stage at a time —
             tokens, embeddings, attention, and its next-word guess. The whole
@@ -135,7 +136,22 @@ export function StageCaptions() {
             <span className="mt-1 font-mono text-[11px] uppercase tracking-wide2 text-faint">
               Scroll · arrow keys · rail · then make the words your own
             </span>
+            {/* commitment signal: known cost = higher completion */}
+            <span className="font-mono text-[11px] uppercase tracking-wide2 text-faint">
+              {STAGES.length} stops · about 5 minutes
+            </span>
           </div>
+          <button
+            type="button"
+            onClick={() => {
+              const s = useJourneyStore.getState();
+              s.setEntered(true);
+              s.setDeepDiveOpen(true);
+            }}
+            className="pressable pointer-events-auto mt-4 font-mono text-[11px] uppercase tracking-wide2 text-dim underline decoration-line underline-offset-4 transition-colors hover:text-ink"
+          >
+            Prefer to read? Open the written guide
+          </button>
         </motion.div>
       </div>
     );
@@ -150,18 +166,20 @@ export function StageCaptions() {
   const region = REGION[current.anchor];
 
   return (
-    <div aria-live="polite" className="pointer-events-none">
+    // silenced while flying so rapid scrubbing doesn't machine-gun a screen
+    // reader with every beat it passes through
+    <div aria-live={traveling ? "off" : "polite"} className="pointer-events-none">
       <motion.div
         key={current.key}
         style={{ opacity: envelope.opacity, y: envelope.y }}
         className={`fixed z-10 flex flex-col gap-3 ${region}`}
       >
-          <h2
+          <h3
             className={`font-display leading-[1.05] text-ink [text-shadow:_0_2px_24px_rgb(6_4_12_/_0.95)] ${centered ? "text-5xl" : "text-[2rem]"
               }`}
           >
             {current.headline}
-          </h2>
+          </h3>
           {current.caption && (
             <p className="max-w-[24rem] text-[14px] leading-relaxed text-dim [text-shadow:_0_1px_12px_rgb(6_4_12_/_0.9)]">
               {current.caption}

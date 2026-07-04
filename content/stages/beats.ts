@@ -114,6 +114,14 @@ export const STAGE_BEATS: Partial<Record<StageId, Beat[]>> = {
       cite: ["vaswani2017"],
     },
     {
+      key: "attn-softmax",
+      headline: "Scores become shares.",
+      caption:
+        "Each row is softmaxed — the weights along a row sum to one, so attention is a budget the query spends.",
+      anchor: "bottom-left",
+      cite: ["vaswani2017"],
+    },
+    {
       key: "attn-matrix",
       headline: "The arcs fold into a heatmap.",
       caption:
@@ -135,6 +143,14 @@ export const STAGE_BEATS: Partial<Record<StageId, Beat[]>> = {
       headline: "Heads watch different relationships.",
       caption: "Some focus nearby, some look back, some lock onto repeated structure.",
       anchor: "bottom-left",
+    },
+    {
+      key: "mh-explore",
+      headline: "Flip through the heads yourself.",
+      caption:
+        "The layer and head selectors drive the live view — every combination is a different learned pattern.",
+      anchor: "bottom-left",
+      cite: ["michel2019"],
     },
     {
       key: "mh-merge",
@@ -178,14 +194,9 @@ export const STAGE_BEATS: Partial<Record<StageId, Beat[]>> = {
     {
       key: "res-write",
       headline: "Layer outputs add, not replace.",
-      caption: "Attention and MLP updates join the highway as residual writes.",
+      caption:
+        "Attention and MLP writes join the highway; the snapshots trace the same token evolving across blocks.",
       anchor: "bottom-left",
-    },
-    {
-      key: "res-layers",
-      headline: "Snapshots show the stream evolving.",
-      caption: "Hidden states trace how the same token changes across blocks.",
-      anchor: "right",
     },
   ],
   layernorm: [
@@ -198,17 +209,10 @@ export const STAGE_BEATS: Partial<Record<StageId, Beat[]>> = {
     {
       key: "ln-normalize",
       headline: "LayerNorm recenters the signal.",
-      caption: "It shifts and scales each token vector before the next read.",
-      anchor: "bottom-left",
-      cite: ["ba2016"],
-    },
-    {
-      key: "ln-pre",
-      headline: "Normalization steadies each block.",
       caption:
-        "GPT-2 uses pre-LayerNorm; many newer LLMs use RMSNorm for cheaper rescaling.",
-      anchor: "right",
-      cite: ["xiong2020", "zhang2019"],
+        "Each vector is shifted and scaled before the next read — GPT-2 pre-norm; newer LLMs often use RMSNorm.",
+      anchor: "bottom-left",
+      cite: ["ba2016", "xiong2020", "zhang2019"],
     },
   ],
   prediction: [

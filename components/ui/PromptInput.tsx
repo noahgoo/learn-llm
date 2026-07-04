@@ -33,7 +33,8 @@ export function PromptInput() {
   // GPT-2 small rambles on arbitrary text; offer prompts it handles well.
   // Deterministic initial chips (hydration-safe); shuffle is user-driven.
   const [chips, setChips] = useState<string[]>(() => SUGGESTIONS.slice(0, 3));
-  const [manuallyOpen, setManuallyOpen] = useState(false);
+  const manuallyOpen = useJourneyStore((s) => s.payloadOpen);
+  const setManuallyOpen = useJourneyStore((s) => s.setPayloadOpen);
   const autoOpened = useRef(false);
 
   const expanded = manuallyOpen;
@@ -51,7 +52,7 @@ export function PromptInput() {
       autoOpened.current = true;
       setManuallyOpen(true);
     }
-  }, [entered]);
+  }, [entered, setManuallyOpen]);
 
   // …and auto-collapse it once they move past the first station: expanded,
   // it covers the bottom third of the scene through the whole journey. One
@@ -63,7 +64,7 @@ export function PromptInput() {
       autoClosed.current = true;
       setManuallyOpen(false);
     }
-  }, [activeStage]);
+  }, [activeStage, setManuallyOpen]);
 
   const onChange = (text: string) => {
     setPrompt(text);
@@ -95,7 +96,7 @@ export function PromptInput() {
             <button
               type="button"
               onClick={() => setManuallyOpen(false)}
-              className="pane px-3 py-1.5 font-mono text-[11px] uppercase tracking-wide2 text-faint transition-colors hover:border-line-strong hover:text-ink"
+              className="pressable pane px-3 py-1.5 font-mono text-[11px] uppercase tracking-wide2 text-faint transition-colors hover:border-line-strong hover:text-ink"
             >
               Hide payload
             </button>
@@ -106,7 +107,7 @@ export function PromptInput() {
                 key={s}
                 type="button"
                 onClick={() => choose(s)}
-                className="max-w-44 truncate border border-line px-2 py-1 font-mono text-[11px] text-dim transition-colors hover:border-line-strong hover:text-peri"
+                className="pressable max-w-44 truncate border border-line px-2 py-1 font-mono text-[11px] text-dim transition-colors hover:border-line-strong hover:text-peri"
               >
                 {s}
               </button>
@@ -115,7 +116,7 @@ export function PromptInput() {
               type="button"
               aria-label="Shuffle suggestions"
               onClick={() => setChips(pickThree())}
-              className="border border-line px-2 py-1 font-mono text-[11px] text-faint transition-colors hover:border-line-strong hover:text-ink"
+              className="pressable border border-line px-2 py-1 font-mono text-[11px] text-faint transition-colors hover:border-line-strong hover:text-ink"
             >
               ↻
             </button>
@@ -142,7 +143,7 @@ export function PromptInput() {
                 <button
                   type="button"
                   onClick={load}
-                  className="bg-accent px-4 py-2 text-void transition-colors hover:bg-lavender"
+                  className="pressable bg-accent px-4 py-2 text-void transition-colors hover:bg-lavender"
                 >
                   Load GPT-2 · 168 MB
                 </button>
@@ -187,7 +188,7 @@ export function PromptInput() {
           <button
             type="button"
             onClick={() => setManuallyOpen(true)}
-            className="pane px-3 py-2 text-dim transition-colors hover:border-line-strong hover:text-ink"
+            className="pressable pane px-3 py-2 text-dim transition-colors hover:border-line-strong hover:text-ink"
           >
             Edit payload
           </button>

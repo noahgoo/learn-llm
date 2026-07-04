@@ -3,9 +3,11 @@
 import { AttentionControls } from "./AttentionControls";
 import { DeepDive } from "./DeepDive";
 import { EndCard } from "./EndCard";
+import { GuessNext } from "./GuessNext";
 import { KineticStat } from "./KineticStat";
 import { ProgressRail } from "./ProgressRail";
 import { PromptInput } from "./PromptInput";
+import { PromptNudge } from "./PromptNudge";
 import { PredictionControls } from "./PredictionControls";
 import { StageCaptions } from "./StageCaptions";
 import { StagePanel } from "./StagePanel";
@@ -23,15 +25,22 @@ export function Hud() {
       <TopBar />
       <ProgressRail />
       <TravelInterstitial />
-      <StagePanel />
-      <StageCaptions />
-      <KineticStat />
-      <DeepDive />
-      <PromptInput />
-      <AttentionControls />
-      <PredictionControls />
-      <Telemetry />
-      <EndCard />
+      {/* the narrative content is the page's main region; TopBar (banner)
+          and ProgressRail (nav) stay outside it. display:contents keeps the
+          fixed-position layout untouched. */}
+      <main className="contents">
+        <StagePanel />
+        <StageCaptions />
+        <KineticStat />
+        <DeepDive />
+        <PromptInput />
+        <PromptNudge />
+        <GuessNext />
+        <AttentionControls />
+        <PredictionControls />
+        <Telemetry />
+        <EndCard />
+      </main>
     </div>
   );
 }

@@ -121,6 +121,64 @@ camera and organs *do* along that spine — it does not replace the timeline.
       reduced motion).
 - [x] Landing: the suggested prompt types itself out under the hero, cursor and all.
 
+## Phase 5 — UX pass (from the 2026-07-04 design review)
+
+_Mobile story mode was deliberately excluded — it's a separate project, planned on
+its own when ready._
+
+### Wayfinding & sharing
+
+- [x] **Deep linking + resume**: stage hash in the URL (`#attention`) — fly there on
+      load, update the hash as stages change. Unlocks stage-level sharing and free
+      resume-after-reload.
+- [ ] _(future)_ **Lens toggle to the TopBar**: `simple|technical` is the best
+      pedagogical feature and it's buried in the Explain drawer. Surfacing it is
+      blocked on the lens-scope decision (site-wide mode vs drawer setting — see
+      decision note) and the technical beat-caption copywriting that choice implies.
+      Parked alongside mobile story mode.
+- [x] **Commitment signal on the landing**: "10 stops · about 5 minutes" under the
+      scroll cue. Known cost = higher completion.
+
+### Pacing & engagement
+
+- [x] **Vary the beat rhythm**: per-stage `beats` already exists — spend budget
+      where the teaching is (attention/multi-head 4–5 beats; layernorm/residual 2).
+      Uniform 3+1 reads templated.
+- [x] **Prompt re-engagement nudge**: one mid-journey hint at attention ("these
+      arcs are for *your* sentence — try another") now that the payload panel
+      auto-collapses. Make the prediction stage's "sample again" a big obvious
+      button — it's the payoff toy.
+- [x] **One comprehension moment**: "guess the next word, then reveal" before the
+      prediction beat. Converts passive scrolling into active learning; the highest
+      pedagogy-per-effort item on the list.
+
+### Accessibility & craft
+
+- [x] **Screen-reader structure**: proper landmarks + heading tree (duplicate h1s
+      exist today); offer the written journey up-front next to "Scroll to begin";
+      silence the caption `aria-live` region while scrubbing/traveling.
+- [x] **Cite tooltips + drawer focus**: citations are hover-only (keyboard/touch
+      can't reach them); DeepDive should trap focus, close on Escape, and return
+      focus to its toggle.
+- [x] **Contrast audit on `--color-faint`**: it carries 11px mono labels across the
+      HUD; verify ≥4.5:1 against void/abyss and bump a step if it fails.
+- [x] **Attention arc legend**: one line stating what arc weight/color encodes —
+      teaches how to read the picture, and satisfies "never rely on color alone."
+- [x] **Press feedback**: subtle tap/hover scale on rail dots, chips, and buttons —
+      the HUD color-shifts but feels inert.
+- [x] **OG/social card**: no share metadata today; render the tower + wordmark once
+      and wire `og:image`/Twitter card in `layout.tsx`. For a visual site the share
+      card is the ad.
+- [x] **Scoped reduced-motion**: the global 0.01ms nuke also kills state-conveying
+      fades (stat traveling-fade, chip transitions); scope it to decorative motion
+      and keep ≤200ms opacity state changes.
+
+**Decision note — lens scope**: today the lens only switches the Explain drawer's
+MDX; beat captions are single-lens, so "technical" users still get the simple
+narration on screen. Either (a) make the lens site-wide — captions/beats get dual
+copy too (content work in `beats.ts`), or (b) keep it a drawer setting and label it
+inside the drawer as "explanation depth". Choose before building the toggle UI.
+
 ## Standing constraints
 
 - Per-frame law: `useJourneyStore.getState()` inside `useFrame`; MotionValues for
