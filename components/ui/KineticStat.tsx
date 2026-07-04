@@ -1,16 +1,16 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useJourneyStore } from "@/lib/store";
 import { STAGES, type StageId } from "@/lib/journey";
 
 /**
- * One number per stage that earns it, counting up as the stage's dwell
- * advances (Apple keynote-style kinetic stat). Scrubbed by beat progress,
- * so scrolling back winds it down. Real GPT-2 small figures.
+ * One number per stage that earns it, counting up on arrival (Apple
+ * keynote-style kinetic stat). Time-based rather than scroll-scrubbed:
+ * snap gravity parks readers exactly on beat boundaries, where a
+ * scrubbed count would sit frozen at 0. Real GPT-2 small figures.
  */
-const STATS: Partial<
-  Record<StageId, { value: number; label: string }>
-> = {
+const STATS: Partial<Record<StageId, { value: number; label: string }>> = {
   tokenization: { value: 50257, label: "words and pieces in the vocabulary" },
   embeddings: { value: 768, label: "numbers describing each token" },
   "multi-head": { value: 144, label: "attention heads · 12 per layer × 12 layers" },
@@ -18,24 +18,33 @@ const STATS: Partial<
 };
 
 const smooth = (t: number) => t * t * (3 - 2 * t);
+const COUNT_MS = 1100;
 
-/**
- * High-frequency subscriber by design (see CLAUDE.md pattern): this small
- * leaf re-renders while its number counts; nothing above it does.
- */
 export function KineticStat() {
+  const entered = useJourneyStore((s) => s.entered);
   const activeStage = useJourneyStore((s) => s.activeStage);
   const traveling = useJourneyStore((s) => s.traveling);
-  const dwell = useJourneyStore((s) => {
-    const beats = STAGES[s.activeStage]?.beats ?? 1;
-    return Math.min(1, (s.beat + s.beatProgress) / beats);
-  });
+  const [n, setN] = useState(0);
 
   const stat = STATS[STAGES[activeStage]?.id];
-  if (!stat) return null;
 
-  // finish counting two-thirds of the way through the dwell
-  const n = Math.round(stat.value * smooth(Math.min(1, dwell * 1.5)));
+  useEffect(() => {
+    if (!stat) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setN(stat.value);
+      return;
+    }
+    const t0 = performance.now();
+    let raf = requestAnimationFrame(function tick(now) {
+      const p = Math.min(1, (now - t0) / COUNT_MS);
+      setN(Math.round(stat.value * smooth(p)));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    });
+    return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeStage]);
+
+  if (!entered || !stat) return null;
 
   return (
     <aside

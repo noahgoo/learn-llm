@@ -58,15 +58,13 @@ function StageNode({ index, square }: { index: number; square: boolean }) {
               : "bg-dim group-hover:bg-ink group-focus-visible:bg-ink"
           }`}
         />
-        {/* label chip: revealed on hover/focus, pinned open while active */}
+        {/* label chip: hover/focus only — pinning it open while active made
+            it collide with the stage panel and captions sharing the left
+            column; the TopBar breadcrumb carries the current location */}
         <span
           className={`pointer-events-none absolute left-full z-30 ml-3 pane px-2 py-1 font-mono text-[11px] whitespace-nowrap uppercase tracking-wide2 transition-all duration-300 ${
             active ? "text-accent" : "text-dim"
-          } ${
-            active
-              ? "translate-x-0 opacity-100"
-              : "-translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100"
-          }`}
+          } -translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100`}
         >
           {String(index + 1).padStart(2, "0")} / {stage.short}
         </span>
@@ -91,7 +89,7 @@ export function ProgressRail() {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
       aria-label="Journey stages"
-      className="pointer-events-auto fixed left-6 top-1/2 z-20 -translate-y-1/2"
+      className="group/rail pointer-events-auto fixed left-6 top-1/2 z-20 -translate-y-1/2"
     >
       <div className="relative flex flex-col gap-3">
         {/* spine + rising progress fill */}
@@ -102,9 +100,12 @@ export function ProgressRail() {
         <SpineFill />
         {GROUPS.map((group) => (
           <div key={group.label} className="flex flex-col gap-2">
+            {/* act labels appear when the pointer approaches the rail —
+                default-quiet so they never fight the stage panel's text in
+                the shared left column */}
             <p
               aria-hidden
-              className="ml-5 font-mono text-[9px] uppercase tracking-wide3 text-faint"
+              className="ml-5 font-mono text-[9px] uppercase tracking-wide3 text-faint opacity-0 transition-opacity duration-300 group-hover/rail:opacity-100 group-focus-within/rail:opacity-100"
             >
               {group.label}
               {group.repeat && (

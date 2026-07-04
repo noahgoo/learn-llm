@@ -51,6 +51,7 @@ export function CameraRig() {
   const parallax = useRef({ x: 0, y: 0 });
   const target = useMemo(() => new THREE.Vector3(), []);
   const look = useMemo(() => new THREE.Vector3(), []);
+  const lookAhead = useMemo(() => new THREE.Vector3(), []);
   const povPoint = useMemo(() => new THREE.Vector3(), []);
   const povAhead = useMemo(() => new THREE.Vector3(), []);
 
@@ -81,7 +82,18 @@ export function CameraRig() {
     }
     const t = THREE.MathUtils.clamp(smoothed.current, 0, 1);
     cameraPath.getPoint(t, target);
-    stationPath.getPoint(Math.min(t + 0.035, 1), look);
+    // Gaze: at rest, look AT the station (with a slight down-path bias for
+    // continuity); in flight, look down the path. The old always-ahead gaze
+    // broke the tower act — the path turns vertical there, so "ahead" was a
+    // floor above and every station's visual sat below the frame. Blend is
+    // scrubbed by distance to the nearest station, so it's reversible and
+    // pop-free (at the mid-travel stage flip the station term has 0 weight).
+    const sFloat = t * (STAGE_COUNT - 1);
+    const nearest = Math.round(sFloat);
+    const travelDepth = Math.min(1, Math.abs(sFloat - nearest) * 2);
+    stationPath.getPoint(Math.min(t + 0.035, 1), lookAhead);
+    stationPath.getPoint(nearest / (STAGE_COUNT - 1), look);
+    look.lerp(lookAhead, 0.3 + 0.7 * (travelDepth * travelDepth * (3 - 2 * travelDepth)));
     // fly toward the station center as the dolly deepens (embeddings push-in)
     if (dolly.current > 1e-3) {
       target.lerp(look, dolly.current);

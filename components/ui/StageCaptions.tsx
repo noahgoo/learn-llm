@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { motion, useMotionValue, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 import { beatsFor, type BeatAnchor } from "@/content/stages/beats";
 import { STAGES } from "@/lib/journey";
@@ -18,11 +18,16 @@ function TypedPrompt() {
   const [n, setN] = useState(0);
   useEffect(() => {
     if (reduceMotion) return;
-    let i = 0;
+    // wall-clock based so a throttled background tab catches up instead of
+    // freezing mid-word when the page loads out of view
+    const t0 = performance.now();
     const timer = setInterval(() => {
-      i += 1;
-      setN(i);
-      if (i >= prompt.length) clearInterval(timer);
+      const chars = Math.min(
+        prompt.length,
+        Math.floor((performance.now() - t0) / 55),
+      );
+      setN(chars);
+      if (chars >= prompt.length) clearInterval(timer);
     }, 55);
     return () => clearInterval(timer);
   }, [prompt, reduceMotion]);
@@ -33,6 +38,35 @@ function TypedPrompt() {
       <span className="animate-pulse text-accent">▌</span>&rdquo;
     </p>
   );
+}
+
+/**
+ * Scroll-scrubbed visibility envelope for beat captions: fully visible
+ * through the first 85% of a beat's dwell (snap gravity parks readers at
+ * beat starts, so the parked state must be full-strength), scrubbing out
+ * over the last 15% as the next beat approaches. Hidden during travel —
+ * the interstitial owns that band. Position-driven, so reverse scrolling
+ * mirrors forward exactly.
+ */
+function useBeatEnvelope() {
+  const opacity = useMotionValue(1);
+  const y = useMotionValue(0);
+  useEffect(
+    () =>
+      useJourneyStore.subscribe((s) => {
+        if (s.traveling) {
+          opacity.set(0);
+          y.set(6);
+          return;
+        }
+        const bp = s.beatProgress;
+        const o = bp > 0.85 ? Math.max(0, 1 - (bp - 0.85) / 0.15) : 1;
+        opacity.set(o);
+        y.set((1 - o) * -10);
+      }),
+    [opacity, y],
+  );
+  return { opacity, y };
 }
 
 /**
@@ -62,6 +96,7 @@ export function StageCaptions() {
   const traveling = useJourneyStore((s) => s.traveling);
   const entered = useJourneyStore((s) => s.entered);
   const reduceMotion = useReducedMotion();
+  const envelope = useBeatEnvelope();
   // Landing: a real title screen. Says what the site is and how to begin,
   // before the 3D journey and the rest of the chrome reveal on first scroll.
   if (!entered) {
@@ -116,15 +151,11 @@ export function StageCaptions() {
 
   return (
     <div aria-live="polite" className="pointer-events-none">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={current.key}
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: traveling ? 0.35 : 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.45, ease: "easeOut" }}
-          className={`fixed z-10 flex flex-col gap-3 ${region}`}
-        >
+      <motion.div
+        key={current.key}
+        style={{ opacity: envelope.opacity, y: envelope.y }}
+        className={`fixed z-10 flex flex-col gap-3 ${region}`}
+      >
           <h2
             className={`font-display leading-[1.05] text-ink [text-shadow:_0_2px_24px_rgb(6_4_12_/_0.95)] ${centered ? "text-5xl" : "text-[2rem]"
               }`}
@@ -158,8 +189,7 @@ export function StageCaptions() {
               </motion.span>
             </div>
           )}
-        </motion.div>
-      </AnimatePresence>
+      </motion.div>
     </div>
   );
 }

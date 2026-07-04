@@ -157,7 +157,10 @@ export function ScrollTrack() {
         const pos = state.progress * JOURNEY_UNITS;
         const nearest = Math.round(pos);
         const dist = Math.abs(pos - nearest);
-        if (dist > 0.02 && dist < 0.3) {
+        // resting mid-travel is always awkward (camera parked between
+        // stations), so travel bands snap from anywhere; dwells keep the
+        // gentle 0.3-unit catch radius
+        if (dist > 0.02 && (state.traveling || dist < 0.3)) {
           scrollToProgress(nearest / JOURNEY_UNITS);
         }
       }, 700);

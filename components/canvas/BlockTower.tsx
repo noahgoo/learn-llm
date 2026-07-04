@@ -57,6 +57,15 @@ export function BlockTower() {
     const { status, progress } = useModelStore.getState();
     const weightsFill =
       status === "ready" ? 1 : status === "loading" ? progress : 0;
+    // Inside the tower (stages 3-7) the slab faces read as big washed-out
+    // planes at grazing angles, so the fills dim while the camera is within
+    // the climb and return on the way out. Edges stay — the wireframe is
+    // what says "architecture" from within.
+    const sF = cameraT * (STAGE_COUNT - 1);
+    const inside =
+      smooth(Math.min(1, Math.max(0, (sF - 2.8) / 0.5))) *
+      (1 - smooth(Math.min(1, Math.max(0, (sF - 7.3) / 0.6))));
+    const fillDim = 1 - 0.85 * inside;
     for (let i = 0; i < SLAB_COUNT; i++) {
       const g = groups.current[i];
       if (!g) continue;
@@ -68,7 +77,7 @@ export function BlockTower() {
       g.scale.y = Math.max(0.0001, s);
       const fill = fills.current[i];
       const line = lines.current[i];
-      if (fill) fill.opacity = 0.03 * s;
+      if (fill) fill.opacity = 0.03 * s * fillDim;
       if (line) line.opacity = 0.18 * s;
       const w = weights.current[i];
       if (w) {

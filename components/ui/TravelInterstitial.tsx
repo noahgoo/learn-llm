@@ -23,7 +23,9 @@ import { useJourneyStore } from "@/lib/store";
 export function TravelInterstitial() {
   const numeralOpacity = useMotionValue(0);
   const titleOpacity = useMotionValue(0);
+  const titleX = useMotionValue(0);
   const titleY = useMotionValue(24);
+  const titleScale = useMotionValue(1);
   const [target, setTarget] = useState(-1);
 
   useEffect(() => {
@@ -43,12 +45,25 @@ export function TravelInterstitial() {
       }
       // numeral: swells in, dissolves before arrival
       numeralOpacity.set(Math.sin(Math.PI * f) * 0.9);
-      // title: rises through the back half, gone by f = 1
+      // title: rises through the back half…
       const back = Math.max(0, (f - 0.45) / 0.55);
-      titleOpacity.set(Math.sin(Math.PI * back));
-      titleY.set((1 - back) * 24);
+      const rise = Math.min(1, back / 0.4);
+      // …then DOCKS: over the last fifth of the flight it shrinks and slides
+      // toward the top-left StagePanel corner, dissolving as the panel's own
+      // chip fades in — a shared-element hand-off, scrubbed both directions.
+      // Chapter dividers stay centered (they announce an act, not the chip).
+      const chapter =
+        t > 0 && actIndexForStage(t - 1) !== actIndexForStage(t);
+      const dock = chapter ? 0 : Math.max(0, (f - 0.8) / 0.2);
+      const glide = dock * dock * (3 - 2 * dock);
+      titleOpacity.set(
+        chapter ? Math.sin(Math.PI * back) : rise * (1 - glide * glide),
+      );
+      titleX.set(-glide * window.innerWidth * 0.36);
+      titleY.set((1 - rise) * 24 - glide * window.innerHeight * 0.3);
+      titleScale.set(1 - 0.45 * glide);
     });
-  }, [numeralOpacity, titleOpacity, titleY]);
+  }, [numeralOpacity, titleOpacity, titleX, titleY, titleScale]);
 
   const stage = STAGES[target];
   if (!stage) return null;
@@ -72,7 +87,7 @@ export function TravelInterstitial() {
         {chapter ? act.numeral : String(target + 1).padStart(2, "0")}
       </motion.p>
       <motion.div
-        style={{ opacity: titleOpacity, y: titleY }}
+        style={{ opacity: titleOpacity, x: titleX, y: titleY, scale: titleScale }}
         className="absolute flex flex-col items-center gap-3 text-center"
       >
         <p className="font-mono text-[11px] uppercase tracking-wide3 text-accent">

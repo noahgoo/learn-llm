@@ -53,6 +53,18 @@ export function PromptInput() {
     }
   }, [entered]);
 
+  // …and auto-collapse it once they move past the first station: expanded,
+  // it covers the bottom third of the scene through the whole journey. One
+  // shot only — reopening after that is a user decision we don't override.
+  const activeStage = useJourneyStore((s) => s.activeStage);
+  const autoClosed = useRef(false);
+  useEffect(() => {
+    if (activeStage > 0 && !autoClosed.current) {
+      autoClosed.current = true;
+      setManuallyOpen(false);
+    }
+  }, [activeStage]);
+
   const onChange = (text: string) => {
     setPrompt(text);
     if (debounce.current) clearTimeout(debounce.current);

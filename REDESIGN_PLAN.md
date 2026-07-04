@@ -53,7 +53,9 @@ camera and organs *do* along that spine — it does not replace the timeline.
 - [x] BlockTower shell: 12 translucent slabs = 12 GPT-2 layers wrapping the climb
       (`components/canvas/BlockTower.tsx`).
 - [ ] Reshape per-stage visuals into organs (tokenizer gate, vocab wall, head fans…) —
-      iterative, continues through Phase 2.
+      **requires a live studio session** (`/?theatre` + Leva): interior geometry and
+      its build choreography need eyes on the scene, not blind constants. Same for
+      DoF in the POV shot. The only remaining open items.
 - [x] **ProgressRail v2 = mini transformer-architecture diagram**: acts grouped
       (Input / Block ×12 / Output), diamond nodes inside the block, continuous
       progress fill rising along the spine.
@@ -69,10 +71,10 @@ camera and organs *do* along that spine — it does not replace the timeline.
       before arrival. _Fine-grained interior builds (individual embedding tiles,
       head fans) remain Theatre-studio work._
 - [x] Typographic arrivals: `TravelInterstitial` — oversized ghost stage numeral
-      peaks mid-flight; the arriving title rises through the back half and hands off
-      to the StagePanel chip at arrival. Scrubbed by the new `travelProgress`
-      (journey.ts → store), so it's fully scrub-symmetric. _Remaining: true
-      shared-element docking into the chip._
+      peaks mid-flight; the arriving title rises through the back half, then **docks**:
+      over the last fifth of the flight it shrinks and glides into the top-left
+      StagePanel corner, dissolving as the panel chip fades in. Scrubbed by
+      `travelProgress`, reversible. Chapter dividers stay centered.
 - [x] **One POV moment**: on the ffn → residual travel the camera dives onto the
       conduit and rides it first-person up the tower core, gaze pushed down the
       tunnel — arriving at the Residual Stream stage having just BEEN the stream.
@@ -110,8 +112,10 @@ camera and organs *do* along that spine — it does not replace the timeline.
 - [x] Phase color temperature (`PhaseColor`): background + fog drift peri → violet →
       ember across acts, blended over the boundary travels. Near-black tints; brand
       tokens untouched.
-- [ ] Scrub-symmetric captions (MotionValue-driven, reverse scroll mirrors forward) —
-      the interstitial already scrubs; beat captions still crossfade on time.
+- [x] Scrub-symmetric captions: beat captions ride a scroll-scrubbed envelope
+      (full through 85% of the beat — snap gravity parks readers at beat starts —
+      scrubbing out over the last 15%; hidden during travel where the interstitial
+      owns the band). Reverse scroll mirrors forward exactly.
 - [x] Soft snap gravity: at rest within 0.3 units of a beat boundary, drift to it
       (700ms idle arm, ±0.02 dead zone, user input interrupts, off with
       reduced motion).
