@@ -65,10 +65,12 @@ export function TokenFlow() {
   const groups = useRef<(THREE.Group | null)[]>([]);
   const chipScale = useRef<(THREE.Group | null)[]>([]);
   const dotScale = useRef<(THREE.Group | null)[]>([]);
+  const labelPose = useRef<(THREE.Group | null)[]>([]);
   const crack = useRef(0);
   const land = useRef(0);
   const positionAdd = useRef(0);
   const flowCursor = useRef(0);
+  const column = useRef(0);
 
   const data = useMemo(() => {
     if (!output) return null;
@@ -131,13 +133,23 @@ export function TokenFlow() {
       s3[1] - 3.1,
       s3[2] + 4.8,
     ]);
+    const colSpacing = Math.max(0.7, Math.min(1.3, 9 / Math.max(1, n - 1)));
+    // where the row files off to once the matrix takes over (attention beat 2)
+    const attCol: Vec3[] = labels.map((_, i) => [
+      s3[0] + 8.5 + Math.sin(i * 0.8) * 0.15,
+      s3[1] + ((n - 1) / 2 - i) * colSpacing,
+      s3[2] + 3,
+    ]);
     const laterRows: Vec3[][] = laterStages.map((stageIndex, stageOffset) => {
       const [sx, sy, sz] = stationPosition(stageIndex);
-      const rowSpacing = Math.max(0.9, Math.min(1.9, 8.5 / Math.max(1, n - 1)));
+      // parked as a vertical column off to screen-right (world +x reads as
+      // screen-right at every tower stop — the camera sits at −x and looks at
+      // the station), clear of the stage visual so the stream never blocks
+      // the learning content. First token at the top.
       return labels.map((_, i) => [
-        sx + (i - (n - 1) / 2) * rowSpacing,
-        sy - 2.8 + Math.sin(i * 0.8 + stageOffset) * 0.18,
-        sz + 4.8,
+        sx + 8.5 + Math.sin(i * 0.8 + stageOffset) * 0.15,
+        sy + ((n - 1) / 2 - i) * colSpacing,
+        sz + 3,
       ]);
     });
     // nearest cloud neighbor per token (world)
@@ -173,6 +185,7 @@ export function TokenFlow() {
       posIntro,
       posSlots,
       attRow,
+      attCol,
       laterRows,
       neighbors,
       splits,
@@ -218,16 +231,30 @@ export function TokenFlow() {
     const camDenom = Math.max(1, STAGE_COUNT - 1);
     const flowTarget = THREE.MathUtils.clamp(s.cameraT * camDenom, TOK, WGT);
 
+    // column: the stream files off into a vertical stack at screen-right as
+    // the attention matrix takes over (beat 2 — same driver as the arc fade),
+    // and stays a column for every later stage. Labels swing from above the
+    // dot (fine in a horizontal row) to its right (where they'd collide with
+    // the dot stacked above). beatProgress-driven, so it scrubs reversibly.
+    const columnTarget =
+      s.activeStage > ATT
+        ? 1
+        : s.activeStage === ATT && s.beat >= 2
+          ? s.beatProgress
+          : 0;
+
     crack.current += (crackTarget - crack.current) * (1 - Math.exp(-5 * delta));
     land.current += (landTarget - land.current) * (1 - Math.exp(-4 * delta));
     positionAdd.current +=
       (positionTarget - positionAdd.current) * (1 - Math.exp(-5 * delta));
     flowCursor.current += (flowTarget - flowCursor.current) * (1 - Math.exp(-6 * delta));
+    column.current += (columnTarget - column.current) * (1 - Math.exp(-5 * delta));
 
     const cursor = flowCursor.current;
     const cr = crack.current;
     const ld = land.current;
     const pos = smoothstep(positionAdd.current);
+    const col = smoothstep(column.current);
     for (let i = 0; i < data.n; i++) {
       const g = groups.current[i];
       if (!g) continue;
@@ -239,7 +266,7 @@ export function TokenFlow() {
       const s0pos = lerpVec([bx, by, bz], [rx, ry, rz], cr);
       const s1pos = lerpVec([ax, ay, az], [cx, cy, cz], ld);
       const s2pos = lerpVec(data.posIntro[i], data.posSlots[i], pos);
-      const s3pos = data.attRow[i];
+      const s3pos = lerpVec(data.attRow[i], data.attCol[i], col);
       const anchors = [
         s0pos,
         s1pos,
@@ -258,8 +285,15 @@ export function TokenFlow() {
       const m = smoothstep(ld);
       const cs = chipScale.current[i];
       const ds = dotScale.current[i];
+      const lp = labelPose.current[i];
       if (cs) cs.scale.setScalar(Math.max(0.0001, smoothstep(cr) * (1 - m)));
       if (ds) ds.scale.setScalar(m);
+      if (lp) {
+        // x=1.4 keeps a center-anchored label's left edge clear of the dot
+        // even for long tokens (~10 chars at 0.7 scale)
+        lp.position.set(lerp(0, 1.4, col), lerp(0.5, 0, col), 0);
+        lp.scale.setScalar(1 - 0.3 * col);
+      }
     }
   });
 
@@ -306,7 +340,12 @@ export function TokenFlow() {
               <sphereGeometry args={[0.2, 16, 16]} />
               <meshBasicMaterial color="#c9b4ff" depthWrite={false} />
             </mesh>
-            <group position={[0, 0.5, 0]}>
+            <group
+              position={[0, 0.5, 0]}
+              ref={(el) => {
+                labelPose.current[i] = el;
+              }}
+            >
               <Text
                 font={FONT}
                 fontSize={0.34}

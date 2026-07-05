@@ -45,6 +45,10 @@ export function AttentionStage() {
 
   const n = output?.seq ?? 0;
   const half = ((n - 1) * CELL) / 2;
+  // Short prompts make a tiny matrix (n·CELL units wide) that reads as a
+  // speck from the arrival camera ~27 units out — upscale it toward a target
+  // span. Long prompts already fill the frame, so never scale below 1.
+  const fit = Math.min(2.2, Math.max(1, 7 / Math.max(1, n * CELL)));
   const matrixReveal =
     activeStage < STAGE_INDEX
       ? 0
@@ -119,7 +123,7 @@ export function AttentionStage() {
 
   return (
     <group ref={panel} position={[1.2, 0, 0]}>
-      <group>
+      <group scale={fit}>
         <instancedMesh
           ref={mesh}
           key={n}

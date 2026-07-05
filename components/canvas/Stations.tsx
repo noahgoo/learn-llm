@@ -1,6 +1,5 @@
 "use client";
 
-import { Billboard, Text } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import type { ComponentType } from "react";
 import { useRef } from "react";
@@ -8,7 +7,6 @@ import * as THREE from "three";
 import { STAGE_COUNT, STAGES, stationPosition, type StageId } from "@/lib/journey";
 import { useJourneyStore } from "@/lib/store";
 
-import { FONT } from "@/lib/public-path";
 import { AttentionStage } from "./stages/AttentionStage";
 import { EmbeddingsStage } from "./stages/EmbeddingsStage";
 import { FeedForwardStage } from "./stages/FeedForwardStage";
@@ -22,6 +20,21 @@ import { WeightsStage } from "./stages/WeightsStage";
 
 const VIOLET = new THREE.Color("#9d7bff");
 const FAINT = new THREE.Color("#4f4a63");
+
+/**
+ * Per-stage size multiplier for the visual. The tower stages are framed from
+ * 23–27 units out (see CAMERA_OFFSETS) while their content spans only ~5
+ * units, which made them too small to read — scale the content up instead of
+ * pulling the camera in, so the flight choreography stays authored as-is.
+ */
+const VISUAL_SCALE: Partial<Record<StageId, number>> = {
+  "multi-head": 1.9,
+  ffn: 1.9,
+  residual: 1.9,
+  layernorm: 2.4,
+  prediction: 1.9,
+  weights: 1.8,
+};
 
 /** Real visualizations per stage; others keep the placeholder core. */
 const STAGE_VISUALS: Partial<Record<StageId, ComponentType>> = {
@@ -119,21 +132,14 @@ function Station({ index }: { index: number }) {
             <meshBasicMaterial color={color} transparent opacity={0.3} />
           </mesh>
         )}
-        {Visual ? (near && <Visual />) : <PlaceholderCore built={stage.built} />}
-        {/* connective handoff: what the stream delivers in / hands off out */}
-        {near && stage.built && (
-          <>
-            <Billboard position={[0, -7.2, 6]}>
-              <Text font={FONT} fontSize={0.34} color="#a5b8ff" anchorX="center">
-                {`IN ▸ ${stage.input}`}
-              </Text>
-            </Billboard>
-            <Billboard position={[0, -7.2, -6]}>
-              <Text font={FONT} fontSize={0.34} color="#c9b4ff" anchorX="center">
-                {`OUT ▸ ${stage.output}`}
-              </Text>
-            </Billboard>
-          </>
+        {Visual ? (
+          near && (
+            <group scale={VISUAL_SCALE[stage.id] ?? 1}>
+              <Visual />
+            </group>
+          )
+        ) : (
+          <PlaceholderCore built={stage.built} />
         )}
       </ApproachReveal>
     </group>

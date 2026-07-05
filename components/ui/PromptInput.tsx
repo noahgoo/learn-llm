@@ -3,6 +3,8 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { useModelStore } from "@/lib/model/client";
+import { useActiveOutput } from "@/lib/model/data";
+import { MAX_TOKENS } from "@/lib/model/protocol";
 import { useJourneyStore } from "@/lib/store";
 import { SUGGESTIONS } from "@/lib/suggestions";
 
@@ -78,6 +80,12 @@ export function PromptInput() {
     setChips(pickThree(text));
   };
 
+  // Honest token count: only when the resolved output is actually for the
+  // typed text (live result or exact fixture match) — never the fallback.
+  const output = useActiveOutput(prompt);
+  const counted = output && output.text === prompt.trim() ? output : null;
+  const atCap = counted !== null && (counted.truncated || counted.seq >= MAX_TOKENS);
+
   // No prompt panel on the landing; it reveals with the rest of the chrome.
   if (!entered) return null;
 
@@ -90,24 +98,52 @@ export function PromptInput() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 16 }}
           transition={{ duration: 0.35, ease: "easeOut" }}
-          className="pointer-events-auto fixed bottom-8 left-1/2 z-20 w-[38rem] max-w-[88vw] -translate-x-1/2 pane p-4"
+          className="pointer-events-auto fixed bottom-8 left-1/2 z-20 w-[38rem] max-w-[88vw] -translate-x-1/2 pane px-5 pt-5 pb-4"
         >
-          <div className="mb-3 flex justify-center">
-            <button
-              type="button"
-              onClick={() => setManuallyOpen(false)}
-              className="pressable pane px-3 py-1.5 font-mono text-[11px] uppercase tracking-wide2 text-faint transition-colors hover:border-line-strong hover:text-ink"
+          {/* Fieldset legend: the panel's name rides its top border */}
+          <span className="absolute -top-[8px] left-4 bg-abyss px-2 font-mono text-[10px] uppercase tracking-wide3 text-faint">
+            Payload
+          </span>
+          <button
+            type="button"
+            aria-label="Hide payload"
+            onClick={() => setManuallyOpen(false)}
+            className="pressable absolute -top-[13px] right-3 h-6 w-6 border border-line bg-abyss font-mono text-[13px] leading-none text-faint transition-colors hover:border-line-strong hover:text-ink"
+          >
+            ×
+          </button>
+          <label htmlFor="prompt" className="sr-only">
+            Payload text
+          </label>
+          <div className="relative">
+            <input
+              id="prompt"
+              type="text"
+              value={prompt}
+              onChange={(e) => onChange(e.target.value)}
+              spellCheck={false}
+              maxLength={280}
+              placeholder="Type any text — watch it think"
+              className="w-full border-b border-line bg-transparent py-2 pr-20 font-mono text-[15px] text-ink caret-accent placeholder:text-faint transition-colors duration-200 outline-none focus:border-accent-dim"
+            />
+            <span
+              aria-hidden={counted === null}
+              className={`pointer-events-none absolute top-1/2 right-0 -translate-y-1/2 font-mono text-[11px] transition-opacity duration-200 ${
+                atCap ? "text-signal" : "text-faint"
+              } ${counted ? "opacity-100" : "opacity-0"}`}
             >
-              Hide payload
-            </button>
+              {counted?.seq ?? 0} / {MAX_TOKENS} tok
+            </span>
           </div>
-          <div className="mb-3 flex flex-wrap items-center justify-center gap-1.5">
-            {chips.map((s) => (
+          <div className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1 font-mono text-[11px]">
+            <span className="uppercase tracking-wide2 text-faint">try</span>
+            {/* Never suggest the text already sitting in the input */}
+            {chips.filter((s) => s !== prompt.trim()).map((s) => (
               <button
                 key={s}
                 type="button"
                 onClick={() => choose(s)}
-                className="pressable max-w-44 truncate border border-line px-2 py-1 font-mono text-[11px] text-dim transition-colors hover:border-line-strong hover:text-peri"
+                className="pressable text-dim underline decoration-line decoration-dotted underline-offset-4 transition-colors hover:text-peri hover:decoration-accent-dim"
               >
                 {s}
               </button>
@@ -116,41 +152,26 @@ export function PromptInput() {
               type="button"
               aria-label="Shuffle suggestions"
               onClick={() => setChips(pickThree())}
-              className="pressable border border-line px-2 py-1 font-mono text-[11px] text-faint transition-colors hover:border-line-strong hover:text-ink"
+              className="pressable px-1 text-faint transition-colors hover:text-ink"
             >
               ↻
             </button>
           </div>
-          <label htmlFor="prompt" className="sr-only">
-            Payload text
-          </label>
-          <input
-            id="prompt"
-            type="text"
-            value={prompt}
-            onChange={(e) => onChange(e.target.value)}
-            spellCheck={false}
-            maxLength={280}
-            placeholder="Type any text — watch it think"
-            className="w-full pane px-4 py-3 text-center font-mono text-sm text-ink placeholder:text-faint transition-colors duration-200 outline-none focus:border-line-strong focus:bg-abyss"
-          />
-          <div className="mt-3 flex flex-wrap items-center justify-center gap-3 font-mono text-[11px] uppercase tracking-wide2 text-faint">
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 font-mono text-[11px] uppercase tracking-wide2">
             {status === "idle" && (
               <>
-                <span className="normal-case tracking-normal text-faint">
-                  Samples work instantly · load GPT-2 for live inference
-                </span>
+                <span className="text-faint">Replay · precomputed</span>
                 <button
                   type="button"
                   onClick={load}
                   className="pressable bg-accent px-4 py-2 text-void transition-colors hover:bg-lavender"
                 >
-                  Load GPT-2 · 168 MB
+                  Run live in browser · 168 MB
                 </button>
               </>
             )}
             {status === "loading" && (
-              <div className="flex min-w-56 flex-col gap-2 text-peri">
+              <div className="flex w-full flex-col gap-2 text-peri">
                 <span>Loading GPT-2 · {Math.round(loadProgress * 100)}%</span>
                 <span className="h-1.5 bg-void/70">
                   <span
