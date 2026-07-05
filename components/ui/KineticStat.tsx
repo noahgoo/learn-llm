@@ -49,7 +49,7 @@ export function KineticStat() {
   return (
     <aside
       aria-live="off"
-      className={`pointer-events-none fixed bottom-24 left-16 z-10 transition-opacity duration-300 ${
+      className={`pointer-events-none fixed bottom-24 left-16 z-10 hidden transition-opacity duration-300 md:block ${
         traveling ? "opacity-0" : "opacity-100"
       }`}
     >

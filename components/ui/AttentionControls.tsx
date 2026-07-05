@@ -52,7 +52,7 @@ export function AttentionControls() {
   if (!visible) return null;
 
   return (
-    <aside className="pointer-events-auto fixed top-36 right-6 z-20 w-56 space-y-3 pane p-4">
+    <aside className="pointer-events-auto fixed top-36 right-6 z-20 hidden w-56 space-y-3 pane p-4 md:block">
       <p className="font-mono text-[11px] uppercase tracking-wide3 text-accent">
         Attention scope
       </p>

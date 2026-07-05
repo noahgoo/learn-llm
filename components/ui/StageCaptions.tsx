@@ -4,7 +4,8 @@ import { motion, useMotionValue, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 import { beatsFor, type BeatAnchor } from "@/content/stages/beats";
 import { STAGES } from "@/lib/journey";
-import { useJourneyStore } from "@/lib/store";
+import { useMobileExperience } from "@/lib/mobile";
+import { useJourneyStore, useLensStore } from "@/lib/store";
 import { Cite } from "./Cite";
 
 /**
@@ -83,11 +84,19 @@ function useBeatEnvelope() {
  * collapses into ONE side lane per stage, so beats swap content in place
  * instead of hopping around the viewport.
  */
+/* Below md every side anchor drops to ONE bottom strip above the safe area —
+   portrait has no side lane, and a fixed caption home beats content hopping
+   around a small screen. `center` beats stay centered (deliberate
+   full-screen moments), just narrower. */
+const SIDE_LANE =
+  "left-4 right-4 bottom-[calc(2rem_+_env(safe-area-inset-bottom))] md:left-16 md:right-auto md:bottom-auto md:top-[46%] md:max-w-[26rem]";
+
 const REGION: Record<BeatAnchor, string> = {
-  center: "left-1/2 top-[34%] -translate-x-1/2 -translate-y-1/2 text-center items-center max-w-[40rem]",
-  "top-left": "left-16 top-[46%] max-w-[26rem]",
-  "bottom-left": "left-16 top-[46%] max-w-[26rem]",
-  right: "left-16 top-[46%] max-w-[26rem]",
+  center:
+    "left-1/2 top-[34%] -translate-x-1/2 -translate-y-1/2 text-center items-center w-[calc(100vw-2.5rem)] max-w-[40rem] md:w-auto",
+  "top-left": SIDE_LANE,
+  "bottom-left": SIDE_LANE,
+  right: SIDE_LANE,
 };
 
 export function StageCaptions() {
@@ -95,6 +104,9 @@ export function StageCaptions() {
   const beat = useJourneyStore((s) => s.beat);
   const traveling = useJourneyStore((s) => s.traveling);
   const entered = useJourneyStore((s) => s.entered);
+  const lens = useLensStore((s) => s.lens);
+  const payloadOpen = useJourneyStore((s) => s.payloadOpen);
+  const mobile = useMobileExperience();
   const reduceMotion = useReducedMotion();
   const envelope = useBeatEnvelope();
   // Landing: a real title screen. Says what the site is and how to begin,
@@ -112,7 +124,7 @@ export function StageCaptions() {
             An interactive 3D explainer
           </p>
           {/* h2: the TopBar wordmark is the page's single h1 */}
-          <h2 className="font-display text-6xl leading-[1.02] text-ink [text-shadow:_0_2px_24px_rgb(6_4_12_/_0.95)]">
+          <h2 className="font-display text-4xl leading-[1.02] text-ink [text-shadow:_0_2px_24px_rgb(6_4_12_/_0.95)] md:text-6xl">
             Watch a language model think.
           </h2>
           <p className="max-w-[34rem] text-[15px] leading-relaxed text-dim">
@@ -158,9 +170,13 @@ export function StageCaptions() {
   }
 
   const stage = STAGES[activeStage];
-  const beats = beatsFor(stage.id);
+  const beats = beatsFor(stage.id, lens);
   const current = beats[Math.min(beat, beats.length - 1)];
   if (!current) return null;
+
+  // On mobile the open payload picker and the caption strip share the
+  // bottom lane — the caption yields while the user is choosing text.
+  if (mobile && payloadOpen) return null;
 
   const centered = current.anchor === "center";
   const region = REGION[current.anchor];
@@ -170,12 +186,13 @@ export function StageCaptions() {
     // reader with every beat it passes through
     <div aria-live={traveling ? "off" : "polite"} className="pointer-events-none">
       <motion.div
-        key={current.key}
+        // lens in the key so toggling remounts the caption cleanly
+        key={`${current.key}-${lens}`}
         style={{ opacity: envelope.opacity, y: envelope.y }}
         className={`fixed z-10 flex flex-col gap-3 ${region}`}
       >
           <h3
-            className={`font-display leading-[1.05] text-ink [text-shadow:_0_2px_24px_rgb(6_4_12_/_0.95)] ${centered ? "text-5xl" : "text-[2rem]"
+            className={`font-display leading-[1.05] text-ink [text-shadow:_0_2px_24px_rgb(6_4_12_/_0.95)] ${centered ? "text-3xl md:text-5xl" : "text-2xl md:text-[2rem]"
               }`}
           >
             {current.headline}

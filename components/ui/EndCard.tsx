@@ -26,7 +26,7 @@ export function EndCard() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 18 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
-          className="pointer-events-auto fixed left-1/2 bottom-10 z-30 w-[30rem] max-w-[86vw] -translate-x-1/2 pane p-5 text-center"
+          className="pointer-events-auto fixed left-1/2 bottom-[calc(2rem_+_env(safe-area-inset-bottom))] z-30 w-[30rem] max-w-[92vw] -translate-x-1/2 pane p-5 text-center md:bottom-10 md:max-w-[86vw]"
         >
           <p className="font-mono text-[11px] uppercase tracking-wide3 text-accent">
             Journey complete

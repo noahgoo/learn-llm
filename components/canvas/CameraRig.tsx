@@ -4,6 +4,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { cameraKeyframe, STAGE_COUNT, STAGES, stationPosition } from "@/lib/journey";
+import { useMobileExperience } from "@/lib/mobile";
 import { useJourneyStore } from "@/lib/store";
 
 const EMBEDDINGS_INDEX = STAGES.findIndex((s) => s.id === "embeddings");
@@ -15,6 +16,29 @@ const POV_FROM = STAGES.findIndex((s) => s.id === "ffn");
  * a wider view so the user can see the whole batch settle at once.
  */
 const EMBEDDINGS_DOLLY = 0;
+
+/**
+ * Portrait framing (MOBILE_PLAN.md §3). The authored CAMERA_OFFSETS assume a
+ * landscape frame with a left HUD lane: negative x pushes the station
+ * right-of-center. Portrait has no side lane and a much narrower horizontal
+ * FOV, so one formula reshapes every shot instead of ten authored mobile
+ * offsets: squeeze the offset's x toward 0 (station re-centers), pull the
+ * camera back along z (tall stages fit), and widen the FOV (the FOV half
+ * lives on the Canvas camera prop in Experience.tsx). journey.ts stays
+ * pure — this is a rig-level view adjustment, not a new timeline.
+ */
+const PORTRAIT_X_SQUEEZE = 0.4;
+const PORTRAIT_PULLBACK = 1.2;
+
+function portraitKeyframe(index: number): THREE.Vector3 {
+  const [sx, , sz] = stationPosition(index);
+  const [kx, ky, kz] = cameraKeyframe(index);
+  return new THREE.Vector3(
+    sx + (kx - sx) * PORTRAIT_X_SQUEEZE,
+    ky,
+    sz + (kz - sz) * PORTRAIT_PULLBACK,
+  );
+}
 
 function usePrefersReducedMotion() {
   return useMemo(
@@ -33,18 +57,21 @@ function usePrefersReducedMotion() {
 export function CameraRig() {
   const camera = useThree((s) => s.camera);
   const reducedMotion = usePrefersReducedMotion();
+  const mobile = useMobileExperience();
 
   const { cameraPath, stationPath } = useMemo(() => {
     const indices = Array.from({ length: STAGE_COUNT }, (_, i) => i);
     return {
       cameraPath: new THREE.CatmullRomCurve3(
-        indices.map((i) => new THREE.Vector3(...cameraKeyframe(i))),
+        indices.map((i) =>
+          mobile ? portraitKeyframe(i) : new THREE.Vector3(...cameraKeyframe(i)),
+        ),
       ),
       stationPath: new THREE.CatmullRomCurve3(
         indices.map((i) => new THREE.Vector3(...stationPosition(i))),
       ),
     };
-  }, []);
+  }, [mobile]);
 
   const smoothed = useRef(0);
   const dolly = useRef(0);

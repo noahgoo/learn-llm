@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import { useMobileExperience } from "@/lib/mobile";
 import { useModelStore } from "@/lib/model/client";
 import { useActiveOutput } from "@/lib/model/data";
 import { MAX_TOKENS } from "@/lib/model/protocol";
@@ -38,6 +39,10 @@ export function PromptInput() {
   const manuallyOpen = useJourneyStore((s) => s.payloadOpen);
   const setManuallyOpen = useJourneyStore((s) => s.setPayloadOpen);
   const autoOpened = useRef(false);
+  // Fixtures-only on mobile (MOBILE_PLAN.md §6): the panel becomes a chip
+  // picker — no free text, and `run` is never called so the worker (and the
+  // 168 MB model download) never spawns.
+  const mobile = useMobileExperience();
 
   const expanded = manuallyOpen;
 
@@ -49,12 +54,14 @@ export function PromptInput() {
 
   // Auto-open the panel once, the first time the user scrolls in, so they
   // notice they can set their own text. After that it's theirs to hide/show.
+  // Not on mobile: the expanded panel would sit on the caption strip's lane,
+  // and the chip picker is discoverable from its top-right toggle.
   useEffect(() => {
-    if (entered && !autoOpened.current) {
+    if (entered && !autoOpened.current && !mobile) {
       autoOpened.current = true;
       setManuallyOpen(true);
     }
-  }, [entered, setManuallyOpen]);
+  }, [entered, setManuallyOpen, mobile]);
 
   // …and auto-collapse it once they move past the first station: expanded,
   // it covers the bottom third of the scene through the whole journey. One
@@ -76,7 +83,7 @@ export function PromptInput() {
 
   const choose = (text: string) => {
     setPrompt(text);
-    run(text);
+    if (!mobile) run(text);
     setChips(pickThree(text));
   };
 
@@ -98,7 +105,7 @@ export function PromptInput() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 16 }}
           transition={{ duration: 0.35, ease: "easeOut" }}
-          className="pointer-events-auto fixed bottom-8 left-1/2 z-20 w-[38rem] max-w-[88vw] -translate-x-1/2 pane px-5 pt-5 pb-4"
+          className="pointer-events-auto fixed bottom-[calc(1.5rem_+_env(safe-area-inset-bottom))] left-1/2 z-20 w-[38rem] max-w-[92vw] -translate-x-1/2 pane px-5 pt-5 pb-4 md:bottom-8 md:max-w-[88vw]"
         >
           {/* Fieldset legend: the panel's name rides its top border */}
           <span className="absolute -top-[8px] left-4 bg-abyss px-2 font-mono text-[10px] uppercase tracking-wide3 text-faint">
@@ -112,10 +119,15 @@ export function PromptInput() {
           >
             ×
           </button>
+          {/* Mobile: the prompt is picked, not typed — free text would imply
+              live inference the phone deliberately doesn't run */}
+          <p className="font-mono text-[14px] text-peri md:hidden">
+            &ldquo;{prompt}&rdquo;
+          </p>
           <label htmlFor="prompt" className="sr-only">
             Payload text
           </label>
-          <div className="relative">
+          <div className="relative hidden md:block">
             <input
               id="prompt"
               type="text"
@@ -157,7 +169,10 @@ export function PromptInput() {
               ↻
             </button>
           </div>
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 font-mono text-[11px] uppercase tracking-wide2">
+          <p className="mt-4 font-mono text-[10px] uppercase tracking-wide2 text-faint md:hidden">
+            Precomputed replay · on desktop this runs GPT-2 live in your browser
+          </p>
+          <div className="mt-4 hidden flex-wrap items-center justify-between gap-3 font-mono text-[11px] uppercase tracking-wide2 md:flex">
             {status === "idle" && (
               <>
                 <span className="text-faint">Replay · precomputed</span>
@@ -199,7 +214,7 @@ export function PromptInput() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
-          className="pointer-events-auto fixed right-6 bottom-6 z-20 flex flex-col items-end gap-2 font-mono text-[11px] uppercase tracking-wide2"
+          className="pointer-events-auto fixed right-6 bottom-6 z-20 hidden flex-col items-end gap-2 font-mono text-[11px] uppercase tracking-wide2 md:flex"
         >
           {status === "ready" && (
             <span className="border border-accent-dim bg-accent/10 px-3 py-2 text-lavender backdrop-blur-sm">

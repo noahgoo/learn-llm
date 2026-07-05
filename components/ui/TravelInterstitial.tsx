@@ -88,12 +88,12 @@ export function TravelInterstitial() {
       </motion.p>
       <motion.div
         style={{ opacity: titleOpacity, x: titleX, y: titleY, scale: titleScale }}
-        className="absolute flex flex-col items-center gap-3 text-center"
+        className="absolute flex flex-col items-center gap-3 px-6 text-center"
       >
         <p className="font-mono text-[11px] uppercase tracking-wide3 text-accent">
           {chapter ? `Part ${act.numeral} · ${act.title}` : stage.phase}
         </p>
-        <h2 className="font-display text-6xl leading-[1.02] text-ink [text-shadow:_0_2px_24px_rgb(6_4_12_/_0.95)]">
+        <h2 className="font-display text-4xl leading-[1.02] text-ink [text-shadow:_0_2px_24px_rgb(6_4_12_/_0.95)] md:text-6xl">
           {chapter ? act.title : stage.title}
         </h2>
         {chapter && (

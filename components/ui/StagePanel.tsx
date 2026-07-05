@@ -27,7 +27,7 @@ export function StagePanel() {
   return (
     <section
       aria-live="polite"
-      className="pointer-events-none fixed left-16 top-24 z-10 w-[20rem]"
+      className="pointer-events-none fixed left-4 top-16 z-10 w-[16rem] md:left-16 md:top-24 md:w-[20rem]"
     >
       <AnimatePresence mode="wait">
         <motion.div
@@ -44,7 +44,7 @@ export function StagePanel() {
           <p className="font-mono text-[11px] uppercase tracking-wide3 text-accent">
             {stage.phase}
           </p>
-          <h2 className="mt-1.5 font-display text-3xl leading-[1.05] text-ink">
+          <h2 className="mt-1.5 font-display text-2xl leading-[1.05] text-ink md:text-3xl">
             {stage.title}
           </h2>
           {!stage.built && (
@@ -52,8 +52,10 @@ export function StagePanel() {
               Station under construction
             </p>
           )}
-          <div className="rule-x mt-4 w-16" />
-          <dl className="mt-4 space-y-1.5 font-mono text-[11px] uppercase tracking-wide2">
+          {/* IN/OUT connective tissue is desktop-only; on mobile that detail
+              lives in the Read sheet and the scene needs the pixels */}
+          <div className="rule-x mt-4 hidden w-16 md:block" />
+          <dl className="mt-4 hidden space-y-1.5 font-mono text-[11px] uppercase tracking-wide2 md:block">
             <div className="flex gap-3">
               <dt className="w-8 text-faint">In</dt>
               <dd className="text-peri">▸ {stage.input}</dd>

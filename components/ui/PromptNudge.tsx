@@ -32,7 +32,7 @@ export function PromptNudge() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 12 }}
           transition={{ duration: 0.4, ease: "easeOut", delay: 0.8 }}
-          className="pointer-events-auto fixed bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-3 pane px-4 py-2.5"
+          className="pointer-events-auto fixed bottom-8 left-1/2 z-20 hidden -translate-x-1/2 items-center gap-3 pane px-4 py-2.5 md:flex"
         >
           <p className="font-mono text-[11px] uppercase tracking-wide2 text-dim">
             These arcs are for <span className="text-peri">your</span> sentence

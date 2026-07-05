@@ -8,6 +8,7 @@ import {
   scrollOffsetForStage,
   STAGES,
 } from "@/lib/journey";
+import { isMobileExperience } from "@/lib/mobile";
 import { useJourneyStore } from "@/lib/store";
 
 function prefersReducedMotion() {
@@ -22,9 +23,17 @@ function prefersReducedMotion() {
  */
 let lenis: Lenis | null = null;
 
-/** Max scrollable pixels for the current runway height. */
+/**
+ * Max scrollable pixels for the current runway height. Measured from the
+ * document rather than derived from innerHeight: the runway is sized in svh
+ * (stable), but innerHeight grows when mobile browser toolbars collapse
+ * mid-scroll — deriving from it would make progress jump under the thumb.
+ */
 function scrollMax() {
-  return Math.max(1, (JOURNEY_UNITS - 1) * window.innerHeight);
+  return Math.max(
+    1,
+    document.documentElement.scrollHeight - window.innerHeight,
+  );
 }
 
 const easeInOutCubic = (t: number) =>
@@ -167,8 +176,11 @@ export function ScrollTrack() {
         const dist = Math.abs(pos - nearest);
         // resting mid-travel is always awkward (camera parked between
         // stations), so travel bands snap from anywhere; dwells keep the
-        // gentle 0.3-unit catch radius
-        if (dist > 0.02 && (state.traveling || dist < 0.3)) {
+        // gentle 0.3-unit catch radius. On mobile the radius covers the
+        // whole unit (hybrid scroll-snap, MOBILE_PLAN.md §4): a flick may
+        // carry several beats, but it always settles ON one.
+        const radius = isMobileExperience() ? 0.5 : 0.3;
+        if (dist > 0.02 && (state.traveling || dist < radius)) {
           scrollToProgress(nearest / JOURNEY_UNITS);
         }
       }, 700);

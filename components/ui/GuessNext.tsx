@@ -53,7 +53,7 @@ export function GuessNext() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 14 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
-          className="pointer-events-auto fixed bottom-24 left-16 z-20 w-[21rem] pane p-4"
+          className="pointer-events-auto fixed bottom-24 left-16 z-20 hidden w-[21rem] pane p-4 md:block"
         >
           <p className="font-mono text-[11px] uppercase tracking-wide3 text-accent">
             {guess === null ? "Your turn" : "The reveal"}

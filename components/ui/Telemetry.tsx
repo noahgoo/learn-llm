@@ -21,7 +21,7 @@ export function Telemetry() {
       <button
         type="button"
         onClick={() => setVisible(true)}
-        className="pressable pointer-events-auto fixed right-6 bottom-28 z-20 pane px-3 py-2 font-mono text-[11px] uppercase tracking-wide2 text-dim transition-colors hover:border-line-strong hover:text-ink"
+        className="pressable pointer-events-auto fixed right-6 bottom-28 z-20 hidden pane px-3 py-2 font-mono text-[11px] uppercase tracking-wide2 text-dim transition-colors hover:border-line-strong hover:text-ink md:block"
       >
         Show diagnostics
       </button>
@@ -29,7 +29,7 @@ export function Telemetry() {
   }
 
   return (
-    <aside className="pointer-events-auto fixed right-6 bottom-28 z-20 w-72 pane p-4">
+    <aside className="pointer-events-auto fixed right-6 bottom-28 z-20 hidden w-72 pane p-4 md:block">
       <div className="flex items-center justify-between gap-3">
         <p className="font-mono text-[11px] uppercase tracking-wide3 text-accent">
           Diagnostics

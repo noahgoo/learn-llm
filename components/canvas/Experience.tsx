@@ -4,6 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import { PerformanceMonitor, Stars } from "@react-three/drei";
 import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { useEffect, useState, useSyncExternalStore } from "react";
+import { useMobileExperience } from "@/lib/mobile";
 import { useFixtureStore } from "@/lib/model/data";
 import { BlockTower } from "./BlockTower";
 import { CameraRig } from "./CameraRig";
@@ -63,6 +64,11 @@ export function Experience() {
   const loadFixtures = useFixtureStore((s) => s.loadFixtures);
   useEffect(() => loadFixtures(), [loadFixtures]);
 
+  // portrait FOV: the narrow frame needs a wider lens (MOBILE_PLAN.md §3);
+  // R3F diffs the camera prop, so rotation/resize re-frames live. The
+  // companion keyframe squeeze lives in CameraRig.
+  const mobile = useMobileExperience();
+
   // adaptive resolution: start mid, let PerformanceMonitor scale 1..2 by GPU headroom
   const [dpr, setDpr] = useState(1.5);
   // bloom is the first thing to go when the GPU struggles
@@ -82,20 +88,24 @@ export function Experience() {
   return (
     <Canvas
       frameloop={frameloop}
-      camera={{ fov: 42, near: 0.1, far: 400, position: [0, 4.5, 17] }}
+      camera={{ fov: mobile ? 54 : 42, near: 0.1, far: 400, position: [0, 4.5, 17] }}
       dpr={dpr}
-      gl={{ antialias: true, powerPreference: "high-performance" }}
+      // antialias is a context-creation flag (no live toggle): skip it on
+      // mobile — bloom hides the aliasing and the fill-rate savings matter
+      gl={{ antialias: !mobile, powerPreference: "high-performance" }}
     >
       <PerformanceMonitor
         onChange={({ factor }) => {
-          setDpr(Math.min(2, Math.max(1, 1 + factor)));
+          // phones cap at 1.5: DPR-3 screens × full-screen postprocessing is
+          // the main mobile GPU cliff (MOBILE_PLAN.md §7)
+          setDpr(Math.min(mobile ? 1.5 : 2, Math.max(1, 1 + factor)));
           setBloom(factor > 0.25);
         }}
       />
       <color attach="background" args={["#06040c"]} />
       <fog attach="fog" args={["#06040c", 60, 220]} />
       <PhaseColor />
-      <Stars radius={180} depth={120} count={3200} factor={3} saturation={0.6} fade speed={0.4} />
+      <Stars radius={180} depth={120} count={mobile ? 1600 : 3200} factor={3} saturation={0.6} fade speed={0.4} />
       <CameraRig />
       <TheatreDriver />
       <Conduit />
