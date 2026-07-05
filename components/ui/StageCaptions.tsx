@@ -127,7 +127,13 @@ export function StageCaptions() {
           <h2 className="font-display text-4xl leading-[1.02] text-ink [text-shadow:_0_2px_24px_rgb(6_4_12_/_0.95)] md:text-6xl">
             Watch a language model think.
           </h2>
-          <p className="max-w-[34rem] text-[15px] leading-relaxed text-dim">
+          {/* mobile is fixtures-only and has no free typing, so the promise
+              ("type", "runs live in your browser") is desktop copy */}
+          <p className="max-w-[34rem] text-[15px] leading-relaxed text-dim md:hidden">
+            Follow a sentence through GPT-2 — tokens, embeddings, attention,
+            and its next-word guess.
+          </p>
+          <p className="hidden max-w-[34rem] text-[15px] leading-relaxed text-dim md:block">
             Type a sentence and follow it through GPT-2, one stage at a time —
             tokens, embeddings, attention, and its next-word guess. The whole
             model runs live, right here in your browser.
@@ -145,7 +151,10 @@ export function StageCaptions() {
             >
               ↓
             </motion.span>
-            <span className="mt-1 font-mono text-[11px] uppercase tracking-wide2 text-faint">
+            {/* input-method hint is desktop-only: arrow keys and the rail
+                labels mean nothing on a phone, and the pill already says
+                scroll */}
+            <span className="mt-1 hidden font-mono text-[11px] uppercase tracking-wide2 text-faint md:block">
               Scroll · arrow keys · rail · then make the words your own
             </span>
             {/* commitment signal: known cost = higher completion */}

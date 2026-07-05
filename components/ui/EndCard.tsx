@@ -35,36 +35,15 @@ export function EndCard() {
             Thank you for learning.
           </h2>
           <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-dim">
-            If this helped, leave a star on GitHub so more people can find the
-            project.
+            If this helped, a star helps more people find it.
           </p>
-          {/* recap strip: the whole journey at a glance, each stop replayable */}
-          <ol className="mx-auto mt-4 flex max-w-md flex-wrap items-center justify-center gap-x-3 gap-y-1.5">
-            {STAGES.map((stage, i) => (
-              <li key={stage.id}>
-                <button
-                  type="button"
-                  onClick={() => scrollToStage(i)}
-                  className="pressable font-mono text-[10px] uppercase tracking-wide2 text-faint hover:text-accent"
-                >
-                  <span className="text-accent-dim">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>{" "}
-                  {stage.short}
-                </button>
-              </li>
-            ))}
-          </ol>
-          <p className="mt-3 font-mono text-[11px] uppercase tracking-wide2 text-dim">
-            Or scroll back up and run it with your own words.
-          </p>
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+          <div className="mt-5 flex flex-col items-center gap-3">
             <a
               href={GITHUB_URL}
               target="_blank"
               rel="noreferrer"
-              aria-label="Open GitHub repository"
-              className="pressable inline-flex items-center justify-center gap-2 border border-accent-dim bg-accent/10 px-4 py-2 font-mono text-[11px] uppercase tracking-wide2 text-lavender transition-colors hover:border-accent hover:text-ink"
+              aria-label="Star the GitHub repository"
+              className="pressable inline-flex items-center justify-center gap-2.5 bg-accent px-6 py-3 font-mono text-[12px] uppercase tracking-wide2 text-void transition-colors hover:bg-lavender"
             >
               <svg
                 aria-hidden
@@ -73,12 +52,12 @@ export function EndCard() {
               >
                 <path d="M8 0C3.58 0 0 3.67 0 8.2c0 3.62 2.29 6.69 5.47 7.77.4.08.55-.18.55-.39 0-.19-.01-.84-.01-1.52-2.01.38-2.53-.5-2.69-.96-.09-.24-.48-.96-.82-1.15-.28-.16-.68-.55-.01-.56.63-.01 1.08.59 1.23.84.72 1.24 1.87.89 2.33.68.07-.53.28-.89.51-1.09-1.78-.21-3.64-.91-3.64-4.03 0-.89.31-1.62.82-2.19-.08-.21-.36-1.04.08-2.16 0 0 .67-.22 2.2.84A7.43 7.43 0 0 1 8 3.99c.68 0 1.36.09 2 .27 1.53-1.06 2.2-.84 2.2-.84.44 1.12.16 1.95.08 2.16.51.57.82 1.3.82 2.19 0 3.13-1.87 3.82-3.65 4.03.29.25.54.75.54 1.52 0 1.09-.01 1.97-.01 2.24 0 .21.15.47.55.39A8.08 8.08 0 0 0 16 8.2C16 3.67 12.42 0 8 0Z" />
               </svg>
-              GitHub
+              Star on GitHub
             </a>
             <button
               type="button"
               onClick={() => scrollToStage(0)}
-              className="pressable border border-line px-4 py-2 font-mono text-[11px] uppercase tracking-wide2 text-dim transition-colors hover:border-line-strong hover:text-ink"
+              className="pressable font-mono text-[11px] uppercase tracking-wide2 text-faint underline decoration-line underline-offset-4 transition-colors hover:text-ink"
             >
               Start over
             </button>
