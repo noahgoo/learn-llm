@@ -8,7 +8,6 @@ import {
   scrollOffsetForStage,
   STAGES,
 } from "@/lib/journey";
-import { isMobileExperience } from "@/lib/mobile";
 import { useJourneyStore } from "@/lib/store";
 
 function prefersReducedMotion() {
@@ -160,33 +159,6 @@ export function ScrollTrack() {
       raf = requestAnimationFrame(loop);
     }
 
-    // Soft snap gravity: when scrolling rests mid-beat NEAR a beat boundary,
-    // drift gently to it so readers settle on complete states. Deliberately
-    // weak — only pulls within 0.3 units, never mid-dwell, and any user
-    // input interrupts it (Lenis). Off under reduced motion (no Lenis).
-    let snapTimer: ReturnType<typeof setTimeout> | null = null;
-    const armSnap = () => {
-      if (!lenis) return;
-      if (snapTimer) clearTimeout(snapTimer);
-      snapTimer = setTimeout(() => {
-        const state = useJourneyStore.getState();
-        if (!state.entered) return;
-        const pos = state.progress * JOURNEY_UNITS;
-        const nearest = Math.round(pos);
-        const dist = Math.abs(pos - nearest);
-        // resting mid-travel is always awkward (camera parked between
-        // stations), so travel bands snap from anywhere; dwells keep the
-        // gentle 0.3-unit catch radius. On mobile the radius covers the
-        // whole unit (hybrid scroll-snap, MOBILE_PLAN.md §4): a flick may
-        // carry several beats, but it always settles ON one.
-        const radius = isMobileExperience() ? 0.5 : 0.3;
-        if (dist > 0.02 && (state.traveling || dist < radius)) {
-          scrollToProgress(nearest / JOURNEY_UNITS);
-        }
-      }, 700);
-    };
-    window.addEventListener("scroll", armSnap, { passive: true });
-
     // Deep-link restore: `#attention` (or a reload mid-journey) jumps
     // straight to that stage's first beat, chrome revealed — no 40-screen
     // re-scroll to get back to where you were.
@@ -203,9 +175,7 @@ export function ScrollTrack() {
     window.addEventListener("keydown", onKeyDown);
     return () => {
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("scroll", armSnap);
       window.removeEventListener("keydown", onKeyDown);
-      if (snapTimer) clearTimeout(snapTimer);
       if (raf !== null) cancelAnimationFrame(raf);
       lenis?.destroy();
       lenis = null;
